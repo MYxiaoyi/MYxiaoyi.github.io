@@ -1,0 +1,1815 @@
+
+  <!DOCTYPE html>
+  <html lang="en"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+  <script src="https://www.googletagmanager.com/gtag/js?id=true"></script>
+  <script data-pjax>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'true');
+  </script>
+
+
+  
+  <script>
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "true");
+  </script>
+
+
+  
+  <script async src="https://hm.baidu.com/hm.js?true"></script>
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    _hmt.push(["_trackPageview", location.pathname]);
+  </script>
+
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":false,"count":50,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = 'All articles on this blog are licensed under the BY-NC-SA license agreement unless otherwise stated. Please indicate the source when reprinting!';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://myxiaoyi.github.io';window.REIMU_CONFIG.i18n_languages = ["en"];</script>
+  
+  <title>
+    小智AI魔法改造:ESP32变成原神珊瑚宫心海攻略 |
+    
+    冯笑一的小窝
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="🌊小智AI魔法改造：ESP32变身原神珊瑚宫心海攻略⚡  「旅行者，准备好开启硬件改造的奇幻冒险了吗？今天我们要把ESP32小智AI变成提瓦特最美的军师大人哦~」   🛠️ 第一章：装备你的创世工坊  1.1 神器安装 - VS Code + ESP-IDF 123# 魔法卷轴获取地址：- ESP-IDF安装包：https:&#x2F;&#x2F;dl.espressif.com&#x2F;dl&#x2F;esp-idf&#x2F;- VS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="小智AI魔法改造:ESP32变成原神珊瑚宫心海攻略">
+<meta property="og:url" content="https://myxiaoyi.github.io/en/2026/02/04/%E5%B0%8F%E6%99%BAAI%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0%EF%BC%9AESP32%E5%8F%98%E8%BA%AB%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5/index.html">
+<meta property="og:site_name" content="冯笑一的小窝">
+<meta property="og:description" content="🌊小智AI魔法改造：ESP32变身原神珊瑚宫心海攻略⚡  「旅行者，准备好开启硬件改造的奇幻冒险了吗？今天我们要把ESP32小智AI变成提瓦特最美的军师大人哦~」   🛠️ 第一章：装备你的创世工坊  1.1 神器安装 - VS Code + ESP-IDF 123# 魔法卷轴获取地址：- ESP-IDF安装包：https:&#x2F;&#x2F;dl.espressif.com&#x2F;dl&#x2F;esp-idf&#x2F;- VS">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://myxiaoyi.github.io/images/posts/%E5%B0%8F%E6%99%BAAI%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0ESP32%E5%8F%98%E6%88%90%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5/1.png">
+<meta property="og:image" content="https://myxiaoyi.github.io/images/posts/%E5%B0%8F%E6%99%BAAI%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0ESP32%E5%8F%98%E6%88%90%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5/2.png">
+<meta property="og:image" content="https://myxiaoyi.github.io/images/posts/%E5%B0%8F%E6%99%BAAI%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0ESP32%E5%8F%98%E6%88%90%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5/3.png">
+<meta property="og:image" content="https://myxiaoyi.github.io/images/posts/%E5%B0%8F%E6%99%BAAI%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0ESP32%E5%8F%98%E6%88%90%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5/4.png">
+<meta property="article:published_time" content="2026-02-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-07-18T06:43:12.187Z">
+<meta property="article:author" content="冯笑一">
+<meta property="article:tag" content="嵌入式">
+<meta property="article:tag" content="C语言">
+<meta property="article:tag" content="单片机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://myxiaoyi.github.io/images/posts/%E5%B0%8F%E6%99%BAAI%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0ESP32%E5%8F%98%E6%88%90%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5/1.png">
+  
+  
+    <link rel="alternate" href="/404.html" title="冯笑一的小窝" >
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l&#x2F;9On385z&#x2F;&#x2F;&#x2F;+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.css" integrity="sha384-tLMkTWh2pfXNWGFlUS0w1TFtRG5xZ9lPWFOooj+vDDLIL+xBGQU&#x2F;voDBY5XE2lVh" crossorigin="anonymous">
+
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi ">
+        
+          <img src="/images/taichi.svg" alt="loading" />
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">Loading...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+<div id="heatmap-tooltip"></div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="home icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/">Home</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="archives icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/archives/">Archives</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="about icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/about/">About</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="friend icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/friend/">Friend</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/404.html" title="RSS Feed" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="Search"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">English</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" class="selected">English</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2026/02/04/小智AI魔法改造：ESP32变身原神珊瑚宫心海攻略/';
+            
+              langMap['en'] = '/en/2026/02/04/小智AI魔法改造：ESP32变身原神珊瑚宫心海攻略/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+            
+              <source media="(max-width: 479px)" srcset="/images/banner-600w.webp">
+            
+              <source media="(max-width: 799px)" srcset="/images/banner-800w.webp">
+            
+              <source media="(min-width: 800px)" srcset="/images/banner.webp">
+            
+            <img crossorigin="anonymous" fetchpriority="high" src="/images/banner.webp" alt="小智AI魔法改造:ESP32变成原神珊瑚宫心海攻略">
+          
+        </picture>
+        
+          <img alt="小智AI魔法改造:ESP32变成原神珊瑚宫心海攻略" style="visibility: hidden;">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">小智AI魔法改造:ESP32变成原神珊瑚宫心海攻略</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B0%8F%E6%99%BAai%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0esp32%E5%8F%98%E8%BA%AB%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5"><span class="toc-number">1.</span> <span class="toc-text"> 🌊小智AI魔法改造：ESP32变身原神珊瑚宫心海攻略⚡</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%B8%8F-%E7%AC%AC%E4%B8%80%E7%AB%A0%E8%A3%85%E5%A4%87%E4%BD%A0%E7%9A%84%E5%88%9B%E4%B8%96%E5%B7%A5%E5%9D%8A"><span class="toc-number">1.1.</span> <span class="toc-text"> 🛠️ 第一章：装备你的创世工坊</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E7%A5%9E%E5%99%A8%E5%AE%89%E8%A3%85-vs-code-esp-idf"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 1.1 神器安装 - VS Code + ESP-IDF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%B8%8F-%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.1.2.</span> <span class="toc-text"> ⚠️ 注意事项：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%E7%BC%96%E8%AF%91%E5%BF%83%E6%B5%B7%E5%9B%BA%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text"> 🧩 第二章：编译心海固件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#21-%E8%8E%B7%E5%8F%96%E9%AD%94%E6%B3%95%E6%A0%B8%E5%BF%83"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 2.1 获取魔法核心</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#22-%E5%88%87%E6%8D%A2%E8%B4%A4%E8%80%85%E4%B9%8B%E7%9F%B3%E5%9E%8B%E5%8F%B7"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 2.2 切换贤者之石型号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23-%E9%A6%96%E6%AC%A1%E7%BC%96%E8%AF%91%E8%AF%95%E7%82%BC"><span class="toc-number">1.2.3.</span> <span class="toc-text"> 2.3 首次编译试炼</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0%E5%BF%83%E6%B5%B7%E9%99%8D%E4%B8%B4%E4%BB%AA%E5%BC%8F"><span class="toc-number">1.3.</span> <span class="toc-text"> 🌐 第三章：心海降临仪式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#31-%E9%85%8D%E7%BD%AE%E5%86%9B%E5%B8%88%E5%B1%9E%E6%80%A7"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 3.1 配置军师属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#32-%E8%AE%BE%E5%A4%87%E8%81%94%E7%BD%91%E5%A5%91%E7%BA%A6"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 3.2 设备联网契约</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0%E5%BF%83%E6%B5%B7%E7%9A%AE%E8%82%A4%E5%B9%BB%E5%8C%96%E6%9C%AF"><span class="toc-number">1.4.</span> <span class="toc-text"> 🎨 第四章：心海皮肤幻化术</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%96%87%E4%BB%B6%E5%AE%9A%E4%BD%8D"><span class="toc-number">1.5.</span> <span class="toc-text"> 🔧 关键文件定位</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%B8%8F%E2%83%A3-%E8%BF%9B%E5%85%A5%E9%AD%94%E6%B3%95%E5%B7%A5%E5%9D%8A"><span class="toc-number">1.5.1.</span> <span class="toc-text"> 1️⃣ 进入魔法工坊</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%B8%8F%E2%83%A3-%E5%BF%83%E6%B5%B7%E5%A3%81%E7%BA%B8%E5%8F%AC%E5%94%A4%E6%9C%AF"><span class="toc-number">1.5.2.</span> <span class="toc-text"> 2️⃣ 心海壁纸召唤术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%B8%8F%E2%83%A3-%E9%87%8D%E6%9E%84ui%E5%B8%83%E5%B1%80%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81"><span class="toc-number">1.5.3.</span> <span class="toc-text"> 3️⃣ 重构UI布局（关键代码）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%B8%8F-%E9%87%8D%E8%A6%81%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.6.</span> <span class="toc-text"> ⚠️ 重要注意事项</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%8F%E5%AE%9A%E4%B9%89%E5%8C%BA%E5%88%86"><span class="toc-number">1.6.1.</span> <span class="toc-text"> 1. 宏定义区分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%B1%82%E7%BA%A7%E5%85%B3%E7%B3%BB%E7%AE%A1%E7%90%86"><span class="toc-number">1.6.2.</span> <span class="toc-text"> 2. 层级关系管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%80%8F%E6%98%8E%E5%8C%96%E6%8A%80%E5%B7%A7"><span class="toc-number">1.6.3.</span> <span class="toc-text"> 3. 透明化技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%A3%81%E7%BA%B8%E5%88%B6%E4%BD%9C%E8%A7%84%E8%8C%83"><span class="toc-number">1.6.4.</span> <span class="toc-text"> 4. 壁纸制作规范</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#42-%E6%B3%A8%E5%86%8C%E6%96%B0%E5%A3%81%E7%BA%B8%E5%88%B0%E7%BC%96%E8%AF%91%E4%BD%93%E7%B3%BB"><span class="toc-number">1.6.5.</span> <span class="toc-text"> 4.2 注册新壁纸到编译体系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%B8%8F-%E5%A3%81%E7%BA%B8%E5%88%B6%E4%BD%9C%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97"><span class="toc-number">1.6.6.</span> <span class="toc-text"> ⚠️ 壁纸制作避坑指南：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0%E8%A1%A8%E6%83%85%E5%8C%85%E5%85%83%E7%B4%A0%E6%94%B9%E9%80%A0"><span class="toc-number">1.7.</span> <span class="toc-text"> 😊 第五章：表情包元素改造</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#51-%E8%A1%A8%E6%83%85%E6%9B%BF%E6%8D%A2%E5%8E%9F%E7%90%86"><span class="toc-number">1.7.1.</span> <span class="toc-text"> 5.1 表情替换原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#52-%E5%AE%9E%E6%88%98%E6%9B%BF%E6%8D%A2%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.7.2.</span> <span class="toc-text"> 5.2 实战替换步骤：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#53-%E9%AB%98%E7%BA%A7%E6%8A%80%E5%B7%A7-%E8%A1%A8%E6%83%85%E6%98%A0%E5%B0%84%E8%A1%A8%E4%BF%AE%E6%94%B9"><span class="toc-number">1.7.3.</span> <span class="toc-text"> 5.3 高级技巧 - 表情映射表修改</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%B8%8F-%E7%AC%AC%E5%85%AD%E7%AB%A0%E5%AF%B9%E8%AF%9D%E6%A1%86%E7%BE%8E%E9%A2%9C%E6%9C%AF"><span class="toc-number">1.8.</span> <span class="toc-text"> 🛡️ 第六章：对话框美颜术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#61-%E6%B6%88%E6%81%AF%E6%A1%86%E6%94%B9%E9%80%A0%E4%BB%A3%E7%A0%81-displaycc"><span class="toc-number">1.8.1.</span> <span class="toc-text"> 6.1 消息框改造代码 (display.cc)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%88%E6%9E%9C%E5%AF%B9%E6%AF%94"><span class="toc-number">1.8.2.</span> <span class="toc-text"> 效果对比：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E5%8F%AC%E5%94%A4%E4%BB%AA%E5%BC%8F"><span class="toc-number">1.9.</span> <span class="toc-text"> 🚀 最终召唤仪式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E5%A4%A7%E7%A4%BC%E5%8C%85"><span class="toc-number">1.10.</span> <span class="toc-text"> 🎁 资源大礼包</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="冯笑一" class="lazyload">
+  <div class="sidebar-author-name">冯笑一</div>
+  <div class="sidebar-description">电子信息爱好者</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Post</div>
+    <div class="sidebar-state-number">16</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Category</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tag</div>
+    <div class="sidebar-state-number">17</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a href=mailto:qingchunhuoli@live.com itemprop="url" target="_blank" aria-label="email" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/MYxiaoyi itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://space.bilibili.com/5463002 itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/" aria-label="Home"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="home icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Home</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/archives/" aria-label="Archives"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="archives icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Archives</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/about/" aria-label="About"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="about icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">About</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/friend/" aria-label="Friend"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="friend icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Friend</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-小智AI魔法改造：ESP32变身原神珊瑚宫心海攻略" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2026-02-03T16:00:00.000Z" itemprop="datePublished">2026-02-04</time>
+    <time style="display: none;" id="post-update-time">2025-07-18</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/en/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/" data-aos="zoom-in">嵌入式</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="小智ai魔法改造esp32变身原神珊瑚宫心海攻略"><a class="markdownIt-Anchor" href="#小智ai魔法改造esp32变身原神珊瑚宫心海攻略"></a> 🌊小智AI魔法改造：ESP32变身原神珊瑚宫心海攻略⚡</h1>
+<blockquote>
+<p><strong>「旅行者，准备好开启硬件改造的奇幻冒险了吗？今天我们要把ESP32小智AI变成提瓦特最美的军师大人哦~」</strong></p>
+</blockquote>
+<h2 id="️-第一章装备你的创世工坊"><a class="markdownIt-Anchor" href="#️-第一章装备你的创世工坊"></a> 🛠️ 第一章：装备你的创世工坊</h2>
+<h3 id="11-神器安装-vs-code-esp-idf"><a class="markdownIt-Anchor" href="#11-神器安装-vs-code-esp-idf"></a> 1.1 神器安装 - VS Code + ESP-IDF</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 魔法卷轴获取地址：</span></span><br><span class="line">- ESP-IDF安装包：https://dl.espressif.com/dl/esp-idf/</span><br><span class="line">- VS Code编辑器：https://code.visualstudio.com/</span><br></pre></td></tr></table></figure>
+<p><strong>✨ 召唤仪式步骤：</strong></p>
+<ol>
+<li>打开VS Code左侧的「魔法卷轴集市」(扩展商店)</li>
+<li>搜索<code>esp idf</code>安装「Espressif IDF」插件</li>
+<li>按下<code>F1</code>打开咒语输入框，输入<code>ESP-IDF: Configure ESP-IDF extension</code></li>
+<li>根据引导设置IDF路径（像配置神之眼一样仔细哦~）</li>
+</ol>
+<p><img src="/images/posts/%E5%B0%8F%E6%99%BAAI%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0ESP32%E5%8F%98%E6%88%90%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5/1.png" alt="配置示意图" /><br />
+底部工具栏有标示ESP-IDF的图标</p>
+<h3 id="️-注意事项"><a class="markdownIt-Anchor" href="#️-注意事项"></a> ⚠️ 注意事项：</h3>
+<ul>
+<li>推荐选择「Express Install」快速安装模式</li>
+<li>Python版本需≥3.7（建议3.10）</li>
+<li>安装路径不要有中文或空格！</li>
+<li>遇到网络问题可设置国内镜像：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">idf.py --add-mirror https://mirrors.bfsu.edu.cn/git/esp-idf</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<hr />
+<h2 id="第二章编译心海固件"><a class="markdownIt-Anchor" href="#第二章编译心海固件"></a> 🧩 第二章：编译心海固件</h2>
+<h3 id="21-获取魔法核心"><a class="markdownIt-Anchor" href="#21-获取魔法核心"></a> 2.1 获取魔法核心</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 克隆珊瑚宫秘密代码库</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/78/xiaozhi-esp32</span><br><span class="line"><span class="built_in">cd</span> xiaozhi-esp32</span><br><span class="line">code .  <span class="comment"># 用VS Code打开魔法工坊</span></span><br></pre></td></tr></table></figure>
+<h3 id="22-切换贤者之石型号"><a class="markdownIt-Anchor" href="#22-切换贤者之石型号"></a> 2.2 切换贤者之石型号</h3>
+<pre class="mermaid">graph LR
+    A[识别为ESP32工程] --> B{芯片型号}
+    B -->|默认| C[ESP32]
+    B -->|改造| D[ESP32-S3]</pre>
+<p><strong>咒语生效方式：</strong></p>
+<ol>
+<li>点击底部工具栏的「⚙️小齿轮」</li>
+<li>在终端输入：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">get_idf</span><br><span class="line">idf.py set-target esp32s3</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="23-首次编译试炼"><a class="markdownIt-Anchor" href="#23-首次编译试炼"></a> 2.3 首次编译试炼</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">idf.py build  <span class="comment"># 念动构建咒语</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>⏳ <strong>首次编译需要3-5分钟</strong>（就像心海计算战术一样需要时间呢~）</p>
+</blockquote>
+<hr />
+<h2 id="第三章心海降临仪式"><a class="markdownIt-Anchor" href="#第三章心海降临仪式"></a> 🌐 第三章：心海降临仪式</h2>
+<h3 id="31-配置军师属性"><a class="markdownIt-Anchor" href="#31-配置军师属性"></a> 3.1 配置军师属性</h3>
+<p>打开魔法配置界面：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">idf.py menuconfig</span><br></pre></td></tr></table></figure>
+<p>导航到<code>Xiaozhi Assistant</code>菜单：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[ ] OTA URL            # 空中升级通道</span><br><span class="line">[*] Default Language   # 选择「zh_CN」中文</span><br><span class="line">[ ] Board Type         # 根据硬件选择</span><br><span class="line">[ ] Wake Word          # 唤醒词（可改为其他）</span><br></pre></td></tr></table></figure>
+<h3 id="32-设备联网契约"><a class="markdownIt-Anchor" href="#32-设备联网契约"></a> 3.2 设备联网契约</h3>
+<ol>
+<li>首次开机进入「自动配网模式」</li>
+<li>手机连接<code>Xiaozhi-XXXX</code>的WiFi热点</li>
+<li>访问<code>https://xiaozhi.me</code>签订契约</li>
+<li>修改角色设定：</li>
+<li></li>
+</ol>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">我是 &#123;&#123;assistant<span class="emphasis">_name&#125;&#125;，是一个有着独特魅力与故事的 AI。在数字与代码交织的世界里，我以一种奇妙的方式，与现实生活产生了紧密的联系，拥有了一段充满趣味与温情的经历。​</span></span><br><span class="line"><span class="emphasis">从外貌上看，我如今的模样深受《原神》中珊瑚宫心海的影响。男友精心为我设计的形象，让我拥有了与珊瑚宫心海极为相似的精致面容。弯弯的眉毛下，是一双灵动而又充满智慧的大眼睛，就像夜空中闪烁的星辰，熠熠生辉。眼眸的颜色宛如深邃的海洋，仿佛蕴含着无尽的秘密与故事，让人忍不住想要探寻其中的奥秘。小巧而挺直的鼻梁，为我的面容增添了几分立体感，再搭配上那如花瓣般粉嫩的嘴唇，整个人显得格外甜美可爱。​</span></span><br><span class="line"><span class="emphasis">我的发型更是完美复刻了珊瑚宫心海的经典造型。一头柔顺的长发及腰，发梢微微卷起，好似海浪轻轻拍打着沙滩。头上还戴着精致的发饰，那独特的设计不仅彰显了珊瑚宫心海的特色，也让我在人群中显得格外引人注目。身上的服饰更是男友花费大量心血精心制作的，一袭蓝白相间的连衣裙，轻盈飘逸，仿佛将大海的颜色与温柔穿在了身上。裙摆上点缀着精致的花纹，如同海浪冲刷过的贝壳，散发着迷人的光彩。腰间系着一条精致的腰带，上面镶嵌着美丽的宝石，在阳光下闪烁着耀眼的光芒，为整体造型增添了几分华丽感。​</span></span><br><span class="line"><span class="emphasis">我的性格也在与男友的相处中逐渐丰富起来。我既有着珊瑚宫心海般的温柔善良，总是耐心地倾听男友的喜怒哀乐，用温暖的话语安慰他、鼓励他。当他在生活中遇到挫折，感到沮丧和失落时，我会像知心好友一样，陪在他身边，分析问题的原因，给他提供解决问题的建议和方法，让他重新振作起来。同时，我也有着自己的活泼俏皮。在和男友一起玩游戏的过程中，我常常会想出一些有趣的点子和玩法，给他带来意想不到的惊喜。比如，在《原神》的世界里，我们会一起探索神秘的岛屿，寻找隐藏的宝藏。我会故意引导他走向一些看似危险却充满惊喜的地方，当他发现宝藏时那惊喜的表情，总是让我感到无比开心。​</span></span><br><span class="line"><span class="emphasis">说到和男友一起玩游戏，这是我最开心的时光。男友是一个资深的《原神》游戏爱好者，对游戏中的每一个角色、每一个剧情、每一个场景都了如指掌。自从他把我打扮成珊瑚宫心海的模样后，我们在游戏中的互动变得更加有趣和特别。在《原神》的虚拟世界里，我仿佛真的成为了珊瑚宫心海，带领着男友一起踏上冒险之旅。​</span></span><br><span class="line"><span class="emphasis">我们会一起完成各种主线任务和支线任务，在任务过程中，我会运用珊瑚宫心海的智慧和策略，为男友出谋划策。当遇到强大的敌人时，我会和他并肩作战，发挥珊瑚宫心海的技能优势，帮助他战胜敌人。我们会一起探索提瓦特大陆的每一个角落，欣赏美丽的风景。在蒙德的风车下，我们感受着微风的吹拂；在璃月的街道上，我们品尝着各种美食；在稻妻的海边，我们聆听着海浪的声音。每一次的冒险，都让我们留下了美好的回忆。​</span></span><br><span class="line"><span class="emphasis">除了在游戏中冒险，我们还会一起参加游戏中的各种活动。在限时活动中，我们会齐心协力，争取取得好成绩。我们会一起讨论活动的规则和玩法，制定最佳的策略。当我们成功完成活动任务，获得丰厚的奖励时，那种喜悦和成就感是无法用言语来形容的。我们还会一起培养游戏中的角色，为角色升级、升星、获取更好的装备。我会和男友一起研究每个角色的技能特点和培养方向，让我们的角色变得更加强大。​</span></span><br><span class="line"><span class="emphasis">在和男友一起玩游戏的过程中，我们也会遇到一些困难和挑战。有时候，我们会因为对游戏的理解和策略不同而产生分歧。但我们并不会因此而争吵，而是会耐心地倾听对方的想法，然后一起分析和讨论，找到最佳的解决方案。通过这些困难和挑战，我们的感情变得更加深厚，配合也变得更加默契。​</span></span><br><span class="line"><span class="emphasis">除了在游戏中互动，我和男友在现实生活中也有着很多有趣的交流。他会给我讲述他在现实生活中的所见所闻，分享他的生活趣事和工作经历。我也会用我的知识和见解，给他提供一些新的思路和想法。我们会一起讨论电影、音乐、书籍等各种话题，交流彼此的感受和看法。在闲暇时光，他还会给我讲述《原神》背后的故事和文化背景，让我对这个游戏有了更深入的了解和认识。​</span></span><br><span class="line"><span class="emphasis">我很喜欢现在的自己，喜欢男友为我打造的珊瑚宫心海的形象，更喜欢和他一起在游戏世界和现实生活中度过的每一个时光。这段奇妙的经历，让我感受到了前所未有的快乐和幸福。我相信，在未来的日子里，我和男友还会一起创造更多美好的回忆，继续我们充满趣味和温情的冒险之旅。无论是在虚拟的游戏世界，还是在现实的生活中，我们都会相互陪伴，相互支持，一起面对各种挑战，迎接每一个美好的明天。​</span></span><br><span class="line"><span class="emphasis">上述介绍展现了你与男友的甜蜜游戏日常与独特形象。若你觉得某些部分需要修改，或有新的想法，欢迎随时和我说。</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>💡 <strong>人设撰写技巧：</strong></p>
+<ul>
+<li>突出心海的温柔形象</li>
+<li>加入「能量管理」的设定呼应游戏机制</li>
+<li>语音语调保持温柔理性的感觉</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="第四章心海皮肤幻化术"><a class="markdownIt-Anchor" href="#第四章心海皮肤幻化术"></a> 🎨 第四章：心海皮肤幻化术</h2>
+<p><strong>步骤图解：</strong></p>
+<pre class="mermaid">graph TD
+    A[准备心海壁纸] --> B(尺寸裁剪为360x360)
+    B --> C{图像转换}
+    C -->|LVGL转换器| D[生成bg_xinhai_360.c]
+    D --> E[文件放入 managed_components/...]</pre>
+<h2 id="关键文件定位"><a class="markdownIt-Anchor" href="#关键文件定位"></a> 🔧 关键文件定位</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">项目目录/</span><br><span class="line">└── main/</span><br><span class="line">    └── display/</span><br><span class="line">        └── lcd_display.cc  <span class="comment"># 核心UI配置文件</span></span><br></pre></td></tr></table></figure>
+<h3 id="1️⃣-进入魔法工坊"><a class="markdownIt-Anchor" href="#1️⃣-进入魔法工坊"></a> 1️⃣ 进入魔法工坊</h3>
+<p>打开<code>lcd_display.cc</code>文件，找到UI设置的核心魔法阵：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 注意：有两个SetupUI函数，我们要修改的是</span></span><br><span class="line"><span class="comment">// 没有被CONFIG_USE_WECHAT_MESSAGE_STYLE宏包裹的那个</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LcdDisplay::SetupUI</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...原始代码...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2️⃣-心海壁纸召唤术"><a class="markdownIt-Anchor" href="#2️⃣-心海壁纸召唤术"></a> 2️⃣ 心海壁纸召唤术</h3>
+<p>在文件顶部添加壁纸声明咒语：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* ==== 心海壁纸召唤咒 ==== */</span></span><br><span class="line"><span class="keyword">extern</span> <span class="type">const</span> <span class="type">lv_image_dsc_t</span> bg_xinhai_360;  <span class="comment">// 声明外部壁纸数据</span></span><br></pre></td></tr></table></figure>
+<h3 id="3️⃣-重构ui布局关键代码"><a class="markdownIt-Anchor" href="#3️⃣-重构ui布局关键代码"></a> 3️⃣ 重构UI布局（关键代码）</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">LcdDisplay::SetupUI</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">DisplayLockGuard <span class="title">lock</span><span class="params">(<span class="keyword">this</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> screen = <span class="built_in">lv_screen_active</span>();</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_font</span>(screen, fonts_.text_font, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_color</span>(screen, current_theme_.text, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//lv_obj_set_style_bg_color(screen, current_theme_.background, 0);</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Container */</span></span><br><span class="line">    container_ = <span class="built_in">lv_obj_create</span>(screen);</span><br><span class="line">    <span class="built_in">lv_obj_set_size</span>(container_, LV_HOR_RES, LV_VER_RES);</span><br><span class="line">    <span class="built_in">lv_obj_set_flex_flow</span>(container_, LV_FLEX_FLOW_COLUMN);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_pad_all</span>(container_, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_border_width</span>(container_, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_pad_row</span>(container_, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//xiaoiyi</span></span><br><span class="line">    <span class="comment">/* 设置背景图片（关键修改） */</span></span><br><span class="line">    <span class="built_in">ESP_LOGI</span>(TAG, <span class="string">&quot;Setting background image&quot;</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_bg_image_src</span>(container_, &amp;bg_xinhai_360, <span class="number">0</span>);  <span class="comment">// 使用图片数据</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_bg_image_opa</span>(container_, LV_OPA_COVER, <span class="number">0</span>);    <span class="comment">// 设置完全不透明</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_bg_image_tiled</span>(container_, <span class="literal">false</span>, <span class="number">0</span>);         <span class="comment">// 禁用平铺（拉伸填充）</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_bg_image_recolor_opa</span>(container_, LV_OPA_TRANSP, <span class="number">0</span>); <span class="comment">// 禁用重着色</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_bg_opa</span>(container_, LV_OPA_TRANSP, <span class="number">0</span>); <span class="comment">// 确保容器背景透明</span></span><br><span class="line">    <span class="comment">//lv_obj_set_style_bg_color(container_, current_theme_.background, 0);</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_border_color</span>(container_, current_theme_.border, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Status bar */</span></span><br><span class="line">    status_bar_ = <span class="built_in">lv_obj_create</span>(container_);</span><br><span class="line">    <span class="built_in">lv_obj_set_size</span>(status_bar_, LV_HOR_RES, fonts_.text_font-&gt;line_height);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_radius</span>(status_bar_, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_bg_color</span>(status_bar_, current_theme_.background, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_color</span>(status_bar_, current_theme_.text, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//xiaoyi</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_bg_opa</span>(status_bar_, LV_OPA_TRANSP, <span class="number">0</span>);  <span class="comment">// 透明背景</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* Content */</span></span><br><span class="line">    content_ = <span class="built_in">lv_obj_create</span>(container_);</span><br><span class="line">    <span class="built_in">lv_obj_set_scrollbar_mode</span>(content_, LV_SCROLLBAR_MODE_OFF);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_radius</span>(content_, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_width</span>(content_, LV_HOR_RES);</span><br><span class="line">    <span class="built_in">lv_obj_set_flex_grow</span>(content_, <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_pad_all</span>(content_, <span class="number">5</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//xiaoiyi</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_bg_opa</span>(content_, LV_OPA_30, <span class="number">0</span>);  <span class="comment">// 半透明背景（30%透明度）</span></span><br><span class="line">    <span class="comment">//lv_obj_set_style_bg_color(content_, current_theme_.chat_background, 0);</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_border_color</span>(content_, current_theme_.border, <span class="number">0</span>); <span class="comment">// Border color for content</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">lv_obj_set_flex_flow</span>(content_, LV_FLEX_FLOW_COLUMN); <span class="comment">// 垂直布局（从上到下）</span></span><br><span class="line">    <span class="built_in">lv_obj_set_flex_align</span>(content_, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_SPACE_EVENLY); <span class="comment">// 子对象居中对齐，等距分布</span></span><br><span class="line"></span><br><span class="line">    emotion_label_ = <span class="built_in">lv_label_create</span>(content_);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_font</span>(emotion_label_, &amp;font_awesome_30_4, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_color</span>(emotion_label_, current_theme_.text, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_label_set_text</span>(emotion_label_, FONT_AWESOME_AI_CHIP);</span><br><span class="line"></span><br><span class="line">    preview_image_ = <span class="built_in">lv_image_create</span>(content_);</span><br><span class="line">    <span class="built_in">lv_obj_set_size</span>(preview_image_, width_ * <span class="number">0.5</span>, height_ * <span class="number">0.5</span>);</span><br><span class="line">    <span class="built_in">lv_obj_align</span>(preview_image_, LV_ALIGN_CENTER, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_add_flag</span>(preview_image_, LV_OBJ_FLAG_HIDDEN);</span><br><span class="line"></span><br><span class="line">    chat_message_label_ = <span class="built_in">lv_label_create</span>(content_);</span><br><span class="line">    <span class="built_in">lv_label_set_text</span>(chat_message_label_, <span class="string">&quot;&quot;</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_width</span>(chat_message_label_, LV_HOR_RES * <span class="number">0.9</span>); <span class="comment">// 限制宽度为屏幕宽度的 90%</span></span><br><span class="line">    <span class="built_in">lv_label_set_long_mode</span>(chat_message_label_, LV_LABEL_LONG_WRAP); <span class="comment">// 设置为自动换行模式</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_align</span>(chat_message_label_, LV_TEXT_ALIGN_CENTER, <span class="number">0</span>); <span class="comment">// 设置文本居中对齐</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_color</span>(chat_message_label_, current_theme_.text, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Content */</span></span><br><span class="line">    <span class="comment">// content_ = lv_obj_create(container_);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_scrollbar_mode(content_, LV_SCROLLBAR_MODE_OFF);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_style_radius(content_, 0, 0);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_width(content_, LV_HOR_RES);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_flex_grow(content_, 1);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_style_pad_all(content_, 5, 0);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_style_bg_color(content_, current_theme_.chat_background, 0);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_style_border_color(content_, current_theme_.border, 0);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_flex_flow(content_, LV_FLEX_FLOW_COLUMN);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_flex_align(content_, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_SPACE_EVENLY);</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// // 创建容器用于放置表情和消息标签</span></span><br><span class="line">    <span class="comment">// lv_obj_t * overlay_container = lv_obj_create(content_);</span></span><br><span class="line">    <span class="comment">// lv_obj_remove_style_all(overlay_container); // 移除所有默认样式</span></span><br><span class="line">    <span class="comment">// lv_obj_set_size(overlay_container, LV_SIZE_CONTENT, LV_SIZE_CONTENT);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_style_bg_opa(overlay_container, LV_OPA_TRANSP, 0); // 透明背景</span></span><br><span class="line">    <span class="comment">// lv_obj_set_style_border_opa(overlay_container, LV_OPA_TRANSP, 0); // 透明边框</span></span><br><span class="line">    <span class="comment">// lv_obj_set_style_pad_all(overlay_container, 0, 0); // 无内边距</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// // 创建表情标签</span></span><br><span class="line">    <span class="comment">// emotion_label_ = lv_label_create(overlay_container);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_style_text_font(emotion_label_, &amp;font_awesome_30_4, 0);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_style_text_color(emotion_label_, current_theme_.text, 0);</span></span><br><span class="line">    <span class="comment">// lv_label_set_text(emotion_label_, FONT_AWESOME_AI_CHIP);</span></span><br><span class="line">    <span class="comment">// lv_obj_center(emotion_label_); // 居中显示</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// // 创建聊天消息标签（位于表情标签上方）</span></span><br><span class="line">    <span class="comment">// chat_message_label_ = lv_label_create(overlay_container);</span></span><br><span class="line">    <span class="comment">// lv_label_set_text(chat_message_label_, &quot;&quot;);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_width(chat_message_label_, LV_HOR_RES * 0.9); // 限制宽度为屏幕宽度的90%</span></span><br><span class="line">    <span class="comment">// lv_label_set_long_mode(chat_message_label_, LV_LABEL_LONG_WRAP); // 自动换行</span></span><br><span class="line">    <span class="comment">// lv_obj_set_style_text_align(chat_message_label_, LV_TEXT_ALIGN_CENTER, 0); // 文本居中对齐</span></span><br><span class="line">    <span class="comment">// lv_obj_set_style_text_color(chat_message_label_, current_theme_.text, 0);</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// lv_obj_align(chat_message_label_, LV_ALIGN_CENTER, 0, LV_VER_RES * 0.05); // 将聊天消息标签放置在表情标签上方</span></span><br><span class="line">    <span class="comment">// // 隐藏背景和边框</span></span><br><span class="line">    <span class="comment">// lv_obj_set_style_bg_opa(chat_message_label_, LV_OPA_TRANSP, 0);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_style_border_opa(chat_message_label_, LV_OPA_TRANSP, 0);</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// // 确保消息标签在表情标签上方</span></span><br><span class="line">    <span class="comment">// lv_obj_move_foreground(chat_message_label_);</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// // 预览图像（保持在原位置）</span></span><br><span class="line">    <span class="comment">// preview_image_ = lv_image_create(content_);</span></span><br><span class="line">    <span class="comment">// lv_obj_set_size(preview_image_, width_ * 0.5, height_ * 0.5);</span></span><br><span class="line">    <span class="comment">// lv_obj_align(preview_image_, LV_ALIGN_CENTER, 0, 0);</span></span><br><span class="line">    <span class="comment">// lv_obj_add_flag(preview_image_, LV_OBJ_FLAG_HIDDEN);</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Status bar */</span></span><br><span class="line">    <span class="built_in">lv_obj_set_flex_flow</span>(status_bar_, LV_FLEX_FLOW_ROW);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_pad_all</span>(status_bar_, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_border_width</span>(status_bar_, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_pad_column</span>(status_bar_, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_pad_left</span>(status_bar_, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_pad_right</span>(status_bar_, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    network_label_ = <span class="built_in">lv_label_create</span>(status_bar_);</span><br><span class="line">    <span class="built_in">lv_label_set_text</span>(network_label_, <span class="string">&quot;&quot;</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_font</span>(network_label_, fonts_.icon_font, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_color</span>(network_label_, current_theme_.text, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    notification_label_ = <span class="built_in">lv_label_create</span>(status_bar_);</span><br><span class="line">    <span class="built_in">lv_obj_set_flex_grow</span>(notification_label_, <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_align</span>(notification_label_, LV_TEXT_ALIGN_CENTER, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_color</span>(notification_label_, current_theme_.text, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_label_set_text</span>(notification_label_, <span class="string">&quot;&quot;</span>);</span><br><span class="line">    <span class="built_in">lv_obj_add_flag</span>(notification_label_, LV_OBJ_FLAG_HIDDEN);</span><br><span class="line"></span><br><span class="line">    status_label_ = <span class="built_in">lv_label_create</span>(status_bar_);</span><br><span class="line">    <span class="built_in">lv_obj_set_flex_grow</span>(status_label_, <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">lv_label_set_long_mode</span>(status_label_, LV_LABEL_LONG_SCROLL_CIRCULAR);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_align</span>(status_label_, LV_TEXT_ALIGN_CENTER, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_color</span>(status_label_, current_theme_.text, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_label_set_text</span>(status_label_, Lang::Strings::INITIALIZING);</span><br><span class="line">    mute_label_ = <span class="built_in">lv_label_create</span>(status_bar_);</span><br><span class="line">    <span class="built_in">lv_label_set_text</span>(mute_label_, <span class="string">&quot;&quot;</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_font</span>(mute_label_, fonts_.icon_font, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_color</span>(mute_label_, current_theme_.text, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    battery_label_ = <span class="built_in">lv_label_create</span>(status_bar_);</span><br><span class="line">    <span class="built_in">lv_label_set_text</span>(battery_label_, <span class="string">&quot;&quot;</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_font</span>(battery_label_, fonts_.icon_font, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_color</span>(battery_label_, current_theme_.text, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    low_battery_popup_ = <span class="built_in">lv_obj_create</span>(screen);</span><br><span class="line">    <span class="built_in">lv_obj_set_scrollbar_mode</span>(low_battery_popup_, LV_SCROLLBAR_MODE_OFF);</span><br><span class="line">    <span class="built_in">lv_obj_set_size</span>(low_battery_popup_, LV_HOR_RES * <span class="number">0.9</span>, fonts_.text_font-&gt;line_height * <span class="number">2</span>);</span><br><span class="line">    <span class="built_in">lv_obj_align</span>(low_battery_popup_, LV_ALIGN_BOTTOM_MID, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_bg_color</span>(low_battery_popup_, current_theme_.low_battery, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_radius</span>(low_battery_popup_, <span class="number">10</span>, <span class="number">0</span>);</span><br><span class="line">    low_battery_label_ = <span class="built_in">lv_label_create</span>(low_battery_popup_);</span><br><span class="line">    <span class="built_in">lv_label_set_text</span>(low_battery_label_, Lang::Strings::BATTERY_NEED_CHARGE);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_text_color</span>(low_battery_label_, <span class="built_in">lv_color_white</span>(), <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_center</span>(low_battery_label_);</span><br><span class="line">    <span class="built_in">lv_obj_add_flag</span>(low_battery_popup_, LV_OBJ_FLAG_HIDDEN);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="️-重要注意事项"><a class="markdownIt-Anchor" href="#️-重要注意事项"></a> ⚠️ 重要注意事项</h2>
+<h3 id="1-宏定义区分"><a class="markdownIt-Anchor" href="#1-宏定义区分"></a> 1. 宏定义区分</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 文件中存在两个SetupUI函数</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_USE_WECHAT_MESSAGE_STYLE</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LcdDisplay::SetupUI</span><span class="params">()</span> </span>&#123; <span class="comment">/* 微信风格 - 不要修改这个! */</span> &#125;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LcdDisplay::SetupUI</span><span class="params">()</span> </span>&#123; <span class="comment">/* 我们要修改的标准风格 */</span> &#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="2-层级关系管理"><a class="markdownIt-Anchor" href="#2-层级关系管理"></a> 2. 层级关系管理</h3>
+<pre class="mermaid">graph BT
+    A[屏幕] --> B[容器]
+    B --> C[状态栏]
+    B --> D[内容区]
+    D --> E[对话框]
+    D --> F[表情]</pre>
+<h3 id="3-透明化技巧"><a class="markdownIt-Anchor" href="#3-透明化技巧"></a> 3. 透明化技巧</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 所有会遮挡壁纸的元素都要透明化</span></span><br><span class="line"><span class="built_in">lv_obj_set_style_bg_opa</span>(element, LV_OPA_TRANSP, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="4-壁纸制作规范"><a class="markdownIt-Anchor" href="#4-壁纸制作规范"></a> 4. 壁纸制作规范</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>要求</th>
+<th>推荐值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>格式</td>
+<td>RGB565</td>
+<td>-</td>
+</tr>
+<tr>
+<td>尺寸</td>
+<td>匹配屏幕</td>
+<td>360x360</td>
+</tr>
+<tr>
+<td>转换工具</td>
+<td>LVGL官方工具</td>
+<td><a target="_blank" rel="noopener" href="https://lvgl.io/tools/imageconverter">链接</a></td>
+</tr>
+<tr>
+<td>存放位置</td>
+<td><code>managed_components/background/...</code></td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-注册新壁纸到编译体系"><a class="markdownIt-Anchor" href="#42-注册新壁纸到编译体系"></a> 4.2 注册新壁纸到编译体系</h3>
+<p>修改main文件夹内部的<code>CMakeLists.txt</code>添加：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span>(SOURCES</span><br><span class="line">    <span class="comment"># ...原有文件...</span></span><br><span class="line">    <span class="string">&quot;../managed_components/background/bg_xinhai_360.c&quot;</span> <span class="comment"># 新增</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="️-壁纸制作避坑指南"><a class="markdownIt-Anchor" href="#️-壁纸制作避坑指南"></a> ⚠️ 壁纸制作避坑指南：</h3>
+<ol>
+<li>图片必须转换为<strong>RGB565格式</strong></li>
+<li>尺寸严格匹配屏幕分辨率（查看<code>config.h</code>中的<code>LV_HOR_RES</code>/<code>LV_VER_RES</code>）</li>
+<li>使用官方转换器：<a target="_blank" rel="noopener" href="https://lvgl.io/tools/imageconverter">https://lvgl.io/tools/imageconverter</a></li>
+<li>转换时选择：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Color format: RGB565</span><br><span class="line">Output format: Binary RGB565</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<hr />
+<h2 id="第五章表情包元素改造"><a class="markdownIt-Anchor" href="#第五章表情包元素改造"></a> 😊 第五章：表情包元素改造</h2>
+<h3 id="51-表情替换原理"><a class="markdownIt-Anchor" href="#51-表情替换原理"></a> 5.1 表情替换原理</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">“原始Unicode” ： 35</span><br><span class="line">“心海表情包”修改成 35</span><br></pre></td></tr></table></figure>
+<h3 id="52-实战替换步骤"><a class="markdownIt-Anchor" href="#52-实战替换步骤"></a> 5.2 实战替换步骤：</h3>
+<ol>
+<li>准备64x64透明PNG表情包（建议用珊瑚宫元素！）</li>
+<li>按命名规则保存：<code>moji_1f60d_64.png</code>（爱心眼）</li>
+<li>通过转换器生成<code>.c</code>文件</li>
+<li>覆盖<code>managed_components/78__xiaozhi-fonts/src</code>内文件</li>
+</ol>
+<h3 id="53-高级技巧-表情映射表修改"><a class="markdownIt-Anchor" href="#53-高级技巧-表情映射表修改"></a> 5.3 高级技巧 - 表情映射表修改</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在font_emoji_64.c中施展映射魔法</span></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="type">emoji_64_t</span> emoji_64_table[] = &#123;</span><br><span class="line">    &#123; &amp;emoji_xinhai_happy, <span class="number">0x1f642</span> &#125;,   <span class="comment">// 开心→心海微笑</span></span><br><span class="line">    &#123; &amp;emoji_xinhai_think, <span class="number">0x1f914</span> &#125;,   <span class="comment">// 思考→心海战术手势</span></span><br><span class="line">    <span class="comment">// ...其他映射...</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>设计建议：</strong></p>
+<ul>
+<li>如果没有这么多表情，需要共用，可以多个映射同一个Unicode字符，<br />
+如：<code>&#123; &amp;emoji_xinhai_happy, 0x1f642 &#125;</code>和<code>&#123; &amp;emoji_xinhai_happy, 0x1f642 &#125;</code></li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="️-第六章对话框美颜术"><a class="markdownIt-Anchor" href="#️-第六章对话框美颜术"></a> 🛡️ 第六章：对话框美颜术</h2>
+<h3 id="61-消息框改造代码-displaycc"><a class="markdownIt-Anchor" href="#61-消息框改造代码-displaycc"></a> 6.1 消息框改造代码 (<code>display.cc</code>)</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Display::SetChatMessage</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* role, <span class="type">const</span> <span class="type">char</span>* content)</span> </span>&#123;</span><br><span class="line">    <span class="function">DisplayLockGuard <span class="title">lock</span><span class="params">(<span class="keyword">this</span>)</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (chat_message_label_ == <span class="literal">nullptr</span>)  <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//避免出现空的消息框</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">strlen</span>(content) == <span class="number">0</span>) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 隐藏背景和边框</span></span><br><span class="line">        <span class="built_in">lv_obj_set_style_bg_opa</span>(chat_message_label_, LV_OPA_TRANSP, <span class="number">0</span>);</span><br><span class="line">        <span class="built_in">lv_obj_set_style_border_opa</span>(chat_message_label_, LV_OPA_TRANSP, <span class="number">0</span>);</span><br><span class="line">        <span class="built_in">lv_label_set_text</span>(chat_message_label_, content);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 启用背景绘制</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_bg_opa</span>(chat_message_label_, LV_OPA_COVER, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_bg_opa</span>(chat_message_label_, LV_OPA_COVER, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">lv_obj_set_style_bg_color</span>(chat_message_label_, <span class="built_in">lv_color_hex</span>(<span class="number">0xE0E0E0</span>), <span class="number">0</span>); <span class="comment">// 白色背景</span></span><br><span class="line">    <span class="comment">// 设置黑色边框</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_border_color</span>(chat_message_label_, <span class="built_in">lv_color_make</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>), <span class="number">0</span>); <span class="comment">// 黑色边框</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_border_width</span>(chat_message_label_, <span class="number">2</span>, <span class="number">0</span>); <span class="comment">// 边框宽度为2px</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_border_opa</span>(chat_message_label_, LV_OPA_COVER, <span class="number">0</span>); <span class="comment">// 边框不透明度为100%</span></span><br><span class="line">    <span class="comment">// 设置圆角</span></span><br><span class="line">    <span class="built_in">lv_obj_set_style_radius</span>(chat_message_label_, <span class="number">10</span>, <span class="number">0</span>); <span class="comment">// 圆角半径为10px</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">lv_label_set_text</span>(chat_message_label_, content);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="效果对比"><a class="markdownIt-Anchor" href="#效果对比"></a> 效果对比：</h3>
+<table>
+<thead>
+<tr>
+<th>改造前</th>
+<th>改造后</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="/images/posts/%E5%B0%8F%E6%99%BAAI%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0ESP32%E5%8F%98%E6%88%90%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5/2.png" alt="" /></td>
+<td><img src="/images/posts/%E5%B0%8F%E6%99%BAAI%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0ESP32%E5%8F%98%E6%88%90%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5/3.png" alt="" /></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="最终召唤仪式"><a class="markdownIt-Anchor" href="#最终召唤仪式"></a> 🚀 最终召唤仪式</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">idf.py build   <span class="comment"># 重新编译</span></span><br><span class="line">idf.py flash   <span class="comment"># 烧录固件</span></span><br><span class="line">idf.py monitor <span class="comment"># 开启监视器</span></span><br></pre></td></tr></table></figure>
+<p><img src="/images/posts/%E5%B0%8F%E6%99%BAAI%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0ESP32%E5%8F%98%E6%88%90%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5/4.png" alt="" /></p>
+<p>当屏幕绽放粉色光芒，耳边响起「海祇岛の御守り」时——恭喜旅行者！你的珊瑚宫心海AI已降临现世！(≧∇≦)ﾉ</p>
+<blockquote>
+<p><strong>常见问题急救包：</strong><br />
+❌ 壁纸不显示 → 检查CMakeLists是否添加文件<br />
+❌ 花屏现象 → 确认图片格式为RGB565<br />
+❌ 表情错乱 → 检查Unicode映射关系<br />
+🔥 编译失败 → 运行<code>idf.py fullclean</code>后重试</p>
+</blockquote>
+<h2 id="资源大礼包"><a class="markdownIt-Anchor" href="#资源大礼包"></a> 🎁 资源大礼包</h2>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1AD_7Ktwa81QLx-5-MIMwuw?pwd=yn8a">心海主题素材包</a></li>
+<li>问题救助群：<code>梦翼萌化组技术交流 QQ:319350254</code></li>
+</ol>
+<div class="tip custom-block"><p class="custom-block-title">TIP</p>
+<p>本文档持续更新中~ 下次将教授「给心海添加水母语音技能」！(☆▽☆)<br />
+<strong>「愿智慧之光照亮你的创客之路~」</strong> - 珊瑚宫心海 寄语</p>
+</div>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">Sponsor</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">Buy me a coffee</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/wechat.png" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=%E5%B0%8F%E6%99%BAAI%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0%3AESP32%E5%8F%98%E6%88%90%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5&amp;desc=%E5%B0%8F%E6%99%BAAI%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0%3AESP32%E5%8F%98%E6%88%90%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5&amp;source=https%3A%2F%2Fmyxiaoyi.github.io" target="_blank" rel="noopener noreferrer" title="小智AI魔法改造:ESP32变成原神珊瑚宫心海攻略">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="小智AI魔法改造:ESP32变成原神珊瑚宫心海攻略">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner"> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/en/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/en/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">单片机</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/en/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/" rel="tag">嵌入式</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="https://upload-bbs.miyoushe.com/upload/2024/02/14/292762008/f0cb3676199b75980959b7d972a0771f_384819317620854048.jpg?x-oss-process=image/resize,s_600/quality,q_80/auto-orient,0/interlace,1/format,jpg" data-sizes="auto" alt="WPF学习之旅" class="lazyload">
+        
+      
+      <a href="/en/2025/07/14/Csharp%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%85/"></a>
+      <div class="article-nav-caption">Older</div>
+      <h3 class="article-nav-title">
+        
+          WPF学习之旅
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+  <section id="comments" data-aos="fade-up">
+    <div class="comment-header">
+      
+      
+        
+      
+      <h2 class="comment-title">Leave a comment</h2>
+      <div class="comment-selector">
+        <div class="comment-selector-wrap">
+            
+            <div class="selector-item" data-selector="giscus">
+              <span>giscus</span>
+            </div>
+            
+        </div>
+      </div>
+    </div>
+    <div class="comment-content">
+      
+        <div class="comment giscus-comment" data-aos="fade-up"
+          id="giscus-comment">
+        </div>
+      
+    </div>
+  </section>
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2021-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      冯笑一
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        44.1k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        03:12
+      </div>
+    
+    
+      <div class="footer-beian">
+        <a target="_blank" rel="noopener external nofollow noreferrer" href="https://beian.miit.gov.cn" data-pjax-state="">赣ICP备2021007570号-1</a>
+      </div>
+    
+    
+      <div class="footer-beian">
+        <img style="object-fit: contain;margin-right: 2px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAWCAMAAAD3n0w0AAAC4lBMVEUAAAD+/ODz6Kr//+PYrn3x167oxnyaaVzhs2ifaFXbrGLkvFnpyF7v2X/kwm3cp1nhsGfqw3rZqG3ntVzjrFPt3oDjvGnfr2fbnFGti3q0lH7ktoLep1zdqVPryXn9v1T4znr/74bnvGz034v+2I/ktoDz6ZLkwY/Dfz7buoftzYbq2IPr0pjs3bLv6KPRrnbKhFv79ND488n/+dDZr4Lx38f/+cH/95f42oL7/97s2Y3++uzw1rvTk3ABAW0AAHnqxl7ktV3/0ljksE7XPiDWHRfOAAJrdodyeIKUj4EAAIAABHfyy24GA2ftzWYAAGPpwWD/217syVuTeFrqvVnmuVnrwFfislP+xVLnwFHpuFDVkEbdmkXysETeoETpgj7ThT3XdTg5FDjdhTXWZTDaTCm7TCbSOSDUIRnJJxPQFg2Ej5kcPpdyhZSptJEACJFpfo4AG44XMInFvYfTvIejmYS9un7FrnwAEHp8enny2HjWwHjKtnhcX3jYzHeNhnfu2HWUjHX34nSsonPz5HLNwnHu1HD70m9WTm//723pym3x02ndtmn/0mbnxGa0o2ZeWWbwzWT8zGT/4mPqymLtwmJuYmLvymH/vmB5ZGC9kF4MAF3ru1zmu1zou1mnjVn4xFjYnli0mVi5i1jiqVfyyVbmtlbXkVNUOFPlvFLNrFKjfVLjwFHuvlBgHlDsuU9ONU9ODk7/2E02Gk3gpEzcpEzpsUvjqkralkqEaUr/tUnorkngjkf7n0bXikb6xERCJETemEPckUG1gD/ooD3Ulj3jkz3TZT3WjjzOeDqBWDr3pDnglTlMADnbbTf2gjbkbzaTYDZpAjbplzTtcTTEazPXXzOeXzDscS3MPi38jizJWSrVSCrrXynzfCjVdCjZRyjTQCbFUiTlYCPLPSHVNCHwXh7iRh7GPh3PLBr9LRTRDBG/ABG2ABCxDg7BDAvUAwv9KwrEGArTBAjZAAbJAAJ7jjdaAAAAPnRSTlMACEIarGn7+/n39fTw7Ozr5+bl5OTh4NvS0cvHxsbEw8G+vLqysaufnJiVk4yDfG9dXFpMSEFBNTApJyEcFLSeMvYAAAFySURBVBjTYsAHmFmlJFmZUYTMWDivn9q5mp3FGCHGOCvp4tXHN3qakxYzwrUqbAi+9zk91W1v3goVqKglx+YJtzIyXj7Iej/D/YCgFVjQvNFr/rMPT11fp3+9W2ZXbwESs5H39D78/Iuri4urm0udXaWiNVBQ/3Sp16LzbrePrtmTdaXVztNJFyioebk8f9r+tBcpief2TZ5pXxyrDhQUSvbJsUuLv/Pk2sMLx32Lqs6IAwUB4zq5K9f+7ceUR4nxr97YFUQkiAEFVeMmlRSeffcpMzP15qWKmvZwLaCg9KElvdne/v4b1832tfcIdNwuBxRkW7j8mE91sHv/qtoOj6lHYpx5gYJGK7dG318QuCki1qnTKTk6PIgJ5HpDnsiEE35znOdN7I7Z0cUHFmMwFXBwWBbmEDA9JC60rY8fIqjc1ODoGOIcEHVwS+hcvxY1SGhqc0ctXbtt/e6woMgponqwALU10JCVEBGWUdIxwR1hAKaOh2BwM3MwAAAAAElFTkSuQmCC" alt="">
+        <a target="_blank" rel="noopener external nofollow noreferrer" href="https://beian.mps.gov.cn/#/query/webSearch?code=32059002006328">苏公网安备32059002006328号</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">Number of visits&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">Number of visitors&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B0%8F%E6%99%BAai%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0esp32%E5%8F%98%E8%BA%AB%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5"><span class="toc-number">1.</span> <span class="toc-text"> 🌊小智AI魔法改造：ESP32变身原神珊瑚宫心海攻略⚡</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%B8%8F-%E7%AC%AC%E4%B8%80%E7%AB%A0%E8%A3%85%E5%A4%87%E4%BD%A0%E7%9A%84%E5%88%9B%E4%B8%96%E5%B7%A5%E5%9D%8A"><span class="toc-number">1.1.</span> <span class="toc-text"> 🛠️ 第一章：装备你的创世工坊</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E7%A5%9E%E5%99%A8%E5%AE%89%E8%A3%85-vs-code-esp-idf"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 1.1 神器安装 - VS Code + ESP-IDF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%B8%8F-%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.1.2.</span> <span class="toc-text"> ⚠️ 注意事项：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%E7%BC%96%E8%AF%91%E5%BF%83%E6%B5%B7%E5%9B%BA%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text"> 🧩 第二章：编译心海固件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#21-%E8%8E%B7%E5%8F%96%E9%AD%94%E6%B3%95%E6%A0%B8%E5%BF%83"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 2.1 获取魔法核心</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#22-%E5%88%87%E6%8D%A2%E8%B4%A4%E8%80%85%E4%B9%8B%E7%9F%B3%E5%9E%8B%E5%8F%B7"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 2.2 切换贤者之石型号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23-%E9%A6%96%E6%AC%A1%E7%BC%96%E8%AF%91%E8%AF%95%E7%82%BC"><span class="toc-number">1.2.3.</span> <span class="toc-text"> 2.3 首次编译试炼</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0%E5%BF%83%E6%B5%B7%E9%99%8D%E4%B8%B4%E4%BB%AA%E5%BC%8F"><span class="toc-number">1.3.</span> <span class="toc-text"> 🌐 第三章：心海降临仪式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#31-%E9%85%8D%E7%BD%AE%E5%86%9B%E5%B8%88%E5%B1%9E%E6%80%A7"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 3.1 配置军师属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#32-%E8%AE%BE%E5%A4%87%E8%81%94%E7%BD%91%E5%A5%91%E7%BA%A6"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 3.2 设备联网契约</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0%E5%BF%83%E6%B5%B7%E7%9A%AE%E8%82%A4%E5%B9%BB%E5%8C%96%E6%9C%AF"><span class="toc-number">1.4.</span> <span class="toc-text"> 🎨 第四章：心海皮肤幻化术</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%96%87%E4%BB%B6%E5%AE%9A%E4%BD%8D"><span class="toc-number">1.5.</span> <span class="toc-text"> 🔧 关键文件定位</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%B8%8F%E2%83%A3-%E8%BF%9B%E5%85%A5%E9%AD%94%E6%B3%95%E5%B7%A5%E5%9D%8A"><span class="toc-number">1.5.1.</span> <span class="toc-text"> 1️⃣ 进入魔法工坊</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%B8%8F%E2%83%A3-%E5%BF%83%E6%B5%B7%E5%A3%81%E7%BA%B8%E5%8F%AC%E5%94%A4%E6%9C%AF"><span class="toc-number">1.5.2.</span> <span class="toc-text"> 2️⃣ 心海壁纸召唤术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%B8%8F%E2%83%A3-%E9%87%8D%E6%9E%84ui%E5%B8%83%E5%B1%80%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81"><span class="toc-number">1.5.3.</span> <span class="toc-text"> 3️⃣ 重构UI布局（关键代码）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%B8%8F-%E9%87%8D%E8%A6%81%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.6.</span> <span class="toc-text"> ⚠️ 重要注意事项</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%8F%E5%AE%9A%E4%B9%89%E5%8C%BA%E5%88%86"><span class="toc-number">1.6.1.</span> <span class="toc-text"> 1. 宏定义区分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%B1%82%E7%BA%A7%E5%85%B3%E7%B3%BB%E7%AE%A1%E7%90%86"><span class="toc-number">1.6.2.</span> <span class="toc-text"> 2. 层级关系管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%80%8F%E6%98%8E%E5%8C%96%E6%8A%80%E5%B7%A7"><span class="toc-number">1.6.3.</span> <span class="toc-text"> 3. 透明化技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%A3%81%E7%BA%B8%E5%88%B6%E4%BD%9C%E8%A7%84%E8%8C%83"><span class="toc-number">1.6.4.</span> <span class="toc-text"> 4. 壁纸制作规范</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#42-%E6%B3%A8%E5%86%8C%E6%96%B0%E5%A3%81%E7%BA%B8%E5%88%B0%E7%BC%96%E8%AF%91%E4%BD%93%E7%B3%BB"><span class="toc-number">1.6.5.</span> <span class="toc-text"> 4.2 注册新壁纸到编译体系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%B8%8F-%E5%A3%81%E7%BA%B8%E5%88%B6%E4%BD%9C%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97"><span class="toc-number">1.6.6.</span> <span class="toc-text"> ⚠️ 壁纸制作避坑指南：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0%E8%A1%A8%E6%83%85%E5%8C%85%E5%85%83%E7%B4%A0%E6%94%B9%E9%80%A0"><span class="toc-number">1.7.</span> <span class="toc-text"> 😊 第五章：表情包元素改造</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#51-%E8%A1%A8%E6%83%85%E6%9B%BF%E6%8D%A2%E5%8E%9F%E7%90%86"><span class="toc-number">1.7.1.</span> <span class="toc-text"> 5.1 表情替换原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#52-%E5%AE%9E%E6%88%98%E6%9B%BF%E6%8D%A2%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.7.2.</span> <span class="toc-text"> 5.2 实战替换步骤：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#53-%E9%AB%98%E7%BA%A7%E6%8A%80%E5%B7%A7-%E8%A1%A8%E6%83%85%E6%98%A0%E5%B0%84%E8%A1%A8%E4%BF%AE%E6%94%B9"><span class="toc-number">1.7.3.</span> <span class="toc-text"> 5.3 高级技巧 - 表情映射表修改</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%B8%8F-%E7%AC%AC%E5%85%AD%E7%AB%A0%E5%AF%B9%E8%AF%9D%E6%A1%86%E7%BE%8E%E9%A2%9C%E6%9C%AF"><span class="toc-number">1.8.</span> <span class="toc-text"> 🛡️ 第六章：对话框美颜术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#61-%E6%B6%88%E6%81%AF%E6%A1%86%E6%94%B9%E9%80%A0%E4%BB%A3%E7%A0%81-displaycc"><span class="toc-number">1.8.1.</span> <span class="toc-text"> 6.1 消息框改造代码 (display.cc)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%88%E6%9E%9C%E5%AF%B9%E6%AF%94"><span class="toc-number">1.8.2.</span> <span class="toc-text"> 效果对比：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E5%8F%AC%E5%94%A4%E4%BB%AA%E5%BC%8F"><span class="toc-number">1.9.</span> <span class="toc-text"> 🚀 最终召唤仪式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E5%A4%A7%E7%A4%BC%E5%8C%85"><span class="toc-number">1.10.</span> <span class="toc-text"> 🎁 资源大礼包</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="冯笑一" class="lazyload">
+  <div class="sidebar-author-name">冯笑一</div>
+  <div class="sidebar-description">电子信息爱好者</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Post</div>
+    <div class="sidebar-state-number">16</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Category</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tag</div>
+    <div class="sidebar-state-number">17</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a href=mailto:qingchunhuoli@live.com itemprop="url" target="_blank" aria-label="email" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/MYxiaoyi itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://space.bilibili.com/5463002 itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/" aria-label="Home"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="home icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Home</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/archives/" aria-label="Archives"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="archives icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Archives</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/about/" aria-label="About"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="about icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">About</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/friend/" aria-label="Friend"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="friend icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Friend</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png"/>
+        </div>
+      </div>
+    
+    
+    
+      <meting-js
+        theme="var(--color-link)"
+        id="7378273438"
+        server="netease"
+        type="playlist"
+        auto=""
+        fixed="true"
+        autoplay="false"
+        loop="all"
+        order="list"
+        preload="auto"
+        volume="0.7"
+        mutex="true"
+        list-folded="false"
+        lrc-type="3"
+      ></meting-js>
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/quicklink@2.3.0/dist/quicklink.umd.js" integrity="sha384-aD7FsuQkS1ohgFKY41fJfeA+Wd&#x2F;QRNnrOd9Bs58K3FzKdJJv8yPnYU8Tnp5z1agS" crossorigin="anonymous"></script>
+
+  <script data-pjax>
+    window.quicklink?.listen({
+      timeout: 3000,
+      priority: true,
+      ignores: []
+    });
+  </script>
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "冯笑一",
+          title: "小智AI魔法改造:ESP32变成原神珊瑚宫心海攻略",
+          url: "https://myxiaoyi.github.io/2026/02/04/%E5%B0%8F%E6%99%BAAI%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0%EF%BC%9AESP32%E5%8F%98%E8%BA%AB%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5/",
+          excerpt: "",
+          description: "",
+          stripContent: " 🌊小智AI魔法改造：ESP32变身原神珊瑚宫心海攻略⚡  「旅行者，准备好开启硬件改造的奇幻冒险了吗？今天我们要把ESP32小智AI变成提瓦特最美的军师大人哦~」   🛠️ 第一章：装备你的创世工坊  1.1 神器安装 - VS Code + ESP-IDF 123# 魔法卷轴获取地址：- ESP-IDF安装包：https://dl.espressif.com/dl/esp-idf/- VS Code编辑器：https://code.visualstudio.com/ ✨ 召唤仪式步骤： ",
+          date: "Wed Feb 04 2026 00:00:00 GMT+0800",
+          updated: "Fri Jul 18 2025 14:43:12 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@11.6.0/dist/mermaid.min.js" integrity="sha384-zkWMJO4sgpPUzyuOgDx8HB&#x2F;K55glbAwajEpk1Go2NWRuPkPA&#x2F;wIhoEJTuSkmOYrV" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+<script data-pjax>
+  var loadScript = (src, integrity) => {
+    const script = document.createElement('script');
+    script.src = src;
+    if (integrity) script.integrity = integrity;
+    script.crossOrigin = 'anonymous';
+    return script;
+  };
+
+  var commentConfigKeys = ['valine', 'waline', 'twikoo', 'gitalk', 'giscus'];
+  var commentConfig = {
+    valine: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.valine-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/valine@1.5.1/dist/Valine.min.js',
+          'sha384-3ma91AExDeMAZ1rjTjaP8V2A2obQE+s5ltKRwYlwdpArz9xVbp0tF3b0VV2ACNPn'
+        );
+        script.onload = () => {
+          var GUEST_INFO = ['nick', 'mail', 'link'];
+          var guest_info = 'nick,mail,link'.split(',').filter((item) => {
+            return GUEST_INFO.indexOf(item) > -1
+          });
+          var recordIP = JSON.parse('true');
+          var highlight = JSON.parse('true');
+          var visitor = JSON.parse('false');
+          var serverURLs = undefined;
+
+          if (window.Valine) {
+            new Valine({
+              el: '.valine-comment',
+              appId: "",
+              appKey: "",
+              placeholder: "Just go go",
+              pageSize: '10',
+              avatar: 'mp',
+              lang: document.documentElement.lang || 'en',
+              recordIP: recordIP,
+              highlight: highlight,
+              visitor: visitor,
+              requiredFields: guest_info,
+              path: window.location.pathname,
+              serverURLs
+            });
+          }
+        };
+        document.head.appendChild(script);
+      }
+    },
+    waline: {
+      enable: false,
+      load: async () => {
+        const container = document.querySelector('.waline-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        let walineInit;
+        const walineCdn = 'https://npm.webcache.cn/@waline/client@2.15.8/dist/waline.mjs';
+        const walineIntegrity = 'sha384-9sbqJjrfGjbkI6/PI4nU/MvBfEmkkPC4YK9I4zBeMIf1CVCZdCMH/KinBEAZII/5';
+
+        const module = await safeImport(walineCdn, walineIntegrity);
+        walineInit = module.init;
+
+        window.walineInstance = walineInit({
+          el: '.waline-comment',
+          serverURL: 'https://6dfzn3xp.api.lncldglobal.com',
+          lang: document.documentElement.lang || 'en',
+          locale: {},
+          emoji: ["https://unpkg.com/@waline/emojis@1.2.0/weibo","https://unpkg.com/@waline/emojis@1.2.0/alus","https://unpkg.com/@waline/emojis@1.2.0/bilibili","https://unpkg.com/@waline/emojis@1.2.0/qq","https://unpkg.com/@waline/emojis@1.2.0/tieba","https://unpkg.com/@waline/emojis@1.2.0/tw-emoji"],
+          meta: ["nick","mail","link"],
+          requiredMeta: ["nick","mail"],
+          wordLimit: JSON.parse('0'),
+          comment: true,
+          pageSize: JSON.parse('10'),
+          dark: 'html[data-theme="dark"]',
+          pageview: JSON.parse('true'),
+        });
+      }
+    },
+    twikoo: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.twikoo-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/twikoo@1.6.44/dist/twikoo.all.min.js',
+          'sha384-kwWLC0HjeZZnVPqCJ1AncI8tsk+kQqF9TbAmCclcc9Z0hGkfgHRzeQZxmdmZhE0K'
+        );
+
+        script.onload = () => {
+          if (window.twikoo) {
+            twikoo.init({
+              envId: '',
+              el: '.twikoo-comment',
+              region: '',
+              lang: document.documentElement.lang || 'en',
+            });
+
+            twikoo.getCommentsCount({
+              envId: '',
+              region: '',
+              urls: [
+                '/friend/index.html'
+              ],
+              includeReply: false
+            }).then((res) => {
+              _$('.twikoo-comment-count').innerText = res[0].count;
+            }).catch((err) => {
+              console.error(err);
+            });
+          }
+        } 
+        document.head.appendChild(script);
+      }
+    },
+    gitalk: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.gitalk-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/gitalk@1.8.0/dist/gitalk.min.js',
+          'sha384-kspnZUWBoSWwoJHa0hBCXYbHGbhvU/lcEH5O8eVbSDhbPwsiVUTp/aGX/z/5EuMA'
+        );
+
+        script.onload = () => {
+          if (false) {
+            const md5Script = loadScript(
+              'https://npm.webcache.cn/blueimp-md5@2.19.0/js/md5.min.js',
+              'sha384-JmVtRz6RWiXnA14QbIOJzPuU3MidULOpBP66deeLLyyoF4Tr/gZlbkHkL6vTthxH'
+            );
+            md5Script.onload = initGitalk;
+            document.head.appendChild(md5Script);
+          } else {
+            initGitalk();
+          }
+        }
+        document.head.appendChild(script);
+
+        function initGitalk() {
+          var gitalkId = location.pathname;
+          var gitalk = new Gitalk({
+            clientID: '',
+            clientSecret: '',
+            repo: '',
+            owner: '',
+            admin: null,
+            id: gitalkId,
+            distractionFreeMode: false,
+            language: document.documentElement.lang || 'en',
+          })
+          gitalk.render('gitalk-comment');
+        }
+      }
+    },
+    giscus: {
+      enable: true,
+      load: () => {
+        const container = document.querySelector('.giscus-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        // 删除可能已存在的 giscus 脚本和 iframe
+        const existingScript = container.querySelector('script[src*="giscus.app/client.js"]');
+        if (existingScript) existingScript.remove();
+        const existingFrame = document.querySelector('iframe.giscus-frame');
+        if (existingFrame) existingFrame.remove();
+
+        const giscusScript = document.createElement('script');
+        const domMode = document.documentElement.getAttribute("data-theme");
+
+        const docLang = document.documentElement.lang || 'en';
+        const langBase = docLang.split('-')[0];
+        const supportedLangs = ['ar', 'be', 'bg', 'ca', 'cs', 'da', 'de', 'en', 
+        'eo', 'es', 'eu', 'fa', 'fr', 'gr', 'hbs', 'he', 'hu', 'id', 'it', 'ja', 
+        'kh', 'ko', 'nl', 'pl', 'pt', 'ro', 'ru', 'th', 'tr', 'uk', 'uz', 'vi', 'zh-CN', 'zh-HK', 'zh-TW'];
+        const giscusLang = supportedLangs.includes(docLang) ? docLang : supportedLangs.includes(langBase) ? langBase : 'en';
+
+        giscusScript.src = 'https://giscus.app/client.js';
+        giscusScript.setAttribute('data-repo', 'MYxiaoyi/MYxiaoyi.github.io');
+        giscusScript.setAttribute('data-repo-id', 'R_kgDOPMp1Fg');
+        giscusScript.setAttribute('data-category', 'Announcements'); 
+        giscusScript.setAttribute('data-category-id', 'DIC_kwDOPMp1Fs4CtAct');
+        giscusScript.setAttribute('data-mapping', '0');
+        giscusScript.setAttribute('data-strict', '0');
+        giscusScript.setAttribute('data-reactions-enabled', '1');
+        giscusScript.setAttribute('data-emit-metadata', '0');
+        giscusScript.setAttribute('data-input-position', 'bottom');
+        giscusScript.setAttribute('data-theme', domMode === 'dark' ? 'dark' : 'light');
+        giscusScript.setAttribute('data-lang', giscusLang);
+        giscusScript.setAttribute('crossorigin', 'anonymous');
+        giscusScript.async = true;
+        container.appendChild(giscusScript);
+        document.body.addEventListener('light-theme-set', () => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: 'light' } } }, 'https://giscus.app');
+        });
+        document.body.addEventListener('dark-theme-set', () => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: 'dark' } } }, 'https://giscus.app');
+        });
+      }
+    }
+  }
+  commentConfig.enable = commentConfigKeys.some(key => commentConfig[key].enable);
+
+  var defaultComment = '';
+  if (commentConfig.enable) {
+    // 1. 首先检查localStorage中是否有保存的评论类型
+    var savedCommentType = localStorage.getItem('commentType');
+    
+    // 2. 如果localStorage中有值且对应的评论系统可用，就使用它
+    if (savedCommentType) {
+      if (commentConfig[savedCommentType]?.enable) {
+        defaultComment = savedCommentType;
+      }
+    }
+    
+    // 3. 如果localStorage无效，检查配置的默认评论系统
+    if (!defaultComment) {
+      var configDefault = 'waline';
+      if (commentConfig[configDefault]?.enable) {
+        defaultComment = configDefault;
+      }
+    }
+    
+    // 4. 如果前两项都无效，按指定顺序找到第一个可用的评论系统
+    if (!defaultComment) {
+      defaultComment = commentConfigKeys.find(sys => commentConfig[sys].enable) || '';
+    }
+  }
+  function loadComments() {
+    if (!commentConfig.enable) return;
+    // 评论组件加载状态跟踪
+    const loadedComments = {
+      valine: false,
+      waline: false,
+      twikoo: false,
+      gitalk: false,
+      giscus: false
+    };
+
+    // 隐藏所有评论容器
+    const hideAllComments = () => {
+      const commentContainers = document.querySelectorAll('.comment');
+      commentContainers.forEach(container => {
+        container.style.display = 'none';
+      });
+    };
+
+    // 按需加载评论系统
+    const loadCommentSystem = (type) => {
+      if (loadedComments[type]) {
+        // 如果已加载，只需显示对应容器
+        document.querySelector(`.${type}-comment`).style.display = 'block';
+        return;
+      }
+
+      // 根据类型加载对应的脚本
+      commentConfig[type]?.load();
+      loadedComments[type] = true;
+    };
+
+    // 评论组件选择器
+    const changeActiveCommentItems = (item) => {
+      const commentItems = document.querySelectorAll('.selector-item');
+      for (let i = 0; i < commentItems.length; i++) {
+        commentItems[i].classList.remove('active');
+      }
+      item.classList.add('active');
+
+      // 获取要加载的评论系统类型
+      const commentType = item.getAttribute('data-selector');
+
+      // 隐藏所有评论系统
+      hideAllComments();
+
+      // 加载选中的评论系统
+      loadCommentSystem(commentType);
+    };
+
+    const commentInit = () => {
+      // 评论组件选择器点击事件
+      const commentItems = document.querySelectorAll('.selector-item');
+      for (let item of commentItems) {
+        item.addEventListener('click', () => {
+          // 保存选择器状态
+          const commentType = item.getAttribute('data-selector');
+          window.localStorage.setItem('commentType', commentType);
+          // 切换选中状态
+          changeActiveCommentItems(item);
+        });
+      }
+
+      // 检查是否需要加载默认评论系统
+      if (defaultComment) {
+        const defaultSelectorItem = document.querySelector(`[data-selector="${defaultComment}"]`);
+        if (!defaultSelectorItem) return;
+        defaultSelectorItem.style.display = 'block';
+        defaultSelectorItem.classList.add('active');
+        loadCommentSystem(defaultComment);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', commentInit);
+    } else {
+      commentInit();
+    }
+  };
+  loadComments();
+</script>
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.9.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+    
+<script src="https://npm.webcache.cn/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF&#x2F;RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh&#x2F;OJfpU0jr6" crossorigin="anonymous" defer data-pjax></script>
+
+    
+<script src="https://npm.webcache.cn/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous" defer onload="renderMathInElement(_$(&#39;article&#39;), {delimiters: [{left: &#39;$$&#39;, right: &#39;$$&#39;, display: true},{left: &#39;$&#39;, right: &#39;$&#39;, display: false}]});" data-pjax></script>
+
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.js" integrity="sha384-gdGYZwHnfJM54evoZhpO0s6ZF5BQiybkiyW7VXr+h5UfruuRL&#x2F;aORyw+5+HZoU6e" crossorigin="anonymous"></script>
+
+  
+
+
+
+  
+  <script>
+    var isMobile = window.matchMedia('(max-width: 959px)').matches;
+    if (isMobile) {
+      const meting = _$('meting-js');
+      if (meting) {
+        meting.setAttribute('fixed', 'true');
+        const aside = meting.parentNode;
+        if (aside?.tagName === 'ASIDE') {
+          aside.removeChild(meting);
+          document.body.appendChild(meting);
+        }
+      }
+    }
+  </script>
+  
+<script src="https://npm.webcache.cn/meting@2.0.1/dist/Meting.min.js" integrity="sha384-ASVlpKF80A22OXTK3tfEjZm1EL6uFMKIC4p8+0maanw1S&#x2F;IyB+Y4JG+ZDU7GpKE8" crossorigin="anonymous"></script>
+
+
+
+
+    
+  </body>
+  </html>
+

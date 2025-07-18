@@ -1,0 +1,1878 @@
+
+  <!DOCTYPE html>
+  <html lang="en"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+  <script src="https://www.googletagmanager.com/gtag/js?id=true"></script>
+  <script data-pjax>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'true');
+  </script>
+
+
+  
+  <script>
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "true");
+  </script>
+
+
+  
+  <script async src="https://hm.baidu.com/hm.js?true"></script>
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    _hmt.push(["_trackPageview", location.pathname]);
+  </script>
+
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":false,"count":50,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = 'All articles on this blog are licensed under the BY-NC-SA license agreement unless otherwise stated. Please indicate the source when reprinting!';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://myxiaoyi.github.io';window.REIMU_CONFIG.i18n_languages = ["en"];</script>
+  
+  <title>
+    LIN总线OTA升级协议定义 |
+    
+    冯笑一的小窝
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="一、LIN ID枚举定义  1. 基本ID枚举 123456typedef enum&#123;    gID_OtapCmd_c &#x3D; 0x31,    gID_OtapGetStatus_c,    gID_OtapData_c&#125; lin_id_t;  2. ID功能说明  gID_OtapCmd_c (0x31)：LIN主节点指示从节点开始&#x2F;结束固件传输的命令ID gID_Otap">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LIN总线OTA升级协议定义">
+<meta property="og:url" content="https://myxiaoyi.github.io/en/2025/07/14/LIN%E6%80%BB%E7%BA%BFOTA%E5%8D%87%E7%BA%A7%E5%8D%8F%E8%AE%AE%E5%AE%9A%E4%B9%89/index.html">
+<meta property="og:site_name" content="冯笑一的小窝">
+<meta property="og:description" content="一、LIN ID枚举定义  1. 基本ID枚举 123456typedef enum&#123;    gID_OtapCmd_c &#x3D; 0x31,    gID_OtapGetStatus_c,    gID_OtapData_c&#125; lin_id_t;  2. ID功能说明  gID_OtapCmd_c (0x31)：LIN主节点指示从节点开始&#x2F;结束固件传输的命令ID gID_Otap">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-07-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-07-16T06:37:44.053Z">
+<meta property="article:author" content="冯笑一">
+<meta property="article:tag" content="嵌入式">
+<meta property="article:tag" content="C语言">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="alternate" href="/404.html" title="冯笑一的小窝" >
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l&#x2F;9On385z&#x2F;&#x2F;&#x2F;+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.css" integrity="sha384-tLMkTWh2pfXNWGFlUS0w1TFtRG5xZ9lPWFOooj+vDDLIL+xBGQU&#x2F;voDBY5XE2lVh" crossorigin="anonymous">
+
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi ">
+        
+          <img src="/images/taichi.svg" alt="loading" />
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">Loading...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+<div id="heatmap-tooltip"></div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="home icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/">Home</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="archives icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/archives/">Archives</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="about icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/about/">About</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="friend icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/friend/">Friend</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/404.html" title="RSS Feed" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="Search"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">English</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" class="selected">English</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/07/14/LIN总线OTA升级协议定义/';
+            
+              langMap['en'] = '/en/2025/07/14/LIN总线OTA升级协议定义/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img style="position: absolute;top: 0;left: 0;width: 100%;height: 150%;z-index: -2;display: block;background: rgba(237, 138, 220, 0.47);mask: linear-gradient(to top, transparent, #fff 50%);"></img>
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">LIN总线OTA升级协议定义</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-lin-id%E6%9E%9A%E4%B8%BE%E5%AE%9A%E4%B9%89"><span class="toc-number">1.</span> <span class="toc-text"> 一、LIN ID枚举定义</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E6%9C%ACid%E6%9E%9A%E4%B8%BE"><span class="toc-number">1.1.</span> <span class="toc-text"> 1. 基本ID枚举</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-id%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E"><span class="toc-number">1.2.</span> <span class="toc-text"> 2. ID功能说明</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%91%BD%E4%BB%A4%E4%B8%8E%E7%8A%B6%E6%80%81%E6%9E%9A%E4%B8%BE%E5%AE%9A%E4%B9%89"><span class="toc-number">2.</span> <span class="toc-text"> 二、命令与状态枚举定义</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-gid_otapcmd_c%E5%91%BD%E4%BB%A4%E6%9E%9A%E4%B8%BE"><span class="toc-number">2.1.</span> <span class="toc-text"> 1. gID_OtapCmd_c命令枚举</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-gid_otapgetstatus_c%E7%8A%B6%E6%80%81%E6%9E%9A%E4%B8%BE"><span class="toc-number">2.2.</span> <span class="toc-text"> 2. gID_OtapGetStatus_c状态枚举</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%95%B0%E6%8D%AE%E5%B8%A7%E6%A0%BC%E5%BC%8F%E5%AE%9A%E4%B9%89"><span class="toc-number">3.</span> <span class="toc-text"> 三、数据帧格式定义</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%90%84id%E6%95%B0%E6%8D%AE%E5%B8%A7%E7%BB%93%E6%9E%84%E5%AF%B9%E6%AF%94"><span class="toc-number">3.1.</span> <span class="toc-text"> 1. 各ID数据帧结构对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AD%97%E6%AE%B5%E8%AF%A6%E7%BB%86%E8%AF%B4%E6%98%8E"><span class="toc-number">3.2.</span> <span class="toc-text"> 2. 字段详细说明</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-ota%E5%8D%87%E7%BA%A7%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-number">4.</span> <span class="toc-text"> 四、OTA升级流程详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%8E%E5%BC%80%E5%A7%8B%E4%BC%A0%E8%BE%93%E9%98%B6%E6%AE%B5"><span class="toc-number">4.1.</span> <span class="toc-text"> 1. 初始化与开始传输阶段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E9%98%B6%E6%AE%B5%E4%BB%A5%E6%89%87%E5%8C%BA1%E4%B8%BA%E4%BE%8B"><span class="toc-number">4.2.</span> <span class="toc-text"> 2. 数据传输阶段(以扇区1为例)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%BC%A0%E8%BE%93%E7%BB%93%E6%9D%9F%E9%98%B6%E6%AE%B5"><span class="toc-number">4.3.</span> <span class="toc-text"> 3. 传输结束阶段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%9B%BE%E8%A1%A8%E8%AF%B4%E6%98%8E"><span class="toc-number">5.</span> <span class="toc-text"> 五、图表说明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ota-%E5%9B%BA%E4%BB%B6%E5%8D%87%E7%BA%A7%E6%B5%81%E7%A8%8B%E8%AF%B4%E6%98%8E"><span class="toc-number">5.1.</span> <span class="toc-text"> OTA 固件升级流程说明：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%8D%8F%E8%AE%AE%E5%85%B3%E9%94%AE%E7%82%B9%E8%AF%B4%E6%98%8E"><span class="toc-number">6.</span> <span class="toc-text"> 六、协议关键点说明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="toc-number">6.1.</span> <span class="toc-text"> 关键参数说明：</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="冯笑一" class="lazyload">
+  <div class="sidebar-author-name">冯笑一</div>
+  <div class="sidebar-description">电子信息爱好者</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Post</div>
+    <div class="sidebar-state-number">16</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Category</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tag</div>
+    <div class="sidebar-state-number">17</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a href=mailto:qingchunhuoli@live.com itemprop="url" target="_blank" aria-label="email" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/MYxiaoyi itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://space.bilibili.com/5463002 itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/" aria-label="Home"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="home icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Home</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/archives/" aria-label="Archives"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="archives icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Archives</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/about/" aria-label="About"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="about icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">About</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/friend/" aria-label="Friend"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="friend icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Friend</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-LIN总线OTA升级协议定义" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-07-13T16:00:00.000Z" itemprop="datePublished">2025-07-14</time>
+    <time style="display: none;" id="post-update-time">2025-07-16</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/en/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/" data-aos="zoom-in">嵌入式</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h2 id="一-lin-id枚举定义"><a class="markdownIt-Anchor" href="#一-lin-id枚举定义"></a> 一、LIN ID枚举定义</h2>
+<h3 id="1-基本id枚举"><a class="markdownIt-Anchor" href="#1-基本id枚举"></a> 1. 基本ID枚举</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    gID_OtapCmd_c = <span class="number">0x31</span>,</span><br><span class="line">    gID_OtapGetStatus_c,</span><br><span class="line">    gID_OtapData_c</span><br><span class="line">&#125; <span class="type">lin_id_t</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="2-id功能说明"><a class="markdownIt-Anchor" href="#2-id功能说明"></a> 2. ID功能说明</h3>
+<ul>
+<li><strong>gID_OtapCmd_c (0x31)</strong>：LIN主节点指示从节点开始/结束固件传输的命令ID</li>
+<li><strong>gID_OtapGetStatus_c</strong>：LIN主节点获取从节点实时状态的状态查询ID</li>
+<li><strong>gID_OtapData_c</strong>：LIN主节点向从节点传输实际固件数据的数据传输ID</li>
+</ul>
+<h2 id="二-命令与状态枚举定义"><a class="markdownIt-Anchor" href="#二-命令与状态枚举定义"></a> 二、命令与状态枚举定义</h2>
+<h3 id="1-gid_otapcmd_c命令枚举"><a class="markdownIt-Anchor" href="#1-gid_otapcmd_c命令枚举"></a> 1. gID_OtapCmd_c命令枚举</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    LIN_OTA_CMD_NONE = <span class="number">0x00</span>,  <span class="comment">// 无命令</span></span><br><span class="line">    LIN_OTA_CMD_START,        <span class="comment">// 开始传输命令</span></span><br><span class="line">    LIN_OTA_CMD_END,          <span class="comment">// 结束传输命令</span></span><br><span class="line">    LIN_OTA_CMD_CONTINUE      <span class="comment">// 继续传输命令</span></span><br><span class="line">&#125; lin_ota_cmd_c;</span><br></pre></td></tr></table></figure>
+<h3 id="2-gid_otapgetstatus_c状态枚举"><a class="markdownIt-Anchor" href="#2-gid_otapgetstatus_c状态枚举"></a> 2. gID_OtapGetStatus_c状态枚举</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    LIN_OTA_STATUS_IDLE = <span class="number">0x00</span>,   <span class="comment">// 空闲状态</span></span><br><span class="line">    LIN_OTA_STATUS_READY,         <span class="comment">// 准备就绪状态</span></span><br><span class="line">    LIN_OTA_STATUS_RUNNING,       <span class="comment">// 传输进行中状态</span></span><br><span class="line">    LIN_OTA_STATUS_FINISH,        <span class="comment">// 传输完成状态</span></span><br><span class="line">    LIN_OTA_STATUS_ABORT          <span class="comment">// 传输中止状态</span></span><br><span class="line">&#125; <span class="type">lin_ota_status_t</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="三-数据帧格式定义"><a class="markdownIt-Anchor" href="#三-数据帧格式定义"></a> 三、数据帧格式定义</h2>
+<h3 id="1-各id数据帧结构对比"><a class="markdownIt-Anchor" href="#1-各id数据帧结构对比"></a> 1. 各ID数据帧结构对比</h3>
+<table>
+<thead>
+<tr>
+<th>ID类型</th>
+<th>数据帧长度</th>
+<th>数据帧详细定义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gID_OtapCmd_c</td>
+<td>8字节</td>
+<td>传输状态码 + 扇区号(1B) + 固件版本号(2B) + 保留字段(4B)</td>
+</tr>
+<tr>
+<td>gID_OtapGetStatus_c</td>
+<td>8字节</td>
+<td>传输状态码 + 扇区号(1B) + 扇区CRC校验码(2B) + 保留字段(4B)</td>
+</tr>
+<tr>
+<td>gID_OtapData_c</td>
+<td>8字节</td>
+<td>全部为固件数据(实际传输时可通过多帧拼接实现更大数据量传输)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-字段详细说明"><a class="markdownIt-Anchor" href="#2-字段详细说明"></a> 2. 字段详细说明</h3>
+<ul>
+<li><strong>传输状态码</strong>：使用<code>lin_ota_cmd_c</code>枚举值(仅gID_OtapCmd_c)或<code>lin_ota_status_t</code>枚举值(仅gID_OtapGetStatus_c)</li>
+<li><strong>扇区号</strong>：指定数据存储的目标扇区(0-255)</li>
+<li><strong>固件版本号</strong>：2字节大端序版本号(如0x0100表示1.00版本)</li>
+<li><strong>扇区CRC校验码</strong>：2字节大端序CRC校验值，用于验证扇区数据完整性</li>
+<li><strong>保留字段</strong>：保留未来扩展使用，当前应置为0</li>
+</ul>
+<h2 id="四-ota升级流程详解"><a class="markdownIt-Anchor" href="#四-ota升级流程详解"></a> 四、OTA升级流程详解</h2>
+<h3 id="1-初始化与开始传输阶段"><a class="markdownIt-Anchor" href="#1-初始化与开始传输阶段"></a> 1. 初始化与开始传输阶段</h3>
+<ol>
+<li>LIN主节点通过<code>gID_OtapCmd_c</code>发送开始传输命令：
+<ul>
+<li>状态码：<code>LIN_OTA_CMD_START</code></li>
+<li>扇区号：0</li>
+<li>固件版本号：0x0100(大端序)</li>
+<li>保留字段：0x00000000</li>
+</ul>
+</li>
+<li>LIN从节点收到命令后进入等待状态，准备接收数据</li>
+<li>LIN主节点通过<code>gID_OtapGetStatus_c</code>查询状态：
+<ul>
+<li>期望从节点返回：<code>LIN_OTA_STATUS_READY</code>状态码</li>
+</ul>
+</li>
+</ol>
+<h3 id="2-数据传输阶段以扇区1为例"><a class="markdownIt-Anchor" href="#2-数据传输阶段以扇区1为例"></a> 2. 数据传输阶段(以扇区1为例)</h3>
+<ol start="4">
+<li>LIN主节点通过<code>gID_OtapData_c</code>发送1K字节固件数据</li>
+<li>LIN从节点存储数据并计算扇区CRC校验码</li>
+<li>LIN主节点再次查询状态：
+<ul>
+<li>期望从节点返回：<code>LIN_OTA_STATUS_FINISH</code>状态码</li>
+<li>校验码：扇区1的CRC校验码(大端序)</li>
+</ul>
+</li>
+<li>LIN主节点发送继续传输命令到扇区1：
+<ul>
+<li>状态码：<code>LIN_OTA_CMD_CONTINUE</code></li>
+<li>扇区号：1</li>
+<li>固件版本号：0x0100</li>
+<li>保留字段：0x00000000</li>
+</ul>
+</li>
+<li>重复步骤4-6直到当前扇区数据传输完成</li>
+<li>主节点查询状态应收到：<code>LIN_OTA_STATUS_FINISH</code>状态码</li>
+</ol>
+<h3 id="3-传输结束阶段"><a class="markdownIt-Anchor" href="#3-传输结束阶段"></a> 3. 传输结束阶段</h3>
+<ol start="10">
+<li>所有扇区数据传输完成后，主节点发送结束命令：
+<ul>
+<li>状态码：<code>LIN_OTA_CMD_END</code></li>
+<li>扇区号：0</li>
+<li>固件版本号：0x0100</li>
+<li>保留字段：0x00000000</li>
+</ul>
+</li>
+<li>LIN从节点收到结束命令后完成固件升级流程</li>
+</ol>
+<h2 id="五-图表说明"><a class="markdownIt-Anchor" href="#五-图表说明"></a> 五、图表说明</h2>
+<pre class="mermaid">sequenceDiagram
+    participant UI as 用户界面
+    participant Updater as OTA升级器
+    participant LIN as LIN设备
+    
+    UI->>Updater: startUpgrade(固件数据, 版本号)
+    activate Updater
+    Updater->>LIN: 打开设备
+    Updater->>LIN: 发送开始命令
+    LIN-->>Updater: 准备就绪状态
+    
+    loop 每个扇区
+        Updater->>LIN: 发送继续命令(扇区号)
+        
+        loop 128次
+            Updater->>LIN: 发送数据帧(8字节)
+        end
+        
+        Updater->>LIN: 查询扇区状态
+        LIN-->>Updater: 返回完成状态
+    end
+    
+    Updater->>LIN: 发送结束命令
+    deactivate Updater
+    Updater->>UI: 发送完成信号
+    UI->>LIN: 关闭设备</pre>
+<h3 id="ota-固件升级流程说明"><a class="markdownIt-Anchor" href="#ota-固件升级流程说明"></a> OTA 固件升级流程说明：</h3>
+<ol>
+<li><strong>初始化升级</strong></li>
+</ol>
+<pre class="mermaid">sequenceDiagram
+    UI->>Updater: startUpgrade(固件数据, 版本号)</pre>
+<pre><code>- 用户界面调用 OTA 升级器，传入固件数据和版本号
+</code></pre>
+<ol start="2">
+<li><strong>LIN 设备准备</strong></li>
+</ol>
+<pre class="mermaid">sequenceDiagram
+    Updater->>LIN: 打开设备
+    Updater->>LIN: 发送开始命令
+    LIN-->>Updater: 准备就绪状态</pre>
+<pre><code>- 打开 LIN 设备连接  
+- 发送升级开始命令
+</code></pre>
+<ol start="3">
+<li><strong>扇区数据写入</strong></li>
+<li></li>
+</ol>
+<pre class="mermaid">sequenceDiagram
+    loop 每个扇区
+        Updater->>LIN: 发送继续命令(扇区号)
+        loop 128次
+            Updater->>LIN: 发送数据帧(8字节)
+        end
+        Updater->>LIN: 查询扇区状态
+        LIN-->>Updater: 返回完成状态
+    end</pre>
+<pre><code>- 循环处理每个扇区（共 128 帧/扇区）  
+- 每帧发送 8 字节数据  
+- 查询并确认扇区写入状态
+</code></pre>
+<ol>
+<li><strong>升级完成</strong></li>
+</ol>
+<pre class="mermaid">sequenceDiagram
+    Updater->>LIN: 发送结束命令
+    Updater->>UI: 发送完成信号
+    UI->>LIN: 关闭设备</pre>
+<pre><code>- 发送升级结束命令  
+- 通知用户界面升级完成  
+- 关闭 LIN 设备连接
+</code></pre>
+<h2 id="六-协议关键点说明"><a class="markdownIt-Anchor" href="#六-协议关键点说明"></a> 六、协议关键点说明</h2>
+<ol>
+<li><strong>数据分片机制</strong>：由于LIN帧数据域仅8字节，1K数据需通过128帧<code>gID_OtapData_c</code>传输</li>
+<li><strong>CRC校验机制</strong>：从节点需对每个扇区数据计算CRC并通过<code>gID_OtapGetStatus_c</code>返回</li>
+<li><strong>版本一致性</strong>：所有命令帧需包含相同的固件版本号以确保版本一致性</li>
+<li><strong>错误处理</strong>：当收到<code>LIN_OTA_STATUS_ABORT</code>状态码时，主节点应重新发起传输流程</li>
+</ol>
+<h3 id="关键参数说明"><a class="markdownIt-Anchor" href="#关键参数说明"></a> 关键参数说明：</h3>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>数据量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单帧数据</td>
+<td>8 字节</td>
+<td>LIN 总线标准数据帧大小</td>
+</tr>
+<tr>
+<td>单扇区传输</td>
+<td>128 帧</td>
+<td>共 1KB (128×8=1024 字节)</td>
+</tr>
+<tr>
+<td>状态确认</td>
+<td>每扇区结束后</td>
+<td>确保数据完整写入</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li>每个扇区写入后必须等待状态确认</li>
+<li>LIN 设备需实现&quot;准备就绪&quot;和&quot;完成状态&quot;协议</li>
+<li>异常处理需包含：超时重传、校验失败回滚等机制</li>
+</ol>
+</blockquote>
+<div class="post-link-card-wrap">
+    <div class="post-link-card">
+      <a href="https://www.f123.club/wp-content/uploads/2021/08/UN77_C6SA5GU39GBAWJ.png" title="https://www.f123.club/" rel="noopener external nofollow noreferrer" target="_blank"></a>
+      
+      <div class="post-link-card-item-wrap">
+        <div class="post-link-card-title">https://www.f123.club/</div>
+        <div class="post-link-card-excerpt"><span class="icon-link"></span>https://www.f123.club/wp-content/uploads/2021/08/UN77_C6SA5GU39GBAWJ.png</div>
+      </div>
+    </div>
+  </div>
+<script>var REIMU_HEATMAP_CONFIG = {articleStats: [{"title":"WPF学习之旅","date":"2025-07-13T16:00:00.000Z","updated":"2025-07-16T06:59:04.030Z","wordcount":3106,"url":"/2025/07/14/Csharp%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%85/"},{"title":"C语言函数指针作为结构体成员实现成员操作","date":"2022-11-15T16:00:00.000Z","updated":"2025-07-16T08:23:52.050Z","wordcount":943,"url":"/2022/11/16/C%E8%AF%AD%E8%A8%80%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88%E4%BD%9C%E4%B8%BA%E7%BB%93%E6%9E%84%E4%BD%93%E6%88%90%E5%91%98%E5%AE%9E%E7%8E%B0%E6%88%90%E5%91%98%E6%93%8D%E4%BD%9C/"},{"title":"ESP32-IDF新建工程和创建分区","date":"2025-06-05T16:00:00.000Z","updated":"2025-07-16T07:26:21.906Z","wordcount":663,"url":"/2025/06/06/ESP32-IDF%E6%96%B0%E5%BB%BA%E5%B7%A5%E7%A8%8B%E5%92%8C%E5%88%9B%E5%BB%BA%E5%88%86%E5%8C%BA/"},{"title":"LIN总线OTA升级协议定义","date":"2025-07-13T16:00:00.000Z","updated":"2025-07-16T06:37:44.053Z","wordcount":1366,"url":"/2025/07/14/LIN%E6%80%BB%E7%BA%BFOTA%E5%8D%87%E7%BA%A7%E5%8D%8F%E8%AE%AE%E5%AE%9A%E4%B9%89/"},{"title":"ROS学习","date":"2024-03-21T16:00:00.000Z","updated":"2025-07-16T09:38:39.484Z","wordcount":1758,"url":"/2024/03/22/ROS%E5%AD%A6%E4%B9%A0/"},{"title":"STM32单片机外设初始化例程","date":"2023-01-17T16:00:00.000Z","updated":"2025-07-16T09:01:59.164Z","wordcount":4848,"url":"/2023/01/18/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/"},{"title":"QML Fluid Element 动态元素","date":"2024-03-21T16:00:00.000Z","updated":"2025-07-16T08:01:18.199Z","wordcount":5229,"url":"/2024/03/22/QML_Fluid_Element%E5%8A%A8%E6%80%81%E5%85%83%E7%B4%A0/"},{"title":"WPF的XAML解析","date":"2025-07-13T16:00:00.000Z","updated":"2025-07-16T06:38:42.697Z","wordcount":920,"url":"/2025/07/14/WPF%E8%A7%A3%E6%9E%90%E6%95%99%E7%A8%8B/"},{"title":"Hello World","date":"2013-12-24T09:49:32.000Z","updated":"2025-07-17T07:15:28.622Z","wordcount":1709,"url":"/2013/12/24/hello-world/"},{"title":"恋爱倒计时","date":"2023-09-15T04:15:02.000Z","updated":"2025-07-17T15:00:11.020Z","wordcount":2034,"url":"/2023/09/15/longtimelove/"},{"title":"情侣小游戏","date":"2025-07-13T09:49:32.000Z","updated":"2025-07-17T15:37:19.062Z","wordcount":4137,"url":"/2025/07/13/love/"},{"title":"号码归属地查询","date":"2025-07-04T04:19:00.000Z","updated":"2025-07-16T06:59:59.505Z","wordcount":1586,"url":"/2025/07/04/shearchphone/"},{"title":"基于Cortex-M0内核的Bootloader开发指南","date":"2025-03-27T16:00:00.000Z","updated":"2025-07-16T07:36:21.575Z","wordcount":2004,"url":"/2025/03/28/%E5%9F%BA%E4%BA%8ECortex-M0%E5%86%85%E6%A0%B8%E7%9A%84Bootloader%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/"},{"title":"基于Modbus-RTU协议的Bootloader升级系统设计","date":"2025-03-23T16:00:00.000Z","updated":"2025-07-16T07:38:11.649Z","wordcount":1268,"url":"/2025/03/24/%E5%9F%BA%E4%BA%8EModbus-RTU%E5%8D%8F%E8%AE%AE%E7%9A%84Bootloader%E5%8D%87%E7%BA%A7%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/"},{"title":"汽车电子固件升级（OTA）实现详解","date":"2025-07-13T16:00:00.000Z","updated":"2025-07-16T07:42:32.203Z","wordcount":2586,"url":"/2025/07/14/%E6%B1%BD%E8%BD%A6%E7%94%B5%E5%AD%90%E5%9B%BA%E4%BB%B6%E5%8D%87%E7%BA%A7%EF%BC%88OTA%EF%BC%89%E5%AE%9E%E7%8E%B0%E8%AF%A6%E8%A7%A3/"},{"title":"小智AI魔法改造:ESP32变成原神珊瑚宫心海攻略","date":"2026-02-03T16:00:00.000Z","updated":"2025-07-18T06:43:12.187Z","wordcount":4075,"url":"/2026/02/04/%E5%B0%8F%E6%99%BAAI%E9%AD%94%E6%B3%95%E6%94%B9%E9%80%A0%EF%BC%9AESP32%E5%8F%98%E8%BA%AB%E5%8E%9F%E7%A5%9E%E7%8F%8A%E7%91%9A%E5%AE%AB%E5%BF%83%E6%B5%B7%E6%94%BB%E7%95%A5/"}], i18n: {"en":{"no_articles":"No articles","words":"word(s)","total_articles":"$1 article(s), $2 word(s)"},"ja":{"no_articles":"記事がありません","words":"文字","total_articles":"$1 記事, $2 文字"},"zh-CN":{"no_articles":"没有文章","words":"字","total_articles":"共 $1 篇文章, $2 字"},"zh-TW":{"no_articles":"没有文章","words":"字","total_articles":"共 $1 篇文章, $2 字"}}, levelStandard: "1000,5000,10000"};</script>
+<link rel="stylesheet" href="/css/heat-map.css">
+<div id="heatmap"></div>
+<script src="/js/heat_map.js"></script>
+
+
+<div class="roll">
+    <div class="roll-button" onclick="rollTagRoulette()">🕹️</div>
+    <div class="roll-tags"><span class="ready removing"></span></div>
+</div>
+<script>
+var rollTagRoulette = () => {
+  var tags = "记忆衰退,表达欲丧失,更加怠惰,无感,好想睡觉".split(",");
+  var tag = document.querySelector('.roll-tags');
+  tag.innerHTML = '';
+
+  var interval = setInterval(function () {
+    var span = document.createElement('span');
+    span.classList.add('ready');
+    span.classList.add('blur');
+    span.innerText = tags[Math.floor(Math.random() * tags.length)];
+    tag.appendChild(span);
+    spans = tag.querySelectorAll('span');
+    for (var i = 0; i < spans.length; i++) {
+      spans[i].classList.add('removing');
+    }
+  }, 200);
+
+  setTimeout(function () {
+    clearInterval(interval);
+    for (var i = 0; i < spans.length-1; i++) {
+      tag.removeChild(spans[i]);
+    }
+    setTimeout(function () {
+      spans[spans.length-1].classList.remove('blur');
+    }, 100);
+  }, 1000);
+}
+
+rollTagRoulette(); // 页面加载时自动触发一次滚动
+</script>
+
+<link rel="stylesheet" href="/css/tag-roulette.css">
+
+  
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">Sponsor</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">Buy me a coffee</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/wechat.png" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=LIN%E6%80%BB%E7%BA%BFOTA%E5%8D%87%E7%BA%A7%E5%8D%8F%E8%AE%AE%E5%AE%9A%E4%B9%89&amp;desc=LIN%E6%80%BB%E7%BA%BFOTA%E5%8D%87%E7%BA%A7%E5%8D%8F%E8%AE%AE%E5%AE%9A%E4%B9%89&amp;source=https%3A%2F%2Fmyxiaoyi.github.io" target="_blank" rel="noopener noreferrer" title="LIN总线OTA升级协议定义">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="LIN总线OTA升级协议定义">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner"> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/en/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/en/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/" rel="tag">嵌入式</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img data-src="https://picx.zhimg.com/v2-e26593268d4ea049dc1646e0afaf21c5_1440w.jpg" data-sizes="auto" alt="WPF学习之旅" class="lazyload">
+          
+        
+        <a href="/en/2025/07/14/Csharp%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%85/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            WPF学习之旅
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="https://picx.zhimg.com/v2-e26593268d4ea049dc1646e0afaf21c5_1440w.jpg" data-sizes="auto" alt="WPF的XAML解析" class="lazyload">
+        
+      
+      <a href="/en/2025/07/14/WPF%E8%A7%A3%E6%9E%90%E6%95%99%E7%A8%8B/"></a>
+      <div class="article-nav-caption">Older</div>
+      <h3 class="article-nav-title">
+        
+          WPF的XAML解析
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+  <section id="comments" data-aos="fade-up">
+    <div class="comment-header">
+      
+      
+        
+      
+      <h2 class="comment-title">Leave a comment</h2>
+      <div class="comment-selector">
+        <div class="comment-selector-wrap">
+            
+            <div class="selector-item" data-selector="giscus">
+              <span>giscus</span>
+            </div>
+            
+        </div>
+      </div>
+    </div>
+    <div class="comment-content">
+      
+        <div class="comment giscus-comment" data-aos="fade-up"
+          id="giscus-comment">
+        </div>
+      
+    </div>
+  </section>
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2021-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      冯笑一
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        44.1k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        03:12
+      </div>
+    
+    
+      <div class="footer-beian">
+        <a target="_blank" rel="noopener external nofollow noreferrer" href="https://beian.miit.gov.cn" data-pjax-state="">赣ICP备2021007570号-1</a>
+      </div>
+    
+    
+      <div class="footer-beian">
+        <img style="object-fit: contain;margin-right: 2px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAWCAMAAAD3n0w0AAAC4lBMVEUAAAD+/ODz6Kr//+PYrn3x167oxnyaaVzhs2ifaFXbrGLkvFnpyF7v2X/kwm3cp1nhsGfqw3rZqG3ntVzjrFPt3oDjvGnfr2fbnFGti3q0lH7ktoLep1zdqVPryXn9v1T4znr/74bnvGz034v+2I/ktoDz6ZLkwY/Dfz7buoftzYbq2IPr0pjs3bLv6KPRrnbKhFv79ND488n/+dDZr4Lx38f/+cH/95f42oL7/97s2Y3++uzw1rvTk3ABAW0AAHnqxl7ktV3/0ljksE7XPiDWHRfOAAJrdodyeIKUj4EAAIAABHfyy24GA2ftzWYAAGPpwWD/217syVuTeFrqvVnmuVnrwFfislP+xVLnwFHpuFDVkEbdmkXysETeoETpgj7ThT3XdTg5FDjdhTXWZTDaTCm7TCbSOSDUIRnJJxPQFg2Ej5kcPpdyhZSptJEACJFpfo4AG44XMInFvYfTvIejmYS9un7FrnwAEHp8enny2HjWwHjKtnhcX3jYzHeNhnfu2HWUjHX34nSsonPz5HLNwnHu1HD70m9WTm//723pym3x02ndtmn/0mbnxGa0o2ZeWWbwzWT8zGT/4mPqymLtwmJuYmLvymH/vmB5ZGC9kF4MAF3ru1zmu1zou1mnjVn4xFjYnli0mVi5i1jiqVfyyVbmtlbXkVNUOFPlvFLNrFKjfVLjwFHuvlBgHlDsuU9ONU9ODk7/2E02Gk3gpEzcpEzpsUvjqkralkqEaUr/tUnorkngjkf7n0bXikb6xERCJETemEPckUG1gD/ooD3Ulj3jkz3TZT3WjjzOeDqBWDr3pDnglTlMADnbbTf2gjbkbzaTYDZpAjbplzTtcTTEazPXXzOeXzDscS3MPi38jizJWSrVSCrrXynzfCjVdCjZRyjTQCbFUiTlYCPLPSHVNCHwXh7iRh7GPh3PLBr9LRTRDBG/ABG2ABCxDg7BDAvUAwv9KwrEGArTBAjZAAbJAAJ7jjdaAAAAPnRSTlMACEIarGn7+/n39fTw7Ozr5+bl5OTh4NvS0cvHxsbEw8G+vLqysaufnJiVk4yDfG9dXFpMSEFBNTApJyEcFLSeMvYAAAFySURBVBjTYsAHmFmlJFmZUYTMWDivn9q5mp3FGCHGOCvp4tXHN3qakxYzwrUqbAi+9zk91W1v3goVqKglx+YJtzIyXj7Iej/D/YCgFVjQvNFr/rMPT11fp3+9W2ZXbwESs5H39D78/Iuri4urm0udXaWiNVBQ/3Sp16LzbrePrtmTdaXVztNJFyioebk8f9r+tBcpief2TZ5pXxyrDhQUSvbJsUuLv/Pk2sMLx32Lqs6IAwUB4zq5K9f+7ceUR4nxr97YFUQkiAEFVeMmlRSeffcpMzP15qWKmvZwLaCg9KElvdne/v4b1832tfcIdNwuBxRkW7j8mE91sHv/qtoOj6lHYpx5gYJGK7dG318QuCki1qnTKTk6PIgJ5HpDnsiEE35znOdN7I7Z0cUHFmMwFXBwWBbmEDA9JC60rY8fIqjc1ODoGOIcEHVwS+hcvxY1SGhqc0ctXbtt/e6woMgponqwALU10JCVEBGWUdIxwR1hAKaOh2BwM3MwAAAAAElFTkSuQmCC" alt="">
+        <a target="_blank" rel="noopener external nofollow noreferrer" href="https://beian.mps.gov.cn/#/query/webSearch?code=32059002006328">苏公网安备32059002006328号</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">Number of visits&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">Number of visitors&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-lin-id%E6%9E%9A%E4%B8%BE%E5%AE%9A%E4%B9%89"><span class="toc-number">1.</span> <span class="toc-text"> 一、LIN ID枚举定义</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E6%9C%ACid%E6%9E%9A%E4%B8%BE"><span class="toc-number">1.1.</span> <span class="toc-text"> 1. 基本ID枚举</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-id%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E"><span class="toc-number">1.2.</span> <span class="toc-text"> 2. ID功能说明</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%91%BD%E4%BB%A4%E4%B8%8E%E7%8A%B6%E6%80%81%E6%9E%9A%E4%B8%BE%E5%AE%9A%E4%B9%89"><span class="toc-number">2.</span> <span class="toc-text"> 二、命令与状态枚举定义</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-gid_otapcmd_c%E5%91%BD%E4%BB%A4%E6%9E%9A%E4%B8%BE"><span class="toc-number">2.1.</span> <span class="toc-text"> 1. gID_OtapCmd_c命令枚举</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-gid_otapgetstatus_c%E7%8A%B6%E6%80%81%E6%9E%9A%E4%B8%BE"><span class="toc-number">2.2.</span> <span class="toc-text"> 2. gID_OtapGetStatus_c状态枚举</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%95%B0%E6%8D%AE%E5%B8%A7%E6%A0%BC%E5%BC%8F%E5%AE%9A%E4%B9%89"><span class="toc-number">3.</span> <span class="toc-text"> 三、数据帧格式定义</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%90%84id%E6%95%B0%E6%8D%AE%E5%B8%A7%E7%BB%93%E6%9E%84%E5%AF%B9%E6%AF%94"><span class="toc-number">3.1.</span> <span class="toc-text"> 1. 各ID数据帧结构对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AD%97%E6%AE%B5%E8%AF%A6%E7%BB%86%E8%AF%B4%E6%98%8E"><span class="toc-number">3.2.</span> <span class="toc-text"> 2. 字段详细说明</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-ota%E5%8D%87%E7%BA%A7%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-number">4.</span> <span class="toc-text"> 四、OTA升级流程详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%8E%E5%BC%80%E5%A7%8B%E4%BC%A0%E8%BE%93%E9%98%B6%E6%AE%B5"><span class="toc-number">4.1.</span> <span class="toc-text"> 1. 初始化与开始传输阶段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E9%98%B6%E6%AE%B5%E4%BB%A5%E6%89%87%E5%8C%BA1%E4%B8%BA%E4%BE%8B"><span class="toc-number">4.2.</span> <span class="toc-text"> 2. 数据传输阶段(以扇区1为例)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%BC%A0%E8%BE%93%E7%BB%93%E6%9D%9F%E9%98%B6%E6%AE%B5"><span class="toc-number">4.3.</span> <span class="toc-text"> 3. 传输结束阶段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%9B%BE%E8%A1%A8%E8%AF%B4%E6%98%8E"><span class="toc-number">5.</span> <span class="toc-text"> 五、图表说明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ota-%E5%9B%BA%E4%BB%B6%E5%8D%87%E7%BA%A7%E6%B5%81%E7%A8%8B%E8%AF%B4%E6%98%8E"><span class="toc-number">5.1.</span> <span class="toc-text"> OTA 固件升级流程说明：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%8D%8F%E8%AE%AE%E5%85%B3%E9%94%AE%E7%82%B9%E8%AF%B4%E6%98%8E"><span class="toc-number">6.</span> <span class="toc-text"> 六、协议关键点说明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="toc-number">6.1.</span> <span class="toc-text"> 关键参数说明：</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="冯笑一" class="lazyload">
+  <div class="sidebar-author-name">冯笑一</div>
+  <div class="sidebar-description">电子信息爱好者</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Post</div>
+    <div class="sidebar-state-number">16</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Category</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tag</div>
+    <div class="sidebar-state-number">17</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a href=mailto:qingchunhuoli@live.com itemprop="url" target="_blank" aria-label="email" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/MYxiaoyi itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://space.bilibili.com/5463002 itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/" aria-label="Home"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="home icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Home</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/archives/" aria-label="Archives"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="archives icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Archives</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/about/" aria-label="About"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="about icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">About</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/friend/" aria-label="Friend"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="friend icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Friend</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png"/>
+        </div>
+      </div>
+    
+    
+    
+      <meting-js
+        theme="var(--color-link)"
+        id="7378273438"
+        server="netease"
+        type="playlist"
+        auto=""
+        fixed="true"
+        autoplay="false"
+        loop="all"
+        order="list"
+        preload="auto"
+        volume="0.7"
+        mutex="true"
+        list-folded="false"
+        lrc-type="3"
+      ></meting-js>
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/quicklink@2.3.0/dist/quicklink.umd.js" integrity="sha384-aD7FsuQkS1ohgFKY41fJfeA+Wd&#x2F;QRNnrOd9Bs58K3FzKdJJv8yPnYU8Tnp5z1agS" crossorigin="anonymous"></script>
+
+  <script data-pjax>
+    window.quicklink?.listen({
+      timeout: 3000,
+      priority: true,
+      ignores: []
+    });
+  </script>
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "冯笑一",
+          title: "LIN总线OTA升级协议定义",
+          url: "https://myxiaoyi.github.io/2025/07/14/LIN%E6%80%BB%E7%BA%BFOTA%E5%8D%87%E7%BA%A7%E5%8D%8F%E8%AE%AE%E5%AE%9A%E4%B9%89/",
+          excerpt: "",
+          description: "",
+          stripContent: " 一、LIN ID枚举定义  1. 基本ID枚举 123456typedef enum&amp;#123;    gID_OtapCmd_c = 0x31,    gID_OtapGetStatus_c,    gID_OtapData_c&amp;#125; lin_id_t;  2. ID功能说明  gID_OtapCmd_c (0x31)：LIN主节点指示从节点开始/结束固件传输的命令ID gID_OtapGetStatus_c：LIN主节点获取从节点实时状态的状态查询ID gID_OtapData_c：",
+          date: "Mon Jul 14 2025 00:00:00 GMT+0800",
+          updated: "Wed Jul 16 2025 14:37:44 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@11.6.0/dist/mermaid.min.js" integrity="sha384-zkWMJO4sgpPUzyuOgDx8HB&#x2F;K55glbAwajEpk1Go2NWRuPkPA&#x2F;wIhoEJTuSkmOYrV" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+<script data-pjax>
+  var loadScript = (src, integrity) => {
+    const script = document.createElement('script');
+    script.src = src;
+    if (integrity) script.integrity = integrity;
+    script.crossOrigin = 'anonymous';
+    return script;
+  };
+
+  var commentConfigKeys = ['valine', 'waline', 'twikoo', 'gitalk', 'giscus'];
+  var commentConfig = {
+    valine: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.valine-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/valine@1.5.1/dist/Valine.min.js',
+          'sha384-3ma91AExDeMAZ1rjTjaP8V2A2obQE+s5ltKRwYlwdpArz9xVbp0tF3b0VV2ACNPn'
+        );
+        script.onload = () => {
+          var GUEST_INFO = ['nick', 'mail', 'link'];
+          var guest_info = 'nick,mail,link'.split(',').filter((item) => {
+            return GUEST_INFO.indexOf(item) > -1
+          });
+          var recordIP = JSON.parse('true');
+          var highlight = JSON.parse('true');
+          var visitor = JSON.parse('false');
+          var serverURLs = undefined;
+
+          if (window.Valine) {
+            new Valine({
+              el: '.valine-comment',
+              appId: "",
+              appKey: "",
+              placeholder: "Just go go",
+              pageSize: '10',
+              avatar: 'mp',
+              lang: document.documentElement.lang || 'en',
+              recordIP: recordIP,
+              highlight: highlight,
+              visitor: visitor,
+              requiredFields: guest_info,
+              path: window.location.pathname,
+              serverURLs
+            });
+          }
+        };
+        document.head.appendChild(script);
+      }
+    },
+    waline: {
+      enable: false,
+      load: async () => {
+        const container = document.querySelector('.waline-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        let walineInit;
+        const walineCdn = 'https://npm.webcache.cn/@waline/client@2.15.8/dist/waline.mjs';
+        const walineIntegrity = 'sha384-9sbqJjrfGjbkI6/PI4nU/MvBfEmkkPC4YK9I4zBeMIf1CVCZdCMH/KinBEAZII/5';
+
+        const module = await safeImport(walineCdn, walineIntegrity);
+        walineInit = module.init;
+
+        window.walineInstance = walineInit({
+          el: '.waline-comment',
+          serverURL: 'https://6dfzn3xp.api.lncldglobal.com',
+          lang: document.documentElement.lang || 'en',
+          locale: {},
+          emoji: ["https://unpkg.com/@waline/emojis@1.2.0/weibo","https://unpkg.com/@waline/emojis@1.2.0/alus","https://unpkg.com/@waline/emojis@1.2.0/bilibili","https://unpkg.com/@waline/emojis@1.2.0/qq","https://unpkg.com/@waline/emojis@1.2.0/tieba","https://unpkg.com/@waline/emojis@1.2.0/tw-emoji"],
+          meta: ["nick","mail","link"],
+          requiredMeta: ["nick","mail"],
+          wordLimit: JSON.parse('0'),
+          comment: true,
+          pageSize: JSON.parse('10'),
+          dark: 'html[data-theme="dark"]',
+          pageview: JSON.parse('true'),
+        });
+      }
+    },
+    twikoo: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.twikoo-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/twikoo@1.6.44/dist/twikoo.all.min.js',
+          'sha384-kwWLC0HjeZZnVPqCJ1AncI8tsk+kQqF9TbAmCclcc9Z0hGkfgHRzeQZxmdmZhE0K'
+        );
+
+        script.onload = () => {
+          if (window.twikoo) {
+            twikoo.init({
+              envId: '',
+              el: '.twikoo-comment',
+              region: '',
+              lang: document.documentElement.lang || 'en',
+            });
+
+            twikoo.getCommentsCount({
+              envId: '',
+              region: '',
+              urls: [
+                '/friend/index.html'
+              ],
+              includeReply: false
+            }).then((res) => {
+              _$('.twikoo-comment-count').innerText = res[0].count;
+            }).catch((err) => {
+              console.error(err);
+            });
+          }
+        } 
+        document.head.appendChild(script);
+      }
+    },
+    gitalk: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.gitalk-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/gitalk@1.8.0/dist/gitalk.min.js',
+          'sha384-kspnZUWBoSWwoJHa0hBCXYbHGbhvU/lcEH5O8eVbSDhbPwsiVUTp/aGX/z/5EuMA'
+        );
+
+        script.onload = () => {
+          if (false) {
+            const md5Script = loadScript(
+              'https://npm.webcache.cn/blueimp-md5@2.19.0/js/md5.min.js',
+              'sha384-JmVtRz6RWiXnA14QbIOJzPuU3MidULOpBP66deeLLyyoF4Tr/gZlbkHkL6vTthxH'
+            );
+            md5Script.onload = initGitalk;
+            document.head.appendChild(md5Script);
+          } else {
+            initGitalk();
+          }
+        }
+        document.head.appendChild(script);
+
+        function initGitalk() {
+          var gitalkId = location.pathname;
+          var gitalk = new Gitalk({
+            clientID: '',
+            clientSecret: '',
+            repo: '',
+            owner: '',
+            admin: null,
+            id: gitalkId,
+            distractionFreeMode: false,
+            language: document.documentElement.lang || 'en',
+          })
+          gitalk.render('gitalk-comment');
+        }
+      }
+    },
+    giscus: {
+      enable: true,
+      load: () => {
+        const container = document.querySelector('.giscus-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        // 删除可能已存在的 giscus 脚本和 iframe
+        const existingScript = container.querySelector('script[src*="giscus.app/client.js"]');
+        if (existingScript) existingScript.remove();
+        const existingFrame = document.querySelector('iframe.giscus-frame');
+        if (existingFrame) existingFrame.remove();
+
+        const giscusScript = document.createElement('script');
+        const domMode = document.documentElement.getAttribute("data-theme");
+
+        const docLang = document.documentElement.lang || 'en';
+        const langBase = docLang.split('-')[0];
+        const supportedLangs = ['ar', 'be', 'bg', 'ca', 'cs', 'da', 'de', 'en', 
+        'eo', 'es', 'eu', 'fa', 'fr', 'gr', 'hbs', 'he', 'hu', 'id', 'it', 'ja', 
+        'kh', 'ko', 'nl', 'pl', 'pt', 'ro', 'ru', 'th', 'tr', 'uk', 'uz', 'vi', 'zh-CN', 'zh-HK', 'zh-TW'];
+        const giscusLang = supportedLangs.includes(docLang) ? docLang : supportedLangs.includes(langBase) ? langBase : 'en';
+
+        giscusScript.src = 'https://giscus.app/client.js';
+        giscusScript.setAttribute('data-repo', 'MYxiaoyi/MYxiaoyi.github.io');
+        giscusScript.setAttribute('data-repo-id', 'R_kgDOPMp1Fg');
+        giscusScript.setAttribute('data-category', 'Announcements'); 
+        giscusScript.setAttribute('data-category-id', 'DIC_kwDOPMp1Fs4CtAct');
+        giscusScript.setAttribute('data-mapping', '0');
+        giscusScript.setAttribute('data-strict', '0');
+        giscusScript.setAttribute('data-reactions-enabled', '1');
+        giscusScript.setAttribute('data-emit-metadata', '0');
+        giscusScript.setAttribute('data-input-position', 'bottom');
+        giscusScript.setAttribute('data-theme', domMode === 'dark' ? 'dark' : 'light');
+        giscusScript.setAttribute('data-lang', giscusLang);
+        giscusScript.setAttribute('crossorigin', 'anonymous');
+        giscusScript.async = true;
+        container.appendChild(giscusScript);
+        document.body.addEventListener('light-theme-set', () => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: 'light' } } }, 'https://giscus.app');
+        });
+        document.body.addEventListener('dark-theme-set', () => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: 'dark' } } }, 'https://giscus.app');
+        });
+      }
+    }
+  }
+  commentConfig.enable = commentConfigKeys.some(key => commentConfig[key].enable);
+
+  var defaultComment = '';
+  if (commentConfig.enable) {
+    // 1. 首先检查localStorage中是否有保存的评论类型
+    var savedCommentType = localStorage.getItem('commentType');
+    
+    // 2. 如果localStorage中有值且对应的评论系统可用，就使用它
+    if (savedCommentType) {
+      if (commentConfig[savedCommentType]?.enable) {
+        defaultComment = savedCommentType;
+      }
+    }
+    
+    // 3. 如果localStorage无效，检查配置的默认评论系统
+    if (!defaultComment) {
+      var configDefault = 'waline';
+      if (commentConfig[configDefault]?.enable) {
+        defaultComment = configDefault;
+      }
+    }
+    
+    // 4. 如果前两项都无效，按指定顺序找到第一个可用的评论系统
+    if (!defaultComment) {
+      defaultComment = commentConfigKeys.find(sys => commentConfig[sys].enable) || '';
+    }
+  }
+  function loadComments() {
+    if (!commentConfig.enable) return;
+    // 评论组件加载状态跟踪
+    const loadedComments = {
+      valine: false,
+      waline: false,
+      twikoo: false,
+      gitalk: false,
+      giscus: false
+    };
+
+    // 隐藏所有评论容器
+    const hideAllComments = () => {
+      const commentContainers = document.querySelectorAll('.comment');
+      commentContainers.forEach(container => {
+        container.style.display = 'none';
+      });
+    };
+
+    // 按需加载评论系统
+    const loadCommentSystem = (type) => {
+      if (loadedComments[type]) {
+        // 如果已加载，只需显示对应容器
+        document.querySelector(`.${type}-comment`).style.display = 'block';
+        return;
+      }
+
+      // 根据类型加载对应的脚本
+      commentConfig[type]?.load();
+      loadedComments[type] = true;
+    };
+
+    // 评论组件选择器
+    const changeActiveCommentItems = (item) => {
+      const commentItems = document.querySelectorAll('.selector-item');
+      for (let i = 0; i < commentItems.length; i++) {
+        commentItems[i].classList.remove('active');
+      }
+      item.classList.add('active');
+
+      // 获取要加载的评论系统类型
+      const commentType = item.getAttribute('data-selector');
+
+      // 隐藏所有评论系统
+      hideAllComments();
+
+      // 加载选中的评论系统
+      loadCommentSystem(commentType);
+    };
+
+    const commentInit = () => {
+      // 评论组件选择器点击事件
+      const commentItems = document.querySelectorAll('.selector-item');
+      for (let item of commentItems) {
+        item.addEventListener('click', () => {
+          // 保存选择器状态
+          const commentType = item.getAttribute('data-selector');
+          window.localStorage.setItem('commentType', commentType);
+          // 切换选中状态
+          changeActiveCommentItems(item);
+        });
+      }
+
+      // 检查是否需要加载默认评论系统
+      if (defaultComment) {
+        const defaultSelectorItem = document.querySelector(`[data-selector="${defaultComment}"]`);
+        if (!defaultSelectorItem) return;
+        defaultSelectorItem.style.display = 'block';
+        defaultSelectorItem.classList.add('active');
+        loadCommentSystem(defaultComment);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', commentInit);
+    } else {
+      commentInit();
+    }
+  };
+  loadComments();
+</script>
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.9.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+    
+<script src="https://npm.webcache.cn/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF&#x2F;RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh&#x2F;OJfpU0jr6" crossorigin="anonymous" defer data-pjax></script>
+
+    
+<script src="https://npm.webcache.cn/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous" defer onload="renderMathInElement(_$(&#39;article&#39;), {delimiters: [{left: &#39;$$&#39;, right: &#39;$$&#39;, display: true},{left: &#39;$&#39;, right: &#39;$&#39;, display: false}]});" data-pjax></script>
+
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.js" integrity="sha384-gdGYZwHnfJM54evoZhpO0s6ZF5BQiybkiyW7VXr+h5UfruuRL&#x2F;aORyw+5+HZoU6e" crossorigin="anonymous"></script>
+
+  
+
+
+
+  
+  <script>
+    var isMobile = window.matchMedia('(max-width: 959px)').matches;
+    if (isMobile) {
+      const meting = _$('meting-js');
+      if (meting) {
+        meting.setAttribute('fixed', 'true');
+        const aside = meting.parentNode;
+        if (aside?.tagName === 'ASIDE') {
+          aside.removeChild(meting);
+          document.body.appendChild(meting);
+        }
+      }
+    }
+  </script>
+  
+<script src="https://npm.webcache.cn/meting@2.0.1/dist/Meting.min.js" integrity="sha384-ASVlpKF80A22OXTK3tfEjZm1EL6uFMKIC4p8+0maanw1S&#x2F;IyB+Y4JG+ZDU7GpKE8" crossorigin="anonymous"></script>
+
+
+
+
+    
+  </body>
+  </html>
+

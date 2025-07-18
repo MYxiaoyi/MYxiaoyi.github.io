@@ -1,0 +1,1943 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+  <script src="https://www.googletagmanager.com/gtag/js?id=true"></script>
+  <script data-pjax>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'true');
+  </script>
+
+
+  
+  <script>
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "true");
+  </script>
+
+
+  
+  <script async src="https://hm.baidu.com/hm.js?true"></script>
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    _hmt.push(["_trackPageview", location.pathname]);
+  </script>
+
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":false,"count":50,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://myxiaoyi.github.io';window.REIMU_CONFIG.i18n_languages = ["en"];</script>
+  
+  <title>
+    汽车电子固件升级（OTA）实现详解 |
+    
+    冯笑一的小窝
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="引言 随着汽车电子技术的飞速发展，固件空中升级(OTA) 技术已成为现代汽车电子系统中不可或缺的功能。在车身控制领域，LIN总线作为低成本、低复杂度的通信协议被广泛应用。本文将深入探讨基于LIN总线的OTA升级实现方案，从协议设计到代码实现，全面解析这一关键技术。  第一部分：LIN总线基础  LIN总线概述 LIN(Local Interconnect Network)是一种低成本串行通信协议">
+<meta property="og:type" content="article">
+<meta property="og:title" content="汽车电子固件升级（OTA）实现详解">
+<meta property="og:url" content="https://myxiaoyi.github.io/2025/07/14/%E6%B1%BD%E8%BD%A6%E7%94%B5%E5%AD%90%E5%9B%BA%E4%BB%B6%E5%8D%87%E7%BA%A7%EF%BC%88OTA%EF%BC%89%E5%AE%9E%E7%8E%B0%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="冯笑一的小窝">
+<meta property="og:description" content="引言 随着汽车电子技术的飞速发展，固件空中升级(OTA) 技术已成为现代汽车电子系统中不可或缺的功能。在车身控制领域，LIN总线作为低成本、低复杂度的通信协议被广泛应用。本文将深入探讨基于LIN总线的OTA升级实现方案，从协议设计到代码实现，全面解析这一关键技术。  第一部分：LIN总线基础  LIN总线概述 LIN(Local Interconnect Network)是一种低成本串行通信协议">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2025/png/33668333/1751981435368-6439468c-bc6d-40bf-9e36-0e42cf925940.png">
+<meta property="article:published_time" content="2025-07-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-07-16T07:42:32.203Z">
+<meta property="article:author" content="冯笑一">
+<meta property="article:tag" content="嵌入式">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content="教程，技术分享">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2025/png/33668333/1751981435368-6439468c-bc6d-40bf-9e36-0e42cf925940.png">
+  
+  
+    <link rel="alternate" href="/404.html" title="冯笑一的小窝" >
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l&#x2F;9On385z&#x2F;&#x2F;&#x2F;+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.css" integrity="sha384-tLMkTWh2pfXNWGFlUS0w1TFtRG5xZ9lPWFOooj+vDDLIL+xBGQU&#x2F;voDBY5XE2lVh" crossorigin="anonymous">
+
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi ">
+        
+          <img src="/images/taichi.svg" alt="loading" />
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">进入珊瑚宫中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+<div id="heatmap-tooltip"></div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="home icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="archives icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/archives/">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="about icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/about/">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="friend icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/friend/">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/404.html" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜索"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">简体中文</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" class="selected">简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/07/14/汽车电子固件升级（OTA）实现详解/';
+            
+              langMap['en'] = '/en/2025/07/14/汽车电子固件升级（OTA）实现详解/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="https://pic4.zhimg.com/v2-1db2a15e30e57389a8456fca9b47223d_1440w.jpg" alt="汽车电子固件升级（OTA）实现详解">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">汽车电子固件升级（OTA）实现详解</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86lin%E6%80%BB%E7%BA%BF%E5%9F%BA%E7%A1%80"><span class="toc-number">2.</span> <span class="toc-text"> 第一部分：LIN总线基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#lin%E6%80%BB%E7%BA%BF%E6%A6%82%E8%BF%B0"><span class="toc-number">2.1.</span> <span class="toc-text"> LIN总线概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#lin%E5%B8%A7%E7%BB%93%E6%9E%84"><span class="toc-number">2.2.</span> <span class="toc-text"> LIN帧结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86ota%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1"><span class="toc-number">3.</span> <span class="toc-text"> 第二部分：OTA协议设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#id%E6%9E%9A%E4%B8%BE%E5%AE%9A%E4%B9%89"><span class="toc-number">3.1.</span> <span class="toc-text"> ID枚举定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E4%B8%8E%E7%8A%B6%E6%80%81%E6%9E%9A%E4%B8%BE"><span class="toc-number">3.2.</span> <span class="toc-text"> 命令与状态枚举</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%B8%A7%E6%A0%BC%E5%BC%8F%E5%AE%9A%E4%B9%89"><span class="toc-number">3.3.</span> <span class="toc-text"> 数据帧格式定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#crc%E6%A0%A1%E9%AA%8C%E6%9C%BA%E5%88%B6"><span class="toc-number">3.4.</span> <span class="toc-text"> CRC校验机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86ota%E5%8D%87%E7%BA%A7%E6%B5%81%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text"> 第三部分：OTA升级流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-number">4.1.</span> <span class="toc-text"> 整体流程图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%8E%E5%BC%80%E5%A7%8B%E4%BC%A0%E8%BE%93"><span class="toc-number">4.2.</span> <span class="toc-text"> 1. 初始化与开始传输</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E9%98%B6%E6%AE%B5%E6%89%87%E5%8C%BA%E5%A4%84%E7%90%86"><span class="toc-number">4.3.</span> <span class="toc-text"> 2. 数据传输阶段（扇区处理）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%BC%A0%E8%BE%93%E7%BB%93%E6%9D%9F%E9%98%B6%E6%AE%B5"><span class="toc-number">4.4.</span> <span class="toc-text"> 3. 传输结束阶段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86%E4%B8%8B%E4%BD%8D%E6%9C%BA%E5%AE%9E%E7%8E%B0"><span class="toc-number">5.</span> <span class="toc-text"> 第四部分：下位机实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E6%9C%BA%E8%AE%BE%E8%AE%A1"><span class="toc-number">5.1.</span> <span class="toc-text"> 状态机设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">5.2.</span> <span class="toc-text"> 数据结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E5%A4%84%E7%90%86"><span class="toc-number">5.3.</span> <span class="toc-text"> 命令处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86%E4%B8%8A%E4%BD%8D%E6%9C%BA%E5%AE%9E%E7%8E%B0"><span class="toc-number">6.</span> <span class="toc-text"> 第五部分：上位机实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%9E%B6%E6%9E%84"><span class="toc-number">6.1.</span> <span class="toc-text"> 线程架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E5%8D%87%E7%BA%A7%E6%B5%81%E7%A8%8B"><span class="toc-number">6.2.</span> <span class="toc-text"> 核心升级流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%87%E5%8C%BA%E4%BC%A0%E8%BE%93%E5%AE%9E%E7%8E%B0"><span class="toc-number">6.3.</span> <span class="toc-text"> 扇区传输实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E9%83%A8%E5%88%86%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E7%82%B9"><span class="toc-number">7.</span> <span class="toc-text"> 第六部分：关键技术点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%95%B0%E6%8D%AE%E5%88%86%E7%89%87%E6%9C%BA%E5%88%B6"><span class="toc-number">7.1.</span> <span class="toc-text"> 1. 数据分片机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6"><span class="toc-number">7.2.</span> <span class="toc-text"> 2. 错误处理机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5%E4%BB%85%E4%BB%8B%E7%BB%8D"><span class="toc-number">7.3.</span> <span class="toc-text"> 3. 性能优化策略（仅介绍）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E9%83%A8%E5%88%86%E5%AE%89%E5%85%A8%E8%AE%BE%E8%AE%A1"><span class="toc-number">8.</span> <span class="toc-text"> 第七部分：安全设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BA%E4%BB%B6%E9%AA%8C%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="toc-number">8.1.</span> <span class="toc-text"> 固件验证机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B"><span class="toc-number">8.2.</span> <span class="toc-text"> 安全启动流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AB%E9%83%A8%E5%88%86%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E6%8C%91%E6%88%98%E4%B8%8E%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">9.</span> <span class="toc-text"> 第八部分：实际应用挑战与解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E6%8C%91%E6%88%98%E5%8F%8A%E5%BA%94%E5%AF%B9"><span class="toc-number">9.1.</span> <span class="toc-text"> 典型挑战及应对</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8Cbank%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0"><span class="toc-number">9.2.</span> <span class="toc-text"> 双Bank设计实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B9%9D%E9%83%A8%E5%88%86%E6%B5%8B%E8%AF%95%E4%B8%8E%E9%AA%8C%E8%AF%81"><span class="toc-number">10.</span> <span class="toc-text"> 第九部分：测试与验证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B%E8%AE%BE%E8%AE%A1"><span class="toc-number">10.1.</span> <span class="toc-text"> 测试用例设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE"><span class="toc-number">10.2.</span> <span class="toc-text"> 性能测试数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">11.</span> <span class="toc-text"> 结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5"><span class="toc-number">12.</span> <span class="toc-text"> 附录：关键代码片段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pid%E8%AE%A1%E7%AE%97%E5%87%BD%E6%95%B0"><span class="toc-number">12.1.</span> <span class="toc-text"> PID计算函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E5%93%8D%E5%BA%94%E5%A4%84%E7%90%86"><span class="toc-number">12.2.</span> <span class="toc-text"> 状态响应处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8A%E4%BD%8D%E6%9C%BA%E5%AE%9E%E7%8E%B0"><span class="toc-number">12.3.</span> <span class="toc-text"> 上位机实现</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="冯笑一" class="lazyload">
+  <div class="sidebar-author-name">冯笑一</div>
+  <div class="sidebar-description">电子信息爱好者</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">16</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">17</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a href=mailto:qingchunhuoli@live.com itemprop="url" target="_blank" aria-label="email" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/MYxiaoyi itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://space.bilibili.com/5463002 itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="home icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives/" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="archives icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about/" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="about icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend/" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="friend icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-汽车电子固件升级（OTA）实现详解" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-07-13T16:00:00.000Z" itemprop="datePublished">2025-07-14</time>
+    <time style="display: none;" id="post-update-time">2025-07-16</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/" data-aos="zoom-in">嵌入式</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h2 id="引言"><a class="markdownIt-Anchor" href="#引言"></a> 引言</h2>
+<p>随着汽车电子技术的飞速发展，<strong>固件空中升级(OTA)</strong> 技术已成为现代汽车电子系统中不可或缺的功能。在车身控制领域，<strong>LIN总线</strong>作为低成本、低复杂度的通信协议被广泛应用。本文将深入探讨基于LIN总线的OTA升级实现方案，从协议设计到代码实现，全面解析这一关键技术。</p>
+<h2 id="第一部分lin总线基础"><a class="markdownIt-Anchor" href="#第一部分lin总线基础"></a> 第一部分：LIN总线基础</h2>
+<h3 id="lin总线概述"><a class="markdownIt-Anchor" href="#lin总线概述"></a> LIN总线概述</h3>
+<p>LIN(Local Interconnect Network)是一种低成本串行通信协议，主要特点包括：</p>
+<ul>
+<li><strong>单主多从架构</strong>：一个主节点控制多个从节点</li>
+<li><strong>低传输速率</strong>：最高20kbps（典型应用19.2kbps）</li>
+<li><strong>单线传输</strong>：简化布线，降低成本</li>
+<li><strong>时间触发通信</strong>：主节点控制通信时序</li>
+</ul>
+<h3 id="lin帧结构"><a class="markdownIt-Anchor" href="#lin帧结构"></a> LIN帧结构</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>长度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>间隔场</td>
+<td>13位以上低电平</td>
+<td>帧起始标识</td>
+</tr>
+<tr>
+<td>同步场</td>
+<td>1字节(0x55)</td>
+<td>时钟同步</td>
+</tr>
+<tr>
+<td>标识符</td>
+<td>1字节</td>
+<td>6位ID+2位校验</td>
+</tr>
+<tr>
+<td>数据场</td>
+<td>0-8字节</td>
+<td>传输数据</td>
+</tr>
+<tr>
+<td>校验和</td>
+<td>1字节</td>
+<td>数据完整性校验</td>
+</tr>
+</tbody>
+</table>
+<h2 id="第二部分ota协议设计"><a class="markdownIt-Anchor" href="#第二部分ota协议设计"></a> 第二部分：OTA协议设计</h2>
+<h3 id="id枚举定义"><a class="markdownIt-Anchor" href="#id枚举定义"></a> ID枚举定义</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    gID_OtapCmd_c = <span class="number">0x31</span>,   <span class="comment">// 命令ID</span></span><br><span class="line">    gID_OtapGetStatus_c,    <span class="comment">// 状态查询ID</span></span><br><span class="line">    gID_OtapData_c          <span class="comment">// 数据传输ID</span></span><br><span class="line">&#125; <span class="type">lin_id_t</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="命令与状态枚举"><a class="markdownIt-Anchor" href="#命令与状态枚举"></a> 命令与状态枚举</h3>
+<p><strong>命令枚举：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    LIN_OTA_CMD_NONE = <span class="number">0x00</span>,  <span class="comment">// 无命令</span></span><br><span class="line">    LIN_OTA_CMD_START,        <span class="comment">// 开始传输</span></span><br><span class="line">    LIN_OTA_CMD_END,          <span class="comment">// 结束传输</span></span><br><span class="line">    LIN_OTA_CMD_CONTINUE      <span class="comment">// 继续传输</span></span><br><span class="line">&#125; lin_ota_cmd_c;</span><br></pre></td></tr></table></figure>
+<p><strong>状态枚举：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    LIN_OTA_STATUS_IDLE = <span class="number">0x00</span>,   <span class="comment">// 空闲</span></span><br><span class="line">    LIN_OTA_STATUS_READY,         <span class="comment">// 准备就绪</span></span><br><span class="line">    LIN_OTA_STATUS_RUNNING,       <span class="comment">// 传输中</span></span><br><span class="line">    LIN_OTA_STATUS_FINISH,        <span class="comment">// 完成</span></span><br><span class="line">    LIN_OTA_STATUS_ABORT          <span class="comment">// 中止</span></span><br><span class="line">&#125; <span class="type">lin_ota_status_t</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="数据帧格式定义"><a class="markdownIt-Anchor" href="#数据帧格式定义"></a> 数据帧格式定义</h3>
+<table>
+<thead>
+<tr>
+<th>ID类型</th>
+<th>长度</th>
+<th>数据帧结构</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gID_OtapCmd_c</td>
+<td>8字节</td>
+<td>[状态码(1B)] [扇区号(1B)] [版本号(2B)] [保留(4B)]</td>
+</tr>
+<tr>
+<td>gID_OtapGetStatus_c</td>
+<td>8字节</td>
+<td>[状态码(1B)] [扇区号(1B)] [CRC(2B)] [保留(4B)]</td>
+</tr>
+<tr>
+<td>gID_OtapData_c</td>
+<td>8字节</td>
+<td>[固件数据(8B)]</td>
+</tr>
+</tbody>
+</table>
+<h3 id="crc校验机制"><a class="markdownIt-Anchor" href="#crc校验机制"></a> CRC校验机制</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">uint16_t</span> <span class="title function_">CalculateCrc16</span><span class="params">(<span class="type">const</span> <span class="type">uint8_t</span> *data, <span class="type">uint16_t</span> len)</span> &#123;</span><br><span class="line">    <span class="type">uint16_t</span> crc = <span class="number">0xFFFF</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">uint16_t</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        crc ^= (<span class="type">uint16_t</span>)data[i] &lt;&lt; <span class="number">8</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">uint8_t</span> j = <span class="number">0</span>; j &lt; <span class="number">8</span>; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (crc &amp; <span class="number">0x8000</span>) &#123;</span><br><span class="line">                crc = (crc &lt;&lt; <span class="number">1</span>) ^ <span class="number">0x1021</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                crc &lt;&lt;= <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> crc;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="第三部分ota升级流程"><a class="markdownIt-Anchor" href="#第三部分ota升级流程"></a> 第三部分：OTA升级流程</h2>
+<h3 id="整体流程图"><a class="markdownIt-Anchor" href="#整体流程图"></a> 整体流程图</h3>
+<pre class="mermaid">graph TD
+    A[开始] --> B[发送开始命令]
+    B --> C{设备就绪?}
+    C -->|是| D[发送继续命令]
+    C -->|否| B
+    D --> E[发送扇区数据]
+    E --> F[查询状态]
+    F --> G{完成且CRC正确?}
+    G -->|是| H[还有扇区?]
+    G -->|否| E
+    H -->|是| D
+    H -->|否| I[发送结束命令]
+    I --> J[升级完成]</pre>
+<h3 id="1-初始化与开始传输"><a class="markdownIt-Anchor" href="#1-初始化与开始传输"></a> 1. 初始化与开始传输</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 主节点发送开始命令</span></span><br><span class="line"><span class="type">uint8_t</span> start_cmd[<span class="number">8</span>] = &#123;</span><br><span class="line">    LIN_OTA_CMD_START, <span class="comment">// 命令</span></span><br><span class="line">    <span class="number">0</span>,                 <span class="comment">// 扇区号0</span></span><br><span class="line">    <span class="number">0x01</span>, <span class="number">0x00</span>,        <span class="comment">// 固件版本1.0 (大端序)</span></span><br><span class="line">    <span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>            <span class="comment">// 保留字段</span></span><br><span class="line">&#125;;</span><br><span class="line">LIN_SendFrame(gID_OtapCmd_c, start_cmd);</span><br></pre></td></tr></table></figure>
+<h3 id="2-数据传输阶段扇区处理"><a class="markdownIt-Anchor" href="#2-数据传输阶段扇区处理"></a> 2. 数据传输阶段（扇区处理）</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 传输单个扇区数据</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> frame = <span class="number">0</span>; frame &lt; <span class="number">128</span>; frame++) &#123;</span><br><span class="line">    <span class="type">uint8_t</span> data_frame[<span class="number">8</span>];</span><br><span class="line">    <span class="comment">// 填充8字节数据</span></span><br><span class="line">    <span class="built_in">memcpy</span>(data_frame, &amp;firmware[frame*<span class="number">8</span>], <span class="number">8</span>);</span><br><span class="line">    LIN_SendFrame(gID_OtapData_c, data_frame);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询扇区状态</span></span><br><span class="line"><span class="type">uint8_t</span> status_frame[<span class="number">8</span>];</span><br><span class="line">LIN_QueryStatus(gID_OtapGetStatus_c, status_frame);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 验证CRC</span></span><br><span class="line"><span class="type">uint16_t</span> remote_crc = (status_frame[<span class="number">2</span>] &lt;&lt; <span class="number">8</span>) | status_frame[<span class="number">3</span>];</span><br><span class="line"><span class="keyword">if</span> (remote_crc != local_crc) &#123;</span><br><span class="line">    <span class="comment">// CRC校验失败，重传</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-传输结束阶段"><a class="markdownIt-Anchor" href="#3-传输结束阶段"></a> 3. 传输结束阶段</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">uint8_t</span> end_cmd[<span class="number">8</span>] = &#123;</span><br><span class="line">    LIN_OTA_CMD_END, <span class="comment">// 结束命令</span></span><br><span class="line">    <span class="number">0</span>,               <span class="comment">// 扇区号0</span></span><br><span class="line">    <span class="number">0x01</span>, <span class="number">0x00</span>,      <span class="comment">// 固件版本1.0</span></span><br><span class="line">    <span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>          <span class="comment">// 保留字段</span></span><br><span class="line">&#125;;</span><br><span class="line">LIN_SendFrame(gID_OtapCmd_c, end_cmd);</span><br></pre></td></tr></table></figure>
+<h2 id="第四部分下位机实现"><a class="markdownIt-Anchor" href="#第四部分下位机实现"></a> 第四部分：下位机实现</h2>
+<h3 id="状态机设计"><a class="markdownIt-Anchor" href="#状态机设计"></a> 状态机设计</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span> &#123;</span></span><br><span class="line">    OTA_IDLE = <span class="number">0</span>,       <span class="comment">// 空闲状态</span></span><br><span class="line">    OTA_READY,          <span class="comment">// 准备就绪</span></span><br><span class="line">    OTA_RECEIVING,       <span class="comment">// 接收数据中</span></span><br><span class="line">    OTA_VERIFYING,       <span class="comment">// 校验中</span></span><br><span class="line">    OTA_COMPLETE,        <span class="comment">// 完成</span></span><br><span class="line">    OTA_ERROR            <span class="comment">// 错误</span></span><br><span class="line">&#125; OtaState;</span><br></pre></td></tr></table></figure>
+<h3 id="数据结构"><a class="markdownIt-Anchor" href="#数据结构"></a> 数据结构</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    OtaState state;            <span class="comment">// 当前状态</span></span><br><span class="line">    <span class="type">uint8_t</span> current_sector;    <span class="comment">// 当前扇区</span></span><br><span class="line">    <span class="type">uint16_t</span> firmware_version; <span class="comment">// 固件版本</span></span><br><span class="line">    <span class="type">uint16_t</span> expected_crc;     <span class="comment">// 期望CRC</span></span><br><span class="line">    <span class="type">uint16_t</span> calculated_crc;   <span class="comment">// 计算CRC</span></span><br><span class="line">    <span class="type">uint32_t</span> bytes_received;   <span class="comment">// 已接收字节数</span></span><br><span class="line">    <span class="type">uint8_t</span> sector_buffer[<span class="number">1024</span>]; <span class="comment">// 扇区缓冲区(1KB)</span></span><br><span class="line">&#125; OtaUpdater;</span><br></pre></td></tr></table></figure>
+<h3 id="命令处理"><a class="markdownIt-Anchor" href="#命令处理"></a> 命令处理</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">OTA_HandleCommand</span><span class="params">(<span class="type">uint8_t</span>* data)</span> &#123;</span><br><span class="line">    <span class="type">uint8_t</span> command = data[<span class="number">0</span>];</span><br><span class="line">    <span class="type">uint8_t</span> sector = data[<span class="number">1</span>];</span><br><span class="line">    <span class="type">uint16_t</span> version = (data[<span class="number">2</span>] &lt;&lt; <span class="number">8</span>) | data[<span class="number">3</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">switch</span>(command) &#123;</span><br><span class="line">        <span class="keyword">case</span> LIN_OTA_CMD_START:</span><br><span class="line">            <span class="comment">// 初始化OTA状态</span></span><br><span class="line">            ota_updater.state = OTA_READY;</span><br><span class="line">            ota_updater.current_sector = <span class="number">0</span>;</span><br><span class="line">            ota_updater.firmware_version = version;</span><br><span class="line">            ota_updater.bytes_received = <span class="number">0</span>;</span><br><span class="line">            <span class="built_in">memset</span>(ota_updater.sector_buffer, <span class="number">0xFF</span>, </span><br><span class="line">                   <span class="keyword">sizeof</span>(ota_updater.sector_buffer));</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">case</span> LIN_OTA_CMD_CONTINUE:</span><br><span class="line">            <span class="comment">// 准备接收新扇区数据</span></span><br><span class="line">            <span class="keyword">if</span> (ota_updater.state == OTA_VERIFYING || </span><br><span class="line">                ota_updater.state == OTA_READY) &#123;</span><br><span class="line">                ota_updater.state = OTA_RECEIVING;</span><br><span class="line">                ota_updater.current_sector = sector;</span><br><span class="line">                ota_updater.bytes_received = <span class="number">0</span>;</span><br><span class="line">                <span class="built_in">memset</span>(ota_updater.sector_buffer, <span class="number">0xFF</span>, </span><br><span class="line">                       <span class="keyword">sizeof</span>(ota_updater.sector_buffer));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">case</span> LIN_OTA_CMD_END:</span><br><span class="line">            <span class="comment">// 结束传输</span></span><br><span class="line">            <span class="keyword">if</span> (ota_updater.state == OTA_VERIFYING || </span><br><span class="line">                ota_updater.state == OTA_COMPLETE) &#123;</span><br><span class="line">                OTA_WriteSectorToFlash(); <span class="comment">// 写入Flash</span></span><br><span class="line">                ota_updater.state = OTA_COMPLETE;</span><br><span class="line">                <span class="comment">// 执行固件跳转</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="第五部分上位机实现"><a class="markdownIt-Anchor" href="#第五部分上位机实现"></a> 第五部分：上位机实现</h2>
+<h3 id="线程架构"><a class="markdownIt-Anchor" href="#线程架构"></a> 线程架构</h3>
+<pre class="mermaid">classDiagram
+    class LinOtaUpdater {
+        -QThread* m_workerThread
+        -OtaWorker* m_worker
+        +startUpgrade()
+        +cancelUpgrade()
+    }
+    
+    class OtaWorker {
+        -int m_devHandle
+        -quint8 m_channel
+        -bool m_cancelRequested
+        +startUpgrade()
+        +cancelUpgrade()
+    }
+    
+    LinOtaUpdater --> OtaWorker : 包含</pre>
+<h3 id="核心升级流程"><a class="markdownIt-Anchor" href="#核心升级流程"></a> 核心升级流程</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">OtaWorker::startUpgrade</span><span class="params">(<span class="type">const</span> QByteArray &amp;firmwareData, </span></span></span><br><span class="line"><span class="params"><span class="function">                             quint16 firmwareVersion)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> SECTOR_SIZE = <span class="number">1024</span>;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> totalSectors = (firmwareData.<span class="built_in">size</span>() + SECTOR_SIZE - <span class="number">1</span>) / SECTOR_SIZE;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 1. 发送开始命令</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">sendStartCommand</span>(firmwareVersion)) &#123;</span><br><span class="line">        <span class="function">emit <span class="title">finished</span><span class="params">(<span class="literal">false</span>, <span class="string">&quot;开始命令发送失败&quot;</span>)</span></span>;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 等待设备就绪</span></span><br><span class="line">    <span class="type">int</span> retry = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (retry++ &lt; <span class="number">20</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">queryStatus</span>(<span class="number">0</span>) == LIN_OTA_STATUS_READY) <span class="keyword">break</span>;</span><br><span class="line">        QThread::<span class="built_in">msleep</span>(<span class="number">100</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (retry &gt;= <span class="number">20</span>) &#123;</span><br><span class="line">        <span class="function">emit <span class="title">finished</span><span class="params">(<span class="literal">false</span>, <span class="string">&quot;设备未就绪&quot;</span>)</span></span>;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 分扇区传输数据</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> sector = <span class="number">0</span>; sector &lt; totalSectors; ++sector) &#123;</span><br><span class="line">        <span class="keyword">if</span> (m_cancelRequested) <span class="keyword">return</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (sector &gt; <span class="number">0</span> &amp;&amp; !<span class="built_in">sendContinueCommand</span>(sector, firmwareVersion)) &#123;</span><br><span class="line">            <span class="function">emit <span class="title">finished</span><span class="params">(<span class="literal">false</span>, QString(<span class="string">&quot;扇区%1继续命令失败&quot;</span>).arg(sector))</span></span>;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        QByteArray sectorData = firmwareData.<span class="built_in">mid</span>(sector * SECTOR_SIZE, SECTOR_SIZE);</span><br><span class="line">        <span class="keyword">if</span> (sectorData.<span class="built_in">size</span>() &lt; SECTOR_SIZE) &#123;</span><br><span class="line">            sectorData.<span class="built_in">append</span>(<span class="built_in">QByteArray</span>(SECTOR_SIZE - sectorData.<span class="built_in">size</span>(), <span class="number">0xFF</span>));</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">transferSectorData</span>(sector, sectorData)) &#123;</span><br><span class="line">            <span class="function">emit <span class="title">finished</span><span class="params">(<span class="literal">false</span>, QString(<span class="string">&quot;扇区%1传输失败&quot;</span>).arg(sector))</span></span>;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="function">emit <span class="title">progressChanged</span><span class="params">(sector * <span class="number">100</span> / totalSectors)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. 发送结束命令</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">sendEndCommand</span>(firmwareVersion)) &#123;</span><br><span class="line">        <span class="function">emit <span class="title">finished</span><span class="params">(<span class="literal">true</span>, <span class="string">&quot;升级成功完成&quot;</span>)</span></span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        emit <span class="built_in">finished</span>(<span class="literal">false</span>, <span class="string">&quot;结束命令发送失败&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="扇区传输实现"><a class="markdownIt-Anchor" href="#扇区传输实现"></a> 扇区传输实现</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">OtaWorker::transferSectorData</span><span class="params">(<span class="type">int</span> sectorIndex, </span></span></span><br><span class="line"><span class="params"><span class="function">                                   <span class="type">const</span> QByteArray &amp;sectorData)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 发送128帧数据</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">128</span>; ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (m_cancelRequested) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        </span><br><span class="line">        QByteArray frame = sectorData.<span class="built_in">mid</span>(i * <span class="number">8</span>, <span class="number">8</span>);</span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">sendDataFrame</span>(frame)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算本地CRC</span></span><br><span class="line">    quint16 localCrc = <span class="built_in">calculateCrc16</span>(sectorData);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 验证扇区状态</span></span><br><span class="line">    <span class="type">int</span> retry = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (retry++ &lt; <span class="number">10</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (m_cancelRequested) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        </span><br><span class="line">        quint16 remoteCrc = <span class="number">0</span>;</span><br><span class="line">        LinOtaStatus status = <span class="built_in">queryStatus</span>(sectorIndex, &amp;remoteCrc);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (status == LIN_OTA_STATUS_FINISH) &#123;</span><br><span class="line">            <span class="keyword">if</span> (localCrc == remoteCrc) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>; <span class="comment">// 校验成功</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                emit <span class="built_in">statusMessage</span>(<span class="built_in">QString</span>(<span class="string">&quot;CRC校验失败: 本地=0x%1, 远程=0x%2&quot;</span>)</span><br><span class="line">                                  .<span class="built_in">arg</span>(localCrc, <span class="number">4</span>, <span class="number">16</span>, <span class="built_in">QChar</span>(<span class="string">&#x27;0&#x27;</span>))</span><br><span class="line">                                  .<span class="built_in">arg</span>(remoteCrc, <span class="number">4</span>, <span class="number">16</span>, <span class="built_in">QChar</span>(<span class="string">&#x27;0&#x27;</span>)));</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        QThread::<span class="built_in">msleep</span>(<span class="number">100</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>; <span class="comment">// 超时</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="第六部分关键技术点"><a class="markdownIt-Anchor" href="#第六部分关键技术点"></a> 第六部分：关键技术点</h2>
+<h3 id="1-数据分片机制"><a class="markdownIt-Anchor" href="#1-数据分片机制"></a> 1. 数据分片机制</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单帧数据</td>
+<td>8字节</td>
+<td>LIN帧最大数据长度</td>
+</tr>
+<tr>
+<td>单扇区</td>
+<td>1KB</td>
+<td>1024字节</td>
+</tr>
+<tr>
+<td>扇区帧数</td>
+<td>128帧</td>
+<td>1024/8=128</td>
+</tr>
+<tr>
+<td>典型固件</td>
+<td>64KB</td>
+<td>64个扇区</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-错误处理机制"><a class="markdownIt-Anchor" href="#2-错误处理机制"></a> 2. 错误处理机制</h3>
+<p><strong>关键错误处理策略：</strong></p>
+<ol>
+<li><strong>超时重传</strong>：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> retry = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span> (retry++ &lt; MAX_RETRY) &#123;</span><br><span class="line">    <span class="comment">// 尝试操作</span></span><br><span class="line">    <span class="keyword">if</span> (success) <span class="keyword">break</span>;</span><br><span class="line">    QThread::<span class="built_in">msleep</span>(RETRY_DELAY);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li><strong>CRC校验失败处理</strong>：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (localCrc != remoteCrc) &#123;</span><br><span class="line">    <span class="comment">// 记录错误</span></span><br><span class="line">    <span class="comment">// 触发重传流程</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li><strong>状态异常处理</strong>：</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (ota_updater.state == OTA_ERROR) &#123;</span><br><span class="line">    <span class="comment">// 重置状态机</span></span><br><span class="line">    <span class="comment">// 通知主节点</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-性能优化策略仅介绍"><a class="markdownIt-Anchor" href="#3-性能优化策略仅介绍"></a> 3. 性能优化策略（仅介绍）</h3>
+<ol>
+<li><strong>并行处理</strong>：多个扇区预取数据</li>
+<li><strong>压缩传输</strong>：固件压缩减少传输量</li>
+<li><strong>差分升级</strong>：仅传输差异部分</li>
+<li><strong>流控制</strong>：动态调整传输速率</li>
+</ol>
+<h2 id="第七部分安全设计"><a class="markdownIt-Anchor" href="#第七部分安全设计"></a> 第七部分：安全设计</h2>
+<h3 id="固件验证机制"><a class="markdownIt-Anchor" href="#固件验证机制"></a> 固件验证机制</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> <span class="title function_">VerifyFirmwareIntegrity</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 1. 检查固件头</span></span><br><span class="line">    <span class="keyword">if</span> (firmware_header.magic != FIRMWARE_MAGIC) </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 2. 验证签名</span></span><br><span class="line">    <span class="keyword">if</span> (!VerifyDigitalSignature(firmware_header.signature))</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 3. 校验整体CRC</span></span><br><span class="line">    <span class="type">uint16_t</span> total_crc = CalculateCrc16(firmware_data, firmware_size);</span><br><span class="line">    <span class="keyword">if</span> (total_crc != firmware_header.crc)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="安全启动流程"><a class="markdownIt-Anchor" href="#安全启动流程"></a> 安全启动流程</h3>
+<pre class="mermaid">sequenceDiagram
+    设备->>Bootloader: 上电启动
+    Bootloader->>Flash: 读取固件头
+    Bootloader->>Crypto: 验证签名
+    alt 验证成功
+        Bootloader->>Application: 跳转到应用
+    else 验证失败
+        Bootloader->>Recovery: 进入恢复模式
+        Recovery->>LIN: 请求固件更新
+    end</pre>
+<h2 id="第八部分实际应用挑战与解决方案"><a class="markdownIt-Anchor" href="#第八部分实际应用挑战与解决方案"></a> 第八部分：实际应用挑战与解决方案</h2>
+<h3 id="典型挑战及应对"><a class="markdownIt-Anchor" href="#典型挑战及应对"></a> 典型挑战及应对</h3>
+<table>
+<thead>
+<tr>
+<th>挑战</th>
+<th>解决方案</th>
+<th>实现要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>带宽限制</td>
+<td>增量更新</td>
+<td>仅传输差异部分</td>
+</tr>
+<tr>
+<td>升级中断</td>
+<td>断点续传</td>
+<td>记录最后成功扇区</td>
+</tr>
+<tr>
+<td>电源不稳</td>
+<td>双Bank设计</td>
+<td>BankA/B交替升级</td>
+</tr>
+<tr>
+<td>内存有限</td>
+<td>流式处理</td>
+<td>分块处理不缓存完整固件</td>
+</tr>
+<tr>
+<td>版本兼容</td>
+<td>元数据校验</td>
+<td>校验硬件ID和版本号</td>
+</tr>
+</tbody>
+</table>
+<h3 id="双bank设计实现"><a class="markdownIt-Anchor" href="#双bank设计实现"></a> 双Bank设计实现</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Flash布局</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BANK_A_START  0x08000000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BANK_A_END    0x0801FFFF</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BANK_B_START  0x08020000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BANK_B_END    0x0803FFFF</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 升级流程</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">PerformOTA</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">uint32_t</span> target_bank = (current_bank == BANK_A) ? BANK_B : BANK_A;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 擦除目标Bank</span></span><br><span class="line">    FLASH_EraseBank(target_bank);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 写入新固件</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; sector_count; i++) &#123;</span><br><span class="line">        WriteSector(target_bank + i*<span class="number">1024</span>, sector_data[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 验证固件</span></span><br><span class="line">    <span class="keyword">if</span> (VerifyFirmware(target_bank)) &#123;</span><br><span class="line">        <span class="comment">// 更新启动标志</span></span><br><span class="line">        SetBootBank(target_bank);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="第九部分测试与验证"><a class="markdownIt-Anchor" href="#第九部分测试与验证"></a> 第九部分：测试与验证</h2>
+<h3 id="测试用例设计"><a class="markdownIt-Anchor" href="#测试用例设计"></a> 测试用例设计</h3>
+<table>
+<thead>
+<tr>
+<th>测试项</th>
+<th>测试方法</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>正常升级</td>
+<td>完整传输固件</td>
+<td>升级成功，设备运行新固件</td>
+</tr>
+<tr>
+<td>断电恢复</td>
+<td>随机断电后重启</td>
+<td>恢复升级流程，无损坏</td>
+</tr>
+<tr>
+<td>带宽测试</td>
+<td>模拟不同总线负载</td>
+<td>升级时间在可接受范围</td>
+</tr>
+<tr>
+<td>错误注入</td>
+<td>模拟数据错误</td>
+<td>触发重传机制，最终成功</td>
+</tr>
+<tr>
+<td>边界测试</td>
+<td>传输最大尺寸固件</td>
+<td>完整处理无溢出</td>
+</tr>
+</tbody>
+</table>
+<h3 id="性能测试数据"><a class="markdownIt-Anchor" href="#性能测试数据"></a> 性能测试数据</h3>
+<table>
+<thead>
+<tr>
+<th>固件大小</th>
+<th>理论时间</th>
+<th>实测时间</th>
+<th>传输效率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>32KB</td>
+<td>13.6s</td>
+<td></td>
+<td>89%</td>
+</tr>
+<tr>
+<td>64KB</td>
+<td>27.3s</td>
+<td></td>
+<td>88%</td>
+</tr>
+<tr>
+<td>128KB</td>
+<td>54.6s</td>
+<td></td>
+<td>87%</td>
+</tr>
+</tbody>
+</table>
+<p><em>测试条件：LIN波特率19.2kbps，含协议开销</em></p>
+<h2 id="结论"><a class="markdownIt-Anchor" href="#结论"></a> 结论</h2>
+<p>基于LIN总线的OTA升级方案在汽车电子系统中具有重要价值。本文详细介绍了从协议设计到代码实现的全过程，重点解决了以下关键问题：</p>
+<ol>
+<li><strong>协议设计</strong>：设计了精简高效的LIN OTA协议，包括命令集、状态机和数据格式</li>
+<li><strong>分片传输</strong>：通过128帧/扇区的机制克服了LIN帧长度限制</li>
+<li><strong>完整性保障</strong>：实现CRC校验和双Bank存储确保升级可靠性</li>
+<li><strong>错误恢复</strong>：完善的超时重传和状态机设计应对各种异常场景</li>
+<li><strong>性能优化</strong>：多线程架构和流式处理提高升级效率</li>
+</ol>
+<p>随着汽车电子架构的演进，LIN OTA技术将在车身控制领域持续发挥重要作用。未来可探索与CAN FD、以太网等高速总线的协同升级方案，以满足日益增长的固件更新需求。</p>
+<blockquote>
+<p><strong>技术交流</strong>：欢迎访问作者博客 <a target="_blank" rel="noopener" href="https://www.f123.club">冯笑一的小窝</a> 获取更多技术文章和源码示例</p>
+</blockquote>
+<h2 id="附录关键代码片段"><a class="markdownIt-Anchor" href="#附录关键代码片段"></a> 附录：关键代码片段</h2>
+<h3 id="pid计算函数"><a class="markdownIt-Anchor" href="#pid计算函数"></a> PID计算函数</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">quint8 <span class="title">OtaWorker::calculatePid</span><span class="params">(quint8 id)</span> </span>&#123;</span><br><span class="line">    id &amp;= <span class="number">0x3F</span>; <span class="comment">// 确保6位ID</span></span><br><span class="line">    quint8 p0 = ((id &gt;&gt; <span class="number">0</span>) &amp; <span class="number">1</span>) ^ ((id &gt;&gt; <span class="number">1</span>) &amp; <span class="number">1</span>) ^ </span><br><span class="line">                ((id &gt;&gt; <span class="number">2</span>) &amp; <span class="number">1</span>) ^ ((id &gt;&gt; <span class="number">4</span>) &amp; <span class="number">1</span>);</span><br><span class="line">    quint8 p1 = ~(((id &gt;&gt; <span class="number">1</span>) &amp; <span class="number">1</span>) ^ ((id &gt;&gt; <span class="number">3</span>) &amp; <span class="number">1</span>) ^ </span><br><span class="line">                 ((id &gt;&gt; <span class="number">4</span>) &amp; <span class="number">1</span>) ^ ((id &gt;&gt; <span class="number">5</span>) &amp; <span class="number">1</span>)) &amp; <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> id | (p0 &lt;&lt; <span class="number">6</span>) | (p1 &lt;&lt; <span class="number">7</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="状态响应处理"><a class="markdownIt-Anchor" href="#状态响应处理"></a> 状态响应处理</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">OTA_SendStatusResponse</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    <span class="type">uint8_t</span> response[<span class="number">8</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    response[<span class="number">0</span>] = (<span class="type">uint8_t</span>)ota_updater.state; <span class="comment">// 状态码</span></span><br><span class="line">    response[<span class="number">1</span>] = ota_updater.current_sector; <span class="comment">// 扇区号</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 计算CRC</span></span><br><span class="line">    <span class="keyword">if</span> (ota_updater.state == OTA_VERIFYING) &#123;</span><br><span class="line">        response[<span class="number">2</span>] = (ota_updater.calculated_crc &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0xFF</span>;</span><br><span class="line">        response[<span class="number">3</span>] = ota_updater.calculated_crc &amp; <span class="number">0xFF</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 发送响应</span></span><br><span class="line">    LIN_slaveSend(response, <span class="keyword">sizeof</span>(response));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="上位机实现"><a class="markdownIt-Anchor" href="#上位机实现"></a> 上位机实现</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在主窗口中使用</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">MainWindow::startOtaUpgrade</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 初始化参数</span></span><br><span class="line">    <span class="type">int</span> devHandle = DevHandle[<span class="number">0</span>];<span class="comment">// 获取设备句柄</span></span><br><span class="line">    <span class="keyword">if</span> (devHandle == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">qWarning</span>() &lt;&lt; <span class="string">&quot;Failed to open LIN device&quot;</span>;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    quint8 channel = ui-&gt;comboBox-&gt;<span class="built_in">currentIndex</span>();   <span class="comment">// LIN通道号 (根据实际情况设置)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 加载固件文件</span></span><br><span class="line">    <span class="function">QFile <span class="title">firmwareFile</span><span class="params">(<span class="string">&quot;firmware.bin&quot;</span>)</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (!firmwareFile.<span class="built_in">open</span>(QIODevice::ReadOnly)) &#123;</span><br><span class="line">        <span class="built_in">qWarning</span>() &lt;&lt; <span class="string">&quot;Failed to open firmware file&quot;</span>;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    QByteArray firmwareData = firmwareFile.<span class="built_in">readAll</span>();</span><br><span class="line">    firmwareFile.<span class="built_in">close</span>();</span><br><span class="line"></span><br><span class="line">    quint16 version = <span class="number">0x0100</span>; <span class="comment">// 固件版本号</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建升级器</span></span><br><span class="line">    m_otaUpdater = <span class="keyword">new</span> <span class="built_in">LinOtaUpdater</span>(devHandle, channel, <span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">connect</span>(m_otaUpdater, &amp;LinOtaUpdater::progressChanged,</span><br><span class="line">            ui-&gt;progressBar, &amp;QProgressBar::setValue);</span><br><span class="line">    <span class="built_in">connect</span>(m_otaUpdater, &amp;LinOtaUpdater::statusMessage,</span><br><span class="line">            <span class="keyword">this</span>, [<span class="keyword">this</span>](QString msg) &#123;</span><br><span class="line">                 ui-&gt;Message-&gt;<span class="built_in">showMessage</span>(msg, MessageConsole::Success);</span><br><span class="line">            &#125;);</span><br><span class="line">    <span class="built_in">connect</span>(m_otaUpdater, &amp;LinOtaUpdater::finished,</span><br><span class="line">            <span class="keyword">this</span>, &amp;MainWindow::handleOtaResult);</span><br><span class="line">    <span class="built_in">connect</span>(m_otaUpdater, &amp;LinOtaUpdater::errorOccurred,</span><br><span class="line">            <span class="keyword">this</span>, [<span class="keyword">this</span>](QString error) &#123;</span><br><span class="line">                QMessageBox::<span class="built_in">critical</span>(<span class="keyword">this</span>, <span class="string">&quot;OTA Error&quot;</span>, error);</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//开始升级</span></span><br><span class="line">    m_otaUpdater-&gt;<span class="built_in">startUpgrade</span>(firmwareData, version);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">MainWindow::handleOtaResult</span><span class="params">(<span class="type">bool</span> success, QString message)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (success) &#123;</span><br><span class="line">        QMessageBox::<span class="built_in">information</span>(<span class="keyword">this</span>, <span class="string">&quot;Success&quot;</span>, message);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        QMessageBox::<span class="built_in">warning</span>(<span class="keyword">this</span>, <span class="string">&quot;Failure&quot;</span>, message);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 清理资源</span></span><br><span class="line">   <span class="keyword">if</span> (m_otaUpdater) &#123;</span><br><span class="line">       <span class="type">int</span> devHandle = m_otaUpdater-&gt;<span class="built_in">getDeviceHandle</span>(); <span class="comment">// 需要添加getter</span></span><br><span class="line">       m_otaUpdater-&gt;<span class="built_in">deleteLater</span>();</span><br><span class="line">       m_otaUpdater = <span class="literal">nullptr</span>;</span><br><span class="line">       <span class="built_in">LIN_EX_CloseDevice</span>(devHandle);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">MainWindow::cancelOtaUpgrade</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (m_otaUpdater) &#123;</span><br><span class="line">        m_otaUpdater-&gt;<span class="built_in">cancelUpgrade</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/33668333/1751981435368-6439468c-bc6d-40bf-9e36-0e42cf925940.png" alt="360X360/0e42cf925940.png" /></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">赞助</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">请作者喝杯咖啡吧</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/wechat.png" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=%E6%B1%BD%E8%BD%A6%E7%94%B5%E5%AD%90%E5%9B%BA%E4%BB%B6%E5%8D%87%E7%BA%A7%EF%BC%88OTA%EF%BC%89%E5%AE%9E%E7%8E%B0%E8%AF%A6%E8%A7%A3&amp;desc=%E6%B1%BD%E8%BD%A6%E7%94%B5%E5%AD%90%E5%9B%BA%E4%BB%B6%E5%8D%87%E7%BA%A7%EF%BC%88OTA%EF%BC%89%E5%AE%9E%E7%8E%B0%E8%AF%A6%E8%A7%A3&amp;source=https%3A%2F%2Fmyxiaoyi.github.io" target="_blank" rel="noopener noreferrer" title="汽车电子固件升级（OTA）实现详解">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="汽车电子固件升级（OTA）实现详解">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner"> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C#</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/" rel="tag">嵌入式</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E6%95%99%E7%A8%8B%EF%BC%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" rel="tag">教程，技术分享</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img data-src="https://picx.zhimg.com/v2-5ae04e7387368442ffd8a29d9a0f50bd_1440w.jpg" data-sizes="auto" alt="WPF的XAML解析" class="lazyload">
+          
+        
+        <a href="/2025/07/14/WPF%E8%A7%A3%E6%9E%90%E6%95%99%E7%A8%8B/"></a>
+        <div class="article-nav-caption">前一篇</div>
+        <h3 class="article-nav-title">
+          
+            WPF的XAML解析
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="https://upload-bbs.miyoushe.com/upload/2024/02/14/292762008/f0cb3676199b75980959b7d972a0771f_384819317620854048.jpg?x-oss-process=image/resize,s_600/quality,q_80/auto-orient,0/interlace,1/format,jpg" data-sizes="auto" alt="情侣小游戏" class="lazyload">
+      
+      <a href="/2025/07/13/love/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          情侣小游戏
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+  <section id="comments" data-aos="fade-up">
+    <div class="comment-header">
+      
+      
+        
+      
+      <h2 class="comment-title">说些什么吧！</h2>
+      <div class="comment-selector">
+        <div class="comment-selector-wrap">
+            
+            <div class="selector-item" data-selector="giscus">
+              <span>giscus</span>
+            </div>
+            
+        </div>
+      </div>
+    </div>
+    <div class="comment-content">
+      
+        <div class="comment giscus-comment" data-aos="fade-up"
+          id="giscus-comment">
+        </div>
+      
+    </div>
+  </section>
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2021-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      冯笑一
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        44.1k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        03:12
+      </div>
+    
+    
+      <div class="footer-beian">
+        <a target="_blank" rel="noopener external nofollow noreferrer" href="https://beian.miit.gov.cn" data-pjax-state="">赣ICP备2021007570号-1</a>
+      </div>
+    
+    
+      <div class="footer-beian">
+        <img style="object-fit: contain;margin-right: 2px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAWCAMAAAD3n0w0AAAC4lBMVEUAAAD+/ODz6Kr//+PYrn3x167oxnyaaVzhs2ifaFXbrGLkvFnpyF7v2X/kwm3cp1nhsGfqw3rZqG3ntVzjrFPt3oDjvGnfr2fbnFGti3q0lH7ktoLep1zdqVPryXn9v1T4znr/74bnvGz034v+2I/ktoDz6ZLkwY/Dfz7buoftzYbq2IPr0pjs3bLv6KPRrnbKhFv79ND488n/+dDZr4Lx38f/+cH/95f42oL7/97s2Y3++uzw1rvTk3ABAW0AAHnqxl7ktV3/0ljksE7XPiDWHRfOAAJrdodyeIKUj4EAAIAABHfyy24GA2ftzWYAAGPpwWD/217syVuTeFrqvVnmuVnrwFfislP+xVLnwFHpuFDVkEbdmkXysETeoETpgj7ThT3XdTg5FDjdhTXWZTDaTCm7TCbSOSDUIRnJJxPQFg2Ej5kcPpdyhZSptJEACJFpfo4AG44XMInFvYfTvIejmYS9un7FrnwAEHp8enny2HjWwHjKtnhcX3jYzHeNhnfu2HWUjHX34nSsonPz5HLNwnHu1HD70m9WTm//723pym3x02ndtmn/0mbnxGa0o2ZeWWbwzWT8zGT/4mPqymLtwmJuYmLvymH/vmB5ZGC9kF4MAF3ru1zmu1zou1mnjVn4xFjYnli0mVi5i1jiqVfyyVbmtlbXkVNUOFPlvFLNrFKjfVLjwFHuvlBgHlDsuU9ONU9ODk7/2E02Gk3gpEzcpEzpsUvjqkralkqEaUr/tUnorkngjkf7n0bXikb6xERCJETemEPckUG1gD/ooD3Ulj3jkz3TZT3WjjzOeDqBWDr3pDnglTlMADnbbTf2gjbkbzaTYDZpAjbplzTtcTTEazPXXzOeXzDscS3MPi38jizJWSrVSCrrXynzfCjVdCjZRyjTQCbFUiTlYCPLPSHVNCHwXh7iRh7GPh3PLBr9LRTRDBG/ABG2ABCxDg7BDAvUAwv9KwrEGArTBAjZAAbJAAJ7jjdaAAAAPnRSTlMACEIarGn7+/n39fTw7Ozr5+bl5OTh4NvS0cvHxsbEw8G+vLqysaufnJiVk4yDfG9dXFpMSEFBNTApJyEcFLSeMvYAAAFySURBVBjTYsAHmFmlJFmZUYTMWDivn9q5mp3FGCHGOCvp4tXHN3qakxYzwrUqbAi+9zk91W1v3goVqKglx+YJtzIyXj7Iej/D/YCgFVjQvNFr/rMPT11fp3+9W2ZXbwESs5H39D78/Iuri4urm0udXaWiNVBQ/3Sp16LzbrePrtmTdaXVztNJFyioebk8f9r+tBcpief2TZ5pXxyrDhQUSvbJsUuLv/Pk2sMLx32Lqs6IAwUB4zq5K9f+7ceUR4nxr97YFUQkiAEFVeMmlRSeffcpMzP15qWKmvZwLaCg9KElvdne/v4b1832tfcIdNwuBxRkW7j8mE91sHv/qtoOj6lHYpx5gYJGK7dG318QuCki1qnTKTk6PIgJ5HpDnsiEE35znOdN7I7Z0cUHFmMwFXBwWBbmEDA9JC60rY8fIqjc1ODoGOIcEHVwS+hcvxY1SGhqc0ctXbtt/e6woMgponqwALU10JCVEBGWUdIxwR1hAKaOh2BwM3MwAAAAAElFTkSuQmCC" alt="">
+        <a target="_blank" rel="noopener external nofollow noreferrer" href="https://beian.mps.gov.cn/#/query/webSearch?code=32059002006328">苏公网安备32059002006328号</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86lin%E6%80%BB%E7%BA%BF%E5%9F%BA%E7%A1%80"><span class="toc-number">2.</span> <span class="toc-text"> 第一部分：LIN总线基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#lin%E6%80%BB%E7%BA%BF%E6%A6%82%E8%BF%B0"><span class="toc-number">2.1.</span> <span class="toc-text"> LIN总线概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#lin%E5%B8%A7%E7%BB%93%E6%9E%84"><span class="toc-number">2.2.</span> <span class="toc-text"> LIN帧结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86ota%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1"><span class="toc-number">3.</span> <span class="toc-text"> 第二部分：OTA协议设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#id%E6%9E%9A%E4%B8%BE%E5%AE%9A%E4%B9%89"><span class="toc-number">3.1.</span> <span class="toc-text"> ID枚举定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E4%B8%8E%E7%8A%B6%E6%80%81%E6%9E%9A%E4%B8%BE"><span class="toc-number">3.2.</span> <span class="toc-text"> 命令与状态枚举</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%B8%A7%E6%A0%BC%E5%BC%8F%E5%AE%9A%E4%B9%89"><span class="toc-number">3.3.</span> <span class="toc-text"> 数据帧格式定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#crc%E6%A0%A1%E9%AA%8C%E6%9C%BA%E5%88%B6"><span class="toc-number">3.4.</span> <span class="toc-text"> CRC校验机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86ota%E5%8D%87%E7%BA%A7%E6%B5%81%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text"> 第三部分：OTA升级流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-number">4.1.</span> <span class="toc-text"> 整体流程图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%8E%E5%BC%80%E5%A7%8B%E4%BC%A0%E8%BE%93"><span class="toc-number">4.2.</span> <span class="toc-text"> 1. 初始化与开始传输</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E9%98%B6%E6%AE%B5%E6%89%87%E5%8C%BA%E5%A4%84%E7%90%86"><span class="toc-number">4.3.</span> <span class="toc-text"> 2. 数据传输阶段（扇区处理）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%BC%A0%E8%BE%93%E7%BB%93%E6%9D%9F%E9%98%B6%E6%AE%B5"><span class="toc-number">4.4.</span> <span class="toc-text"> 3. 传输结束阶段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86%E4%B8%8B%E4%BD%8D%E6%9C%BA%E5%AE%9E%E7%8E%B0"><span class="toc-number">5.</span> <span class="toc-text"> 第四部分：下位机实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E6%9C%BA%E8%AE%BE%E8%AE%A1"><span class="toc-number">5.1.</span> <span class="toc-text"> 状态机设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">5.2.</span> <span class="toc-text"> 数据结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E5%A4%84%E7%90%86"><span class="toc-number">5.3.</span> <span class="toc-text"> 命令处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86%E4%B8%8A%E4%BD%8D%E6%9C%BA%E5%AE%9E%E7%8E%B0"><span class="toc-number">6.</span> <span class="toc-text"> 第五部分：上位机实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%9E%B6%E6%9E%84"><span class="toc-number">6.1.</span> <span class="toc-text"> 线程架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E5%8D%87%E7%BA%A7%E6%B5%81%E7%A8%8B"><span class="toc-number">6.2.</span> <span class="toc-text"> 核心升级流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%87%E5%8C%BA%E4%BC%A0%E8%BE%93%E5%AE%9E%E7%8E%B0"><span class="toc-number">6.3.</span> <span class="toc-text"> 扇区传输实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E9%83%A8%E5%88%86%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E7%82%B9"><span class="toc-number">7.</span> <span class="toc-text"> 第六部分：关键技术点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%95%B0%E6%8D%AE%E5%88%86%E7%89%87%E6%9C%BA%E5%88%B6"><span class="toc-number">7.1.</span> <span class="toc-text"> 1. 数据分片机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6"><span class="toc-number">7.2.</span> <span class="toc-text"> 2. 错误处理机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5%E4%BB%85%E4%BB%8B%E7%BB%8D"><span class="toc-number">7.3.</span> <span class="toc-text"> 3. 性能优化策略（仅介绍）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E9%83%A8%E5%88%86%E5%AE%89%E5%85%A8%E8%AE%BE%E8%AE%A1"><span class="toc-number">8.</span> <span class="toc-text"> 第七部分：安全设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BA%E4%BB%B6%E9%AA%8C%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="toc-number">8.1.</span> <span class="toc-text"> 固件验证机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B"><span class="toc-number">8.2.</span> <span class="toc-text"> 安全启动流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AB%E9%83%A8%E5%88%86%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E6%8C%91%E6%88%98%E4%B8%8E%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">9.</span> <span class="toc-text"> 第八部分：实际应用挑战与解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E6%8C%91%E6%88%98%E5%8F%8A%E5%BA%94%E5%AF%B9"><span class="toc-number">9.1.</span> <span class="toc-text"> 典型挑战及应对</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8Cbank%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0"><span class="toc-number">9.2.</span> <span class="toc-text"> 双Bank设计实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B9%9D%E9%83%A8%E5%88%86%E6%B5%8B%E8%AF%95%E4%B8%8E%E9%AA%8C%E8%AF%81"><span class="toc-number">10.</span> <span class="toc-text"> 第九部分：测试与验证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B%E8%AE%BE%E8%AE%A1"><span class="toc-number">10.1.</span> <span class="toc-text"> 测试用例设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE"><span class="toc-number">10.2.</span> <span class="toc-text"> 性能测试数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">11.</span> <span class="toc-text"> 结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5"><span class="toc-number">12.</span> <span class="toc-text"> 附录：关键代码片段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pid%E8%AE%A1%E7%AE%97%E5%87%BD%E6%95%B0"><span class="toc-number">12.1.</span> <span class="toc-text"> PID计算函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E5%93%8D%E5%BA%94%E5%A4%84%E7%90%86"><span class="toc-number">12.2.</span> <span class="toc-text"> 状态响应处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8A%E4%BD%8D%E6%9C%BA%E5%AE%9E%E7%8E%B0"><span class="toc-number">12.3.</span> <span class="toc-text"> 上位机实现</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="冯笑一" class="lazyload">
+  <div class="sidebar-author-name">冯笑一</div>
+  <div class="sidebar-description">电子信息爱好者</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">16</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">17</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a href=mailto:qingchunhuoli@live.com itemprop="url" target="_blank" aria-label="email" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/MYxiaoyi itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://space.bilibili.com/5463002 itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="home icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives/" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="archives icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about/" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="about icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend/" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="friend icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png"/>
+        </div>
+      </div>
+    
+    
+    
+      <meting-js
+        theme="var(--color-link)"
+        id="7378273438"
+        server="netease"
+        type="playlist"
+        auto=""
+        fixed="true"
+        autoplay="false"
+        loop="all"
+        order="list"
+        preload="auto"
+        volume="0.7"
+        mutex="true"
+        list-folded="false"
+        lrc-type="3"
+      ></meting-js>
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/quicklink@2.3.0/dist/quicklink.umd.js" integrity="sha384-aD7FsuQkS1ohgFKY41fJfeA+Wd&#x2F;QRNnrOd9Bs58K3FzKdJJv8yPnYU8Tnp5z1agS" crossorigin="anonymous"></script>
+
+  <script data-pjax>
+    window.quicklink?.listen({
+      timeout: 3000,
+      priority: true,
+      ignores: []
+    });
+  </script>
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "冯笑一",
+          title: "汽车电子固件升级（OTA）实现详解",
+          url: "https://myxiaoyi.github.io/2025/07/14/%E6%B1%BD%E8%BD%A6%E7%94%B5%E5%AD%90%E5%9B%BA%E4%BB%B6%E5%8D%87%E7%BA%A7%EF%BC%88OTA%EF%BC%89%E5%AE%9E%E7%8E%B0%E8%AF%A6%E8%A7%A3/",
+          excerpt: "",
+          description: "",
+          stripContent: " 引言 随着汽车电子技术的飞速发展，固件空中升级(OTA) 技术已成为现代汽车电子系统中不可或缺的功能。在车身控制领域，LIN总线作为低成本、低复杂度的通信协议被广泛应用。本文将深入探讨基于LIN总线的OTA升级实现方案，从协议设计到代码实现，全面解析这一关键技术。  第一部分：LIN总线基础  LIN总线概述 LIN(Local Interconnect Network)是一种低成本串行通信协议，主要特点包括：  单主多从架构：一个主节点控制多个从节点 低传输速率：最高20kbps（典型应用1",
+          date: "Mon Jul 14 2025 00:00:00 GMT+0800",
+          updated: "Wed Jul 16 2025 15:42:32 GMT+0800",
+          cover: "https://pic4.zhimg.com/v2-1db2a15e30e57389a8456fca9b47223d_1440w.jpg",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@11.6.0/dist/mermaid.min.js" integrity="sha384-zkWMJO4sgpPUzyuOgDx8HB&#x2F;K55glbAwajEpk1Go2NWRuPkPA&#x2F;wIhoEJTuSkmOYrV" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+<script data-pjax>
+  var loadScript = (src, integrity) => {
+    const script = document.createElement('script');
+    script.src = src;
+    if (integrity) script.integrity = integrity;
+    script.crossOrigin = 'anonymous';
+    return script;
+  };
+
+  var commentConfigKeys = ['valine', 'waline', 'twikoo', 'gitalk', 'giscus'];
+  var commentConfig = {
+    valine: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.valine-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/valine@1.5.1/dist/Valine.min.js',
+          'sha384-3ma91AExDeMAZ1rjTjaP8V2A2obQE+s5ltKRwYlwdpArz9xVbp0tF3b0VV2ACNPn'
+        );
+        script.onload = () => {
+          var GUEST_INFO = ['nick', 'mail', 'link'];
+          var guest_info = 'nick,mail,link'.split(',').filter((item) => {
+            return GUEST_INFO.indexOf(item) > -1
+          });
+          var recordIP = JSON.parse('true');
+          var highlight = JSON.parse('true');
+          var visitor = JSON.parse('false');
+          var serverURLs = undefined;
+
+          if (window.Valine) {
+            new Valine({
+              el: '.valine-comment',
+              appId: "",
+              appKey: "",
+              placeholder: "Just go go",
+              pageSize: '10',
+              avatar: 'mp',
+              lang: document.documentElement.lang || 'en',
+              recordIP: recordIP,
+              highlight: highlight,
+              visitor: visitor,
+              requiredFields: guest_info,
+              path: window.location.pathname,
+              serverURLs
+            });
+          }
+        };
+        document.head.appendChild(script);
+      }
+    },
+    waline: {
+      enable: false,
+      load: async () => {
+        const container = document.querySelector('.waline-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        let walineInit;
+        const walineCdn = 'https://npm.webcache.cn/@waline/client@2.15.8/dist/waline.mjs';
+        const walineIntegrity = 'sha384-9sbqJjrfGjbkI6/PI4nU/MvBfEmkkPC4YK9I4zBeMIf1CVCZdCMH/KinBEAZII/5';
+
+        const module = await safeImport(walineCdn, walineIntegrity);
+        walineInit = module.init;
+
+        window.walineInstance = walineInit({
+          el: '.waline-comment',
+          serverURL: 'https://6dfzn3xp.api.lncldglobal.com',
+          lang: document.documentElement.lang || 'en',
+          locale: {},
+          emoji: ["https://unpkg.com/@waline/emojis@1.2.0/weibo","https://unpkg.com/@waline/emojis@1.2.0/alus","https://unpkg.com/@waline/emojis@1.2.0/bilibili","https://unpkg.com/@waline/emojis@1.2.0/qq","https://unpkg.com/@waline/emojis@1.2.0/tieba","https://unpkg.com/@waline/emojis@1.2.0/tw-emoji"],
+          meta: ["nick","mail","link"],
+          requiredMeta: ["nick","mail"],
+          wordLimit: JSON.parse('0'),
+          comment: true,
+          pageSize: JSON.parse('10'),
+          dark: 'html[data-theme="dark"]',
+          pageview: JSON.parse('true'),
+        });
+      }
+    },
+    twikoo: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.twikoo-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/twikoo@1.6.44/dist/twikoo.all.min.js',
+          'sha384-kwWLC0HjeZZnVPqCJ1AncI8tsk+kQqF9TbAmCclcc9Z0hGkfgHRzeQZxmdmZhE0K'
+        );
+
+        script.onload = () => {
+          if (window.twikoo) {
+            twikoo.init({
+              envId: '',
+              el: '.twikoo-comment',
+              region: '',
+              lang: document.documentElement.lang || 'en',
+            });
+
+            twikoo.getCommentsCount({
+              envId: '',
+              region: '',
+              urls: [
+                '/friend/index.html'
+              ],
+              includeReply: false
+            }).then((res) => {
+              _$('.twikoo-comment-count').innerText = res[0].count;
+            }).catch((err) => {
+              console.error(err);
+            });
+          }
+        } 
+        document.head.appendChild(script);
+      }
+    },
+    gitalk: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.gitalk-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/gitalk@1.8.0/dist/gitalk.min.js',
+          'sha384-kspnZUWBoSWwoJHa0hBCXYbHGbhvU/lcEH5O8eVbSDhbPwsiVUTp/aGX/z/5EuMA'
+        );
+
+        script.onload = () => {
+          if (false) {
+            const md5Script = loadScript(
+              'https://npm.webcache.cn/blueimp-md5@2.19.0/js/md5.min.js',
+              'sha384-JmVtRz6RWiXnA14QbIOJzPuU3MidULOpBP66deeLLyyoF4Tr/gZlbkHkL6vTthxH'
+            );
+            md5Script.onload = initGitalk;
+            document.head.appendChild(md5Script);
+          } else {
+            initGitalk();
+          }
+        }
+        document.head.appendChild(script);
+
+        function initGitalk() {
+          var gitalkId = location.pathname;
+          var gitalk = new Gitalk({
+            clientID: '',
+            clientSecret: '',
+            repo: '',
+            owner: '',
+            admin: null,
+            id: gitalkId,
+            distractionFreeMode: false,
+            language: document.documentElement.lang || 'en',
+          })
+          gitalk.render('gitalk-comment');
+        }
+      }
+    },
+    giscus: {
+      enable: true,
+      load: () => {
+        const container = document.querySelector('.giscus-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        // 删除可能已存在的 giscus 脚本和 iframe
+        const existingScript = container.querySelector('script[src*="giscus.app/client.js"]');
+        if (existingScript) existingScript.remove();
+        const existingFrame = document.querySelector('iframe.giscus-frame');
+        if (existingFrame) existingFrame.remove();
+
+        const giscusScript = document.createElement('script');
+        const domMode = document.documentElement.getAttribute("data-theme");
+
+        const docLang = document.documentElement.lang || 'en';
+        const langBase = docLang.split('-')[0];
+        const supportedLangs = ['ar', 'be', 'bg', 'ca', 'cs', 'da', 'de', 'en', 
+        'eo', 'es', 'eu', 'fa', 'fr', 'gr', 'hbs', 'he', 'hu', 'id', 'it', 'ja', 
+        'kh', 'ko', 'nl', 'pl', 'pt', 'ro', 'ru', 'th', 'tr', 'uk', 'uz', 'vi', 'zh-CN', 'zh-HK', 'zh-TW'];
+        const giscusLang = supportedLangs.includes(docLang) ? docLang : supportedLangs.includes(langBase) ? langBase : 'en';
+
+        giscusScript.src = 'https://giscus.app/client.js';
+        giscusScript.setAttribute('data-repo', 'MYxiaoyi/MYxiaoyi.github.io');
+        giscusScript.setAttribute('data-repo-id', 'R_kgDOPMp1Fg');
+        giscusScript.setAttribute('data-category', 'Announcements'); 
+        giscusScript.setAttribute('data-category-id', 'DIC_kwDOPMp1Fs4CtAct');
+        giscusScript.setAttribute('data-mapping', '0');
+        giscusScript.setAttribute('data-strict', '0');
+        giscusScript.setAttribute('data-reactions-enabled', '1');
+        giscusScript.setAttribute('data-emit-metadata', '0');
+        giscusScript.setAttribute('data-input-position', 'bottom');
+        giscusScript.setAttribute('data-theme', domMode === 'dark' ? 'dark' : 'light');
+        giscusScript.setAttribute('data-lang', giscusLang);
+        giscusScript.setAttribute('crossorigin', 'anonymous');
+        giscusScript.async = true;
+        container.appendChild(giscusScript);
+        document.body.addEventListener('light-theme-set', () => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: 'light' } } }, 'https://giscus.app');
+        });
+        document.body.addEventListener('dark-theme-set', () => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: 'dark' } } }, 'https://giscus.app');
+        });
+      }
+    }
+  }
+  commentConfig.enable = commentConfigKeys.some(key => commentConfig[key].enable);
+
+  var defaultComment = '';
+  if (commentConfig.enable) {
+    // 1. 首先检查localStorage中是否有保存的评论类型
+    var savedCommentType = localStorage.getItem('commentType');
+    
+    // 2. 如果localStorage中有值且对应的评论系统可用，就使用它
+    if (savedCommentType) {
+      if (commentConfig[savedCommentType]?.enable) {
+        defaultComment = savedCommentType;
+      }
+    }
+    
+    // 3. 如果localStorage无效，检查配置的默认评论系统
+    if (!defaultComment) {
+      var configDefault = 'waline';
+      if (commentConfig[configDefault]?.enable) {
+        defaultComment = configDefault;
+      }
+    }
+    
+    // 4. 如果前两项都无效，按指定顺序找到第一个可用的评论系统
+    if (!defaultComment) {
+      defaultComment = commentConfigKeys.find(sys => commentConfig[sys].enable) || '';
+    }
+  }
+  function loadComments() {
+    if (!commentConfig.enable) return;
+    // 评论组件加载状态跟踪
+    const loadedComments = {
+      valine: false,
+      waline: false,
+      twikoo: false,
+      gitalk: false,
+      giscus: false
+    };
+
+    // 隐藏所有评论容器
+    const hideAllComments = () => {
+      const commentContainers = document.querySelectorAll('.comment');
+      commentContainers.forEach(container => {
+        container.style.display = 'none';
+      });
+    };
+
+    // 按需加载评论系统
+    const loadCommentSystem = (type) => {
+      if (loadedComments[type]) {
+        // 如果已加载，只需显示对应容器
+        document.querySelector(`.${type}-comment`).style.display = 'block';
+        return;
+      }
+
+      // 根据类型加载对应的脚本
+      commentConfig[type]?.load();
+      loadedComments[type] = true;
+    };
+
+    // 评论组件选择器
+    const changeActiveCommentItems = (item) => {
+      const commentItems = document.querySelectorAll('.selector-item');
+      for (let i = 0; i < commentItems.length; i++) {
+        commentItems[i].classList.remove('active');
+      }
+      item.classList.add('active');
+
+      // 获取要加载的评论系统类型
+      const commentType = item.getAttribute('data-selector');
+
+      // 隐藏所有评论系统
+      hideAllComments();
+
+      // 加载选中的评论系统
+      loadCommentSystem(commentType);
+    };
+
+    const commentInit = () => {
+      // 评论组件选择器点击事件
+      const commentItems = document.querySelectorAll('.selector-item');
+      for (let item of commentItems) {
+        item.addEventListener('click', () => {
+          // 保存选择器状态
+          const commentType = item.getAttribute('data-selector');
+          window.localStorage.setItem('commentType', commentType);
+          // 切换选中状态
+          changeActiveCommentItems(item);
+        });
+      }
+
+      // 检查是否需要加载默认评论系统
+      if (defaultComment) {
+        const defaultSelectorItem = document.querySelector(`[data-selector="${defaultComment}"]`);
+        if (!defaultSelectorItem) return;
+        defaultSelectorItem.style.display = 'block';
+        defaultSelectorItem.classList.add('active');
+        loadCommentSystem(defaultComment);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', commentInit);
+    } else {
+      commentInit();
+    }
+  };
+  loadComments();
+</script>
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.9.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+    
+<script src="https://npm.webcache.cn/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF&#x2F;RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh&#x2F;OJfpU0jr6" crossorigin="anonymous" defer data-pjax></script>
+
+    
+<script src="https://npm.webcache.cn/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous" defer onload="renderMathInElement(_$(&#39;article&#39;), {delimiters: [{left: &#39;$$&#39;, right: &#39;$$&#39;, display: true},{left: &#39;$&#39;, right: &#39;$&#39;, display: false}]});" data-pjax></script>
+
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.js" integrity="sha384-gdGYZwHnfJM54evoZhpO0s6ZF5BQiybkiyW7VXr+h5UfruuRL&#x2F;aORyw+5+HZoU6e" crossorigin="anonymous"></script>
+
+  
+
+
+
+  
+  <script>
+    var isMobile = window.matchMedia('(max-width: 959px)').matches;
+    if (isMobile) {
+      const meting = _$('meting-js');
+      if (meting) {
+        meting.setAttribute('fixed', 'true');
+        const aside = meting.parentNode;
+        if (aside?.tagName === 'ASIDE') {
+          aside.removeChild(meting);
+          document.body.appendChild(meting);
+        }
+      }
+    }
+  </script>
+  
+<script src="https://npm.webcache.cn/meting@2.0.1/dist/Meting.min.js" integrity="sha384-ASVlpKF80A22OXTK3tfEjZm1EL6uFMKIC4p8+0maanw1S&#x2F;IyB+Y4JG+ZDU7GpKE8" crossorigin="anonymous"></script>
+
+
+
+
+    
+  </body>
+  </html>
+

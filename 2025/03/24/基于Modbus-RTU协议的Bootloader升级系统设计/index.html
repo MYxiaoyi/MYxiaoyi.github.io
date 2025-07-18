@@ -1,0 +1,1871 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+  <script src="https://www.googletagmanager.com/gtag/js?id=true"></script>
+  <script data-pjax>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'true');
+  </script>
+
+
+  
+  <script>
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "true");
+  </script>
+
+
+  
+  <script async src="https://hm.baidu.com/hm.js?true"></script>
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    _hmt.push(["_trackPageview", location.pathname]);
+  </script>
+
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":false,"count":50,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://myxiaoyi.github.io';window.REIMU_CONFIG.i18n_languages = ["en"];</script>
+  
+  <title>
+    基于Modbus-RTU协议的Bootloader升级系统设计 |
+    
+    冯笑一的小窝
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="一、串口协议配置  1. 基本串口参数 1234567891011&#x2F;&#x2F; Qt串口配置代码QSerialPort serial;serial.setPortName(&quot;COM1&quot;);       &#x2F;&#x2F; 用户可选择端口serial.setBaudRate(QSerialPort::Baud9600);serial.setDataBits(QSerialPort::Data8);">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于Modbus-RTU协议的Bootloader升级系统设计">
+<meta property="og:url" content="https://myxiaoyi.github.io/2025/03/24/%E5%9F%BA%E4%BA%8EModbus-RTU%E5%8D%8F%E8%AE%AE%E7%9A%84Bootloader%E5%8D%87%E7%BA%A7%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="冯笑一的小窝">
+<meta property="og:description" content="一、串口协议配置  1. 基本串口参数 1234567891011&#x2F;&#x2F; Qt串口配置代码QSerialPort serial;serial.setPortName(&quot;COM1&quot;);       &#x2F;&#x2F; 用户可选择端口serial.setBaudRate(QSerialPort::Baud9600);serial.setDataBits(QSerialPort::Data8);">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-07-16T07:38:11.649Z">
+<meta property="article:author" content="冯笑一">
+<meta property="article:tag" content="嵌入式">
+<meta property="article:tag" content="C语言">
+<meta property="article:tag" content="笔记">
+<meta property="article:tag" content="单片机">
+<meta property="article:tag" content="bootloader">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="alternate" href="/404.html" title="冯笑一的小窝" >
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l&#x2F;9On385z&#x2F;&#x2F;&#x2F;+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.css" integrity="sha384-tLMkTWh2pfXNWGFlUS0w1TFtRG5xZ9lPWFOooj+vDDLIL+xBGQU&#x2F;voDBY5XE2lVh" crossorigin="anonymous">
+
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi ">
+        
+          <img src="/images/taichi.svg" alt="loading" />
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">进入珊瑚宫中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+<div id="heatmap-tooltip"></div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="home icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="archives icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/archives/">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="about icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/about/">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="friend icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/friend/">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/404.html" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜索"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">简体中文</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" class="selected">简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/03/24/基于Modbus-RTU协议的Bootloader升级系统设计/';
+            
+              langMap['en'] = '/en/2025/03/24/基于Modbus-RTU协议的Bootloader升级系统设计/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+            
+              <source media="(max-width: 479px)" srcset="/images/banner-600w.webp">
+            
+              <source media="(max-width: 799px)" srcset="/images/banner-800w.webp">
+            
+              <source media="(min-width: 800px)" srcset="/images/banner.webp">
+            
+            <img crossorigin="anonymous" fetchpriority="high" src="/images/banner.webp" alt="基于Modbus-RTU协议的Bootloader升级系统设计">
+          
+        </picture>
+        
+          <img alt="基于Modbus-RTU协议的Bootloader升级系统设计" style="visibility: hidden;">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">基于Modbus-RTU协议的Bootloader升级系统设计</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%B2%E5%8F%A3%E5%8D%8F%E8%AE%AE%E9%85%8D%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text"> 一、串口协议配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E6%9C%AC%E4%B8%B2%E5%8F%A3%E5%8F%82%E6%95%B0"><span class="toc-number">1.1.</span> <span class="toc-text"> 1. 基本串口参数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-hex%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text"> 二、Hex文件处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E4%B8%8E%E8%BD%AC%E6%8D%A2"><span class="toc-number">2.1.</span> <span class="toc-text"> 1. 文件解析与转换</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-modbus-rtu%E5%8D%8F%E8%AE%AE%E5%B8%A7%E6%A0%BC%E5%BC%8F"><span class="toc-number">3.</span> <span class="toc-text"> 三、Modbus-RTU协议帧格式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%95%B0%E6%8D%AE%E5%B8%A7%E7%BB%93%E6%9E%84"><span class="toc-number">3.1.</span> <span class="toc-text"> 1. 数据帧结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%85%B3%E9%94%AE%E5%AF%84%E5%AD%98%E5%99%A8%E5%AE%9A%E4%B9%89"><span class="toc-number">3.2.</span> <span class="toc-text"> 2. 关键寄存器定义</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0"><span class="toc-number">4.</span> <span class="toc-text"> 四、核心功能实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%95%B0%E6%8D%AE%E5%8F%91%E9%80%81%E6%A8%A1%E5%9D%97"><span class="toc-number">4.1.</span> <span class="toc-text"> 1. 数据发送模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-crc%E6%A0%A1%E9%AA%8C%E5%AE%9E%E7%8E%B0"><span class="toc-number">4.2.</span> <span class="toc-text"> 2. CRC校验实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%93%8D%E5%BA%94%E5%A4%84%E7%90%86%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="toc-number">4.3.</span> <span class="toc-text"> 3. 响应处理状态机</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%8D%87%E7%BA%A7%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6"><span class="toc-number">5.</span> <span class="toc-text"> 五、升级流程控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%8A%B6%E6%80%81%E8%BD%AC%E7%A7%BB%E6%B5%81%E7%A8%8B"><span class="toc-number">5.1.</span> <span class="toc-text"> 1. 状态转移流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6"><span class="toc-number">5.2.</span> <span class="toc-text"> 2. 错误处理机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E4%B8%8B%E4%BD%8D%E6%9C%BA%E5%93%8D%E5%BA%94%E8%A7%84%E8%8C%83"><span class="toc-number">6.</span> <span class="toc-text"> 六、下位机响应规范</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%88%90%E5%8A%9F%E5%93%8D%E5%BA%94%E6%A0%BC%E5%BC%8F"><span class="toc-number">6.1.</span> <span class="toc-text"> 1. 成功响应格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%94%99%E8%AF%AF%E5%93%8D%E5%BA%94%E6%A0%BC%E5%BC%8F"><span class="toc-number">6.2.</span> <span class="toc-text"> 2. 错误响应格式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#font-stylecolorrgb64-64-6422-%E8%87%AA%E5%AE%9A%E4%B9%89bootloader%E5%BC%82%E5%B8%B8%E7%A0%81font"><span class="toc-number">6.2.1.</span> <span class="toc-text"> 2.2 自定义Bootloader异常码</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number"></span> <span class="toc-text"> 注意事项</span></a>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="冯笑一" class="lazyload">
+  <div class="sidebar-author-name">冯笑一</div>
+  <div class="sidebar-description">电子信息爱好者</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">16</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">17</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a href=mailto:qingchunhuoli@live.com itemprop="url" target="_blank" aria-label="email" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/MYxiaoyi itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://space.bilibili.com/5463002 itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="home icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives/" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="archives icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about/" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="about icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend/" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="friend icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-基于Modbus-RTU协议的Bootloader升级系统设计" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-03-23T16:00:00.000Z" itemprop="datePublished">2025-03-24</time>
+    <time style="display: none;" id="post-update-time">2025-07-16</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/" data-aos="zoom-in">嵌入式</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <hr />
+<h2 id="一-串口协议配置"><a class="markdownIt-Anchor" href="#一-串口协议配置"></a> 一、串口协议配置</h2>
+<h3 id="1-基本串口参数"><a class="markdownIt-Anchor" href="#1-基本串口参数"></a> 1. 基本串口参数</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Qt串口配置代码</span></span><br><span class="line">QSerialPort serial;</span><br><span class="line">serial.<span class="built_in">setPortName</span>(<span class="string">&quot;COM1&quot;</span>);       <span class="comment">// 用户可选择端口</span></span><br><span class="line">serial.<span class="built_in">setBaudRate</span>(QSerialPort::Baud9600);</span><br><span class="line">serial.<span class="built_in">setDataBits</span>(QSerialPort::Data8);</span><br><span class="line">serial.<span class="built_in">setParity</span>(QSerialPort::NoParity);</span><br><span class="line">serial.<span class="built_in">setStopBits</span>(QSerialPort::OneStop);</span><br><span class="line">serial.<span class="built_in">setFlowControl</span>(QSerialPort::NoFlowControl);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 连接接收槽函数</span></span><br><span class="line"><span class="built_in">connect</span>(&amp;serial, &amp;QSerialPort::readyRead, <span class="keyword">this</span>, &amp;ModbusMaster::handleReadyRead);</span><br></pre></td></tr></table></figure>
+<h2 id="二-hex文件处理"><a class="markdownIt-Anchor" href="#二-hex文件处理"></a> 二、Hex文件处理</h2>
+<h3 id="1-文件解析与转换"><a class="markdownIt-Anchor" href="#1-文件解析与转换"></a> 1. 文件解析与转换</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">ModbusMaster::loadAndParseHexFile</span><span class="params">(<span class="type">const</span> QString &amp;filePath)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">QFile <span class="title">file</span><span class="params">(filePath)</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (!file.<span class="built_in">open</span>(QIODevice::ReadOnly)) &#123;</span><br><span class="line">        <span class="built_in">qWarning</span>() &lt;&lt; <span class="string">&quot;文件打开失败:&quot;</span> &lt;&lt; filePath;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 此处简化处理直接读取二进制数据</span></span><br><span class="line">    QByteArray data = file.<span class="built_in">readAll</span>();</span><br><span class="line">    file.<span class="built_in">close</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 分块处理（512字节/块）</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; data.<span class="built_in">size</span>(); i += <span class="number">512</span>) &#123;</span><br><span class="line">        QByteArray block = data.<span class="built_in">mid</span>(i, <span class="number">512</span>);</span><br><span class="line">        <span class="keyword">if</span>(block.<span class="built_in">size</span>() &lt; <span class="number">512</span>) &#123;</span><br><span class="line">            block.<span class="built_in">append</span>(<span class="built_in">QByteArray</span>(<span class="number">512</span> - block.<span class="built_in">size</span>(), <span class="number">0xFF</span>)); <span class="comment">// 填充0xFF</span></span><br><span class="line">        &#125;</span><br><span class="line">        dataBlocks.<span class="built_in">append</span>(block);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> !dataBlocks.<span class="built_in">isEmpty</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="三-modbus-rtu协议帧格式"><a class="markdownIt-Anchor" href="#三-modbus-rtu协议帧格式"></a> 三、Modbus-RTU协议帧格式</h2>
+<h3 id="1-数据帧结构"><a class="markdownIt-Anchor" href="#1-数据帧结构"></a> 1. 数据帧结构</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>长度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>从机地址</td>
+<td>1字节</td>
+<td>目标设备地址（0x01~0xFF）</td>
+</tr>
+<tr>
+<td>功能码</td>
+<td>1字节</td>
+<td>0x03读/0x10写多寄存器</td>
+</tr>
+<tr>
+<td>数据地址</td>
+<td>2字节</td>
+<td>寄存器起始地址</td>
+</tr>
+<tr>
+<td>数据内容</td>
+<td>N字节</td>
+<td>最好的方式是block号(2字节)+512字节数据</td>
+</tr>
+<tr>
+<td>CRC校验</td>
+<td>2字节</td>
+<td>Modbus CRC16校验</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-关键寄存器定义"><a class="markdownIt-Anchor" href="#2-关键寄存器定义"></a> 2. 关键寄存器定义</h3>
+<table>
+<thead>
+<tr>
+<th>寄存器地址</th>
+<th>类型</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x00E0</td>
+<td>读写</td>
+<td>状态寄存器（0:APP, 1:Bootloader）用于确认当前状态（读取回复00 xx，写入需要加校验（cc xx），可使用读UID校验进入bootloder）</td>
+</tr>
+<tr>
+<td>0x00E1</td>
+<td>读写</td>
+<td>固件版本号（例如0x0102表示V1.2）上位机读取文件名</td>
+</tr>
+<tr>
+<td>0x00E2</td>
+<td>只写</td>
+<td>总数据块数（数据长度/512 + 1）</td>
+</tr>
+<tr>
+<td>0x00E3</td>
+<td>写</td>
+<td>数据块写入接口</td>
+</tr>
+<tr>
+<td>0x00E4</td>
+<td>读</td>
+<td>完整CRC校验</td>
+</tr>
+</tbody>
+</table>
+<h2 id="四-核心功能实现"><a class="markdownIt-Anchor" href="#四-核心功能实现"></a> 四、核心功能实现</h2>
+<h3 id="1-数据发送模块"><a class="markdownIt-Anchor" href="#1-数据发送模块"></a> 1. 数据发送模块</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">QByteArray <span class="title">ModbusMaster::createModbusRequest</span><span class="params">(<span class="type">const</span> bankNum,<span class="type">const</span> QByteArray &amp;data)</span> </span>&#123;</span><br><span class="line">    <span class="comment">/* 自定义Bootloader协议帧格式：</span></span><br><span class="line"><span class="comment">       ---------------------------------------------------</span></span><br><span class="line"><span class="comment">       | 地址(1) | 功能码(1) | 块序号(2) | 数据块(512) | CRC16(2)    |</span></span><br><span class="line"><span class="comment">       --------------------------------------------------- */</span></span><br><span class="line">    QByteArray frame;</span><br><span class="line">    quint8 slaveAddr = <span class="number">0x01</span>;       <span class="comment">// 从机地址</span></span><br><span class="line">    quint8 funcCode = <span class="number">0x06</span>;        <span class="comment">// 自定义写操作</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 帧头</span></span><br><span class="line">    frame.<span class="built_in">append</span>(slaveAddr);</span><br><span class="line">    frame.<span class="built_in">append</span>(funcCode);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 块序号</span></span><br><span class="line">    frame.<span class="built_in">append</span>(bankNum &gt;&gt; <span class="number">8</span>);</span><br><span class="line">    frame.<span class="built_in">append</span>(bankNum &amp; <span class="number">0xFF</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 数据块（固定512字节）</span></span><br><span class="line">    <span class="keyword">if</span>(data.<span class="built_in">size</span>() &lt; <span class="number">512</span>)&#123;</span><br><span class="line">        frame.<span class="built_in">append</span>(data);</span><br><span class="line">        frame.<span class="built_in">append</span>(<span class="built_in">QByteArray</span>(<span class="number">512</span> - data.<span class="built_in">size</span>(), <span class="number">0xFF</span>)); <span class="comment">// 填充</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        frame.<span class="built_in">append</span>(data.<span class="built_in">left</span>(<span class="number">512</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// CRC校验</span></span><br><span class="line">    quint16 crc = <span class="built_in">calculateCRC</span>(frame);</span><br><span class="line">    frame.<span class="built_in">append</span>(<span class="built_in">quint8</span>(crc &amp; <span class="number">0xFF</span>));</span><br><span class="line">    frame.<span class="built_in">append</span>(<span class="built_in">quint8</span>((crc &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0xFF</span>));</span><br><span class="line">    <span class="keyword">return</span> frame;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-crc校验实现"><a class="markdownIt-Anchor" href="#2-crc校验实现"></a> 2. CRC校验实现</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">quint16 <span class="title">ModbusMaster::calculateCRC</span><span class="params">(<span class="type">const</span> QByteArray &amp;data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    quint16 crc = <span class="number">0xFFFF</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">char</span> byte : data) &#123;</span><br><span class="line">        crc ^= (quint8)byte;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">8</span>; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (crc &amp; <span class="number">0x0001</span>) &#123;</span><br><span class="line">                crc = (crc &gt;&gt; <span class="number">1</span>) ^ <span class="number">0xA001</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                crc &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;                                                         </span><br><span class="line">    <span class="keyword">return</span> crc;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-响应处理状态机"><a class="markdownIt-Anchor" href="#3-响应处理状态机"></a> 3. 响应处理状态机</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">ModbusMaster::handleReadyRead</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    QByteArray response = serial.<span class="built_in">readAll</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 验证CRC</span></span><br><span class="line">    quint16 receivedCRC = (quint8)response.<span class="built_in">at</span>(response.<span class="built_in">size</span>()<span class="number">-2</span>) &lt;&lt; <span class="number">8</span> </span><br><span class="line">                        | (quint8)response.<span class="built_in">at</span>(response.<span class="built_in">size</span>()<span class="number">-1</span>);</span><br><span class="line">    quint16 calculatedCRC = <span class="built_in">calculateCRC</span>(response.<span class="built_in">left</span>(response.<span class="built_in">size</span>()<span class="number">-2</span>));</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span>(receivedCRC != calculatedCRC) &#123;</span><br><span class="line">        <span class="built_in">qWarning</span>() &lt;&lt; <span class="string">&quot;CRC校验失败&quot;</span>;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 解析功能码</span></span><br><span class="line">    quint8 functionCode = (quint8)response[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">switch</span>(functionCode) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">0x10</span>: <span class="comment">// 写寄存器响应</span></span><br><span class="line">        <span class="built_in">handleWriteResponse</span>(response);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">0x03</span>: <span class="comment">// 读寄存器响应</span></span><br><span class="line">        <span class="built_in">handleReadResponse</span>(response);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">qWarning</span>() &lt;&lt; <span class="string">&quot;未知功能码:&quot;</span> &lt;&lt; functionCode;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="五-升级流程控制"><a class="markdownIt-Anchor" href="#五-升级流程控制"></a> 五、升级流程控制</h2>
+<pre class="mermaid">sequenceDiagram
+    participant 上位机
+    participant 下位机
+    
+    上位机->>下位机: 发送身份验证（挑战-响应）
+    activate 下位机
+    下位机-->>上位机: 返回响应数据+状态
+    deactivate 下位机
+    
+    上位机->>下位机: 写0x00F0进入Bootloader
+    下位机-->>上位机: 操作成功响应(0x00F0 0x0001)
+    
+    上位机->>下位机: 读0x00F0确认状态
+    下位机-->>上位机: 返回当前模式(0x0001)
+    
+    上位机->>下位机: 读0x00F1（固件版本）
+    下位机-->>上位机: 返回版本号
+    上位机->>上位机: 验证版本兼容性
+    
+    alt 版本验证通过
+        上位机->>下位机: 写0x00F2总块数
+        下位机-->>上位机: 确认接收块数
+        
+        loop 数据块传输
+            上位机->>下位机: 写0x00F3发送数据块(n)
+            下位机-->>上位机: 确认接收或错误码
+            alt 传输失败
+                上位机->>上位机: 指数退避重试(最多3次)
+            end
+        end
+        
+        上位机->>下位机: 读0x00F4全局CRC
+        下位机-->>上位机: 返回计算后的CRC
+        
+        alt CRC匹配
+						上位机->>下位机: 写0x00F1（固件版本）
+				    下位机-->>上位机: 返回新版本号
+            上位机->>下位机: 写0x00F0返回APP模式
+            下位机-->>上位机: 操作成功响应
+        else CRC不匹配
+            上位机->>上位机: 触发错误处理流程
+        end
+        
+    else 版本验证失败
+        上位机->>下位机: 写0x00F0返回APP模式
+        下位机-->>上位机: 模式切换确认
+        上位机->>上位机: 记录错误日志并终止
+    end</pre>
+<h3 id="1-状态转移流程"><a class="markdownIt-Anchor" href="#1-状态转移流程"></a> 1. 状态转移流程</h3>
+<pre class="mermaid">stateDiagram-v2
+    [*] --> Idle
+    Idle --> EnterBootloader: 开始升级
+    EnterBootloader --> SendMetadata: 收到ACK
+    SendMetadata --> TransferData: 收到ACK
+    TransferData --> TransferData: 发送下一块
+    TransferData --> Finalize: 最后一块完成
+    Finalize --> [*]: 收到最终确认</pre>
+<h3 id="2-错误处理机制"><a class="markdownIt-Anchor" href="#2-错误处理机制"></a> 2. 错误处理机制</h3>
+<table>
+<thead>
+<tr>
+<th>错误类型</th>
+<th>处理方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CRC校验失败</td>
+<td>自动重发当前数据块（最多3次）</td>
+</tr>
+<tr>
+<td>超时无响应</td>
+<td>自动重发当前数据块（最多3次）</td>
+</tr>
+<tr>
+<td>版本不匹配</td>
+<td>终止升级并提示错误</td>
+</tr>
+<tr>
+<td>Flash写入失败</td>
+<td>记录错误地址并尝试续传</td>
+</tr>
+</tbody>
+</table>
+<h2 id="六-下位机响应规范"><a class="markdownIt-Anchor" href="#六-下位机响应规范"></a> 六、下位机响应规范</h2>
+<h3 id="1-成功响应格式"><a class="markdownIt-Anchor" href="#1-成功响应格式"></a> 1. 成功响应格式</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">01 06 00F3 0001 XXXX (CRC)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第1字节：从机地址</li>
+<li>第2字节：功能码</li>
+<li>第3-4字节：写入地址</li>
+<li>第5-6字节：成功写入的bank号</li>
+<li>最后2字节：CRC校验</li>
+</ul>
+<h3 id="2-错误响应格式"><a class="markdownIt-Anchor" href="#2-错误响应格式"></a> 2. 错误响应格式</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">01 90 04 XXXX (CRC)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第2字节：功能码+0x80</li>
+<li>第3字节：错误代码
+<ul>
+<li>0x01: 非法功能</li>
+<li>0x02: 非法地址</li>
+<li>0x03: 数据值错误</li>
+<li>0x04: 设备忙</li>
+</ul>
+</li>
+</ul>
+<h4 id="font-stylecolorrgb64-64-6422-自定义bootloader异常码font"><a class="markdownIt-Anchor" href="#font-stylecolorrgb64-64-6422-自定义bootloader异常码font"></a> <font style="color:rgb(64, 64, 64);">2.2 自定义Bootloader异常码</font></h4>
+<table>
+<thead>
+<tr>
+<th><strong>异常码</strong></th>
+<th><strong>名称</strong></th>
+<th><strong>触发场景</strong></th>
+<th><strong>建议处理方式</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><font style="color:rgb(64, 64, 64);">0x11</font></td>
+<td><font style="color:rgb(64, 64, 64);">CRC Check Failed</font></td>
+<td><font style="color:rgb(64, 64, 64);">数据块CRC校验失败</font></td>
+<td><font style="color:rgb(64, 64, 64);">自动重传（最多3次）</font></td>
+</tr>
+<tr>
+<td><font style="color:rgb(64, 64, 64);">0x12</font></td>
+<td><font style="color:rgb(64, 64, 64);">Flash Write Error</font></td>
+<td><font style="color:rgb(64, 64, 64);">Flash编程失败</font></td>
+<td><font style="color:rgb(64, 64, 64);">记录错误地址块，尝试续传</font></td>
+</tr>
+<tr>
+<td><font style="color:rgb(64, 64, 64);">0x13</font></td>
+<td><font style="color:rgb(64, 64, 64);">Device Busy</font></td>
+<td><font style="color:rgb(64, 64, 64);">设备处理忙状态</font></td>
+<td><font style="color:rgb(64, 64, 64);">指数退避重试（最大5次）</font></td>
+</tr>
+<tr>
+<td><font style="color:rgb(64, 64, 64);">0x14</font></td>
+<td><font style="color:rgb(64, 64, 64);">Auth Failed</font></td>
+<td><font style="color:rgb(64, 64, 64);">身份验证失败</font></td>
+<td><font style="color:rgb(64, 64, 64);">终止并触发安全锁定</font></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="注意事项"><a class="markdownIt-Anchor" href="#注意事项"></a> 注意事项</h1>
+<ol>
+<li><strong>Hex文件解析</strong>：实际项目需实现完整的HEX或bin格式解析</li>
+<li><strong>内存对齐</strong>：确保数据块地址符合Flash页对齐要求</li>
+<li><strong>CRC校验</strong>：必须在下位机端同步实现相同算法</li>
+<li><strong>超时时间</strong>：根据实际硬件性能调整（3-5秒）</li>
+<li><strong>固件验证</strong>：升级完成后建议执行整体CRC校验</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">赞助</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">请作者喝杯咖啡吧</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/wechat.png" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=%E5%9F%BA%E4%BA%8EModbus-RTU%E5%8D%8F%E8%AE%AE%E7%9A%84Bootloader%E5%8D%87%E7%BA%A7%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1&amp;desc=%E5%9F%BA%E4%BA%8EModbus-RTU%E5%8D%8F%E8%AE%AE%E7%9A%84Bootloader%E5%8D%87%E7%BA%A7%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1&amp;source=https%3A%2F%2Fmyxiaoyi.github.io" target="_blank" rel="noopener noreferrer" title="基于Modbus-RTU协议的Bootloader升级系统设计">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="基于Modbus-RTU协议的Bootloader升级系统设计">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner"> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/bootloader/" rel="tag">bootloader</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">单片机</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/" rel="tag">嵌入式</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E7%AC%94%E8%AE%B0/" rel="tag">笔记</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img data-src="https://pic4.zhimg.com/v2-b96eb3d286b92f5e388a7e1e94fb19f3_1440w.jpg" data-sizes="auto" alt="基于Cortex-M0内核的Bootloader开发指南" class="lazyload">
+          
+        
+        <a href="/2025/03/28/%E5%9F%BA%E4%BA%8ECortex-M0%E5%86%85%E6%A0%B8%E7%9A%84Bootloader%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/"></a>
+        <div class="article-nav-caption">前一篇</div>
+        <h3 class="article-nav-title">
+          
+            基于Cortex-M0内核的Bootloader开发指南
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="https://pic4.zhimg.com/v2-a41eb02267e586f175382b15cb65c6cd_1440w.jpg" data-sizes="auto" alt="ROS学习" class="lazyload">
+        
+      
+      <a href="/2024/03/22/ROS%E5%AD%A6%E4%B9%A0/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          ROS学习
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+  <section id="comments" data-aos="fade-up">
+    <div class="comment-header">
+      
+      
+        
+      
+      <h2 class="comment-title">说些什么吧！</h2>
+      <div class="comment-selector">
+        <div class="comment-selector-wrap">
+            
+            <div class="selector-item" data-selector="giscus">
+              <span>giscus</span>
+            </div>
+            
+        </div>
+      </div>
+    </div>
+    <div class="comment-content">
+      
+        <div class="comment giscus-comment" data-aos="fade-up"
+          id="giscus-comment">
+        </div>
+      
+    </div>
+  </section>
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2021-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      冯笑一
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        44.1k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        03:12
+      </div>
+    
+    
+      <div class="footer-beian">
+        <a target="_blank" rel="noopener external nofollow noreferrer" href="https://beian.miit.gov.cn" data-pjax-state="">赣ICP备2021007570号-1</a>
+      </div>
+    
+    
+      <div class="footer-beian">
+        <img style="object-fit: contain;margin-right: 2px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAWCAMAAAD3n0w0AAAC4lBMVEUAAAD+/ODz6Kr//+PYrn3x167oxnyaaVzhs2ifaFXbrGLkvFnpyF7v2X/kwm3cp1nhsGfqw3rZqG3ntVzjrFPt3oDjvGnfr2fbnFGti3q0lH7ktoLep1zdqVPryXn9v1T4znr/74bnvGz034v+2I/ktoDz6ZLkwY/Dfz7buoftzYbq2IPr0pjs3bLv6KPRrnbKhFv79ND488n/+dDZr4Lx38f/+cH/95f42oL7/97s2Y3++uzw1rvTk3ABAW0AAHnqxl7ktV3/0ljksE7XPiDWHRfOAAJrdodyeIKUj4EAAIAABHfyy24GA2ftzWYAAGPpwWD/217syVuTeFrqvVnmuVnrwFfislP+xVLnwFHpuFDVkEbdmkXysETeoETpgj7ThT3XdTg5FDjdhTXWZTDaTCm7TCbSOSDUIRnJJxPQFg2Ej5kcPpdyhZSptJEACJFpfo4AG44XMInFvYfTvIejmYS9un7FrnwAEHp8enny2HjWwHjKtnhcX3jYzHeNhnfu2HWUjHX34nSsonPz5HLNwnHu1HD70m9WTm//723pym3x02ndtmn/0mbnxGa0o2ZeWWbwzWT8zGT/4mPqymLtwmJuYmLvymH/vmB5ZGC9kF4MAF3ru1zmu1zou1mnjVn4xFjYnli0mVi5i1jiqVfyyVbmtlbXkVNUOFPlvFLNrFKjfVLjwFHuvlBgHlDsuU9ONU9ODk7/2E02Gk3gpEzcpEzpsUvjqkralkqEaUr/tUnorkngjkf7n0bXikb6xERCJETemEPckUG1gD/ooD3Ulj3jkz3TZT3WjjzOeDqBWDr3pDnglTlMADnbbTf2gjbkbzaTYDZpAjbplzTtcTTEazPXXzOeXzDscS3MPi38jizJWSrVSCrrXynzfCjVdCjZRyjTQCbFUiTlYCPLPSHVNCHwXh7iRh7GPh3PLBr9LRTRDBG/ABG2ABCxDg7BDAvUAwv9KwrEGArTBAjZAAbJAAJ7jjdaAAAAPnRSTlMACEIarGn7+/n39fTw7Ozr5+bl5OTh4NvS0cvHxsbEw8G+vLqysaufnJiVk4yDfG9dXFpMSEFBNTApJyEcFLSeMvYAAAFySURBVBjTYsAHmFmlJFmZUYTMWDivn9q5mp3FGCHGOCvp4tXHN3qakxYzwrUqbAi+9zk91W1v3goVqKglx+YJtzIyXj7Iej/D/YCgFVjQvNFr/rMPT11fp3+9W2ZXbwESs5H39D78/Iuri4urm0udXaWiNVBQ/3Sp16LzbrePrtmTdaXVztNJFyioebk8f9r+tBcpief2TZ5pXxyrDhQUSvbJsUuLv/Pk2sMLx32Lqs6IAwUB4zq5K9f+7ceUR4nxr97YFUQkiAEFVeMmlRSeffcpMzP15qWKmvZwLaCg9KElvdne/v4b1832tfcIdNwuBxRkW7j8mE91sHv/qtoOj6lHYpx5gYJGK7dG318QuCki1qnTKTk6PIgJ5HpDnsiEE35znOdN7I7Z0cUHFmMwFXBwWBbmEDA9JC60rY8fIqjc1ODoGOIcEHVwS+hcvxY1SGhqc0ctXbtt/e6woMgponqwALU10JCVEBGWUdIxwR1hAKaOh2BwM3MwAAAAAElFTkSuQmCC" alt="">
+        <a target="_blank" rel="noopener external nofollow noreferrer" href="https://beian.mps.gov.cn/#/query/webSearch?code=32059002006328">苏公网安备32059002006328号</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%B2%E5%8F%A3%E5%8D%8F%E8%AE%AE%E9%85%8D%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text"> 一、串口协议配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E6%9C%AC%E4%B8%B2%E5%8F%A3%E5%8F%82%E6%95%B0"><span class="toc-number">1.1.</span> <span class="toc-text"> 1. 基本串口参数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-hex%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text"> 二、Hex文件处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E4%B8%8E%E8%BD%AC%E6%8D%A2"><span class="toc-number">2.1.</span> <span class="toc-text"> 1. 文件解析与转换</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-modbus-rtu%E5%8D%8F%E8%AE%AE%E5%B8%A7%E6%A0%BC%E5%BC%8F"><span class="toc-number">3.</span> <span class="toc-text"> 三、Modbus-RTU协议帧格式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%95%B0%E6%8D%AE%E5%B8%A7%E7%BB%93%E6%9E%84"><span class="toc-number">3.1.</span> <span class="toc-text"> 1. 数据帧结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%85%B3%E9%94%AE%E5%AF%84%E5%AD%98%E5%99%A8%E5%AE%9A%E4%B9%89"><span class="toc-number">3.2.</span> <span class="toc-text"> 2. 关键寄存器定义</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0"><span class="toc-number">4.</span> <span class="toc-text"> 四、核心功能实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%95%B0%E6%8D%AE%E5%8F%91%E9%80%81%E6%A8%A1%E5%9D%97"><span class="toc-number">4.1.</span> <span class="toc-text"> 1. 数据发送模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-crc%E6%A0%A1%E9%AA%8C%E5%AE%9E%E7%8E%B0"><span class="toc-number">4.2.</span> <span class="toc-text"> 2. CRC校验实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%93%8D%E5%BA%94%E5%A4%84%E7%90%86%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="toc-number">4.3.</span> <span class="toc-text"> 3. 响应处理状态机</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%8D%87%E7%BA%A7%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6"><span class="toc-number">5.</span> <span class="toc-text"> 五、升级流程控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%8A%B6%E6%80%81%E8%BD%AC%E7%A7%BB%E6%B5%81%E7%A8%8B"><span class="toc-number">5.1.</span> <span class="toc-text"> 1. 状态转移流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6"><span class="toc-number">5.2.</span> <span class="toc-text"> 2. 错误处理机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E4%B8%8B%E4%BD%8D%E6%9C%BA%E5%93%8D%E5%BA%94%E8%A7%84%E8%8C%83"><span class="toc-number">6.</span> <span class="toc-text"> 六、下位机响应规范</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%88%90%E5%8A%9F%E5%93%8D%E5%BA%94%E6%A0%BC%E5%BC%8F"><span class="toc-number">6.1.</span> <span class="toc-text"> 1. 成功响应格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%94%99%E8%AF%AF%E5%93%8D%E5%BA%94%E6%A0%BC%E5%BC%8F"><span class="toc-number">6.2.</span> <span class="toc-text"> 2. 错误响应格式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#font-stylecolorrgb64-64-6422-%E8%87%AA%E5%AE%9A%E4%B9%89bootloader%E5%BC%82%E5%B8%B8%E7%A0%81font"><span class="toc-number">6.2.1.</span> <span class="toc-text"> 2.2 自定义Bootloader异常码</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number"></span> <span class="toc-text"> 注意事项</span></a>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="冯笑一" class="lazyload">
+  <div class="sidebar-author-name">冯笑一</div>
+  <div class="sidebar-description">电子信息爱好者</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">16</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">17</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a href=mailto:qingchunhuoli@live.com itemprop="url" target="_blank" aria-label="email" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/MYxiaoyi itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://space.bilibili.com/5463002 itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="home icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives/" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="archives icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about/" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="about icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend/" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="friend icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png"/>
+        </div>
+      </div>
+    
+    
+    
+      <meting-js
+        theme="var(--color-link)"
+        id="7378273438"
+        server="netease"
+        type="playlist"
+        auto=""
+        fixed="true"
+        autoplay="false"
+        loop="all"
+        order="list"
+        preload="auto"
+        volume="0.7"
+        mutex="true"
+        list-folded="false"
+        lrc-type="3"
+      ></meting-js>
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/quicklink@2.3.0/dist/quicklink.umd.js" integrity="sha384-aD7FsuQkS1ohgFKY41fJfeA+Wd&#x2F;QRNnrOd9Bs58K3FzKdJJv8yPnYU8Tnp5z1agS" crossorigin="anonymous"></script>
+
+  <script data-pjax>
+    window.quicklink?.listen({
+      timeout: 3000,
+      priority: true,
+      ignores: []
+    });
+  </script>
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "冯笑一",
+          title: "基于Modbus-RTU协议的Bootloader升级系统设计",
+          url: "https://myxiaoyi.github.io/2025/03/24/%E5%9F%BA%E4%BA%8EModbus-RTU%E5%8D%8F%E8%AE%AE%E7%9A%84Bootloader%E5%8D%87%E7%BA%A7%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/",
+          excerpt: "",
+          description: "",
+          stripContent: "  一、串口协议配置  1. 基本串口参数 1234567891011// Qt串口配置代码QSerialPort serial;serial.setPortName(&amp;quot;COM1&amp;quot;);       // 用户可选择端口serial.setBaudRate(QSerialPort::Baud9600);serial.setDataBits(QSerialPort::Data8);serial.setParity(QSerialPort::NoParity);serial.set",
+          date: "Mon Mar 24 2025 00:00:00 GMT+0800",
+          updated: "Wed Jul 16 2025 15:38:11 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@11.6.0/dist/mermaid.min.js" integrity="sha384-zkWMJO4sgpPUzyuOgDx8HB&#x2F;K55glbAwajEpk1Go2NWRuPkPA&#x2F;wIhoEJTuSkmOYrV" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+<script data-pjax>
+  var loadScript = (src, integrity) => {
+    const script = document.createElement('script');
+    script.src = src;
+    if (integrity) script.integrity = integrity;
+    script.crossOrigin = 'anonymous';
+    return script;
+  };
+
+  var commentConfigKeys = ['valine', 'waline', 'twikoo', 'gitalk', 'giscus'];
+  var commentConfig = {
+    valine: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.valine-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/valine@1.5.1/dist/Valine.min.js',
+          'sha384-3ma91AExDeMAZ1rjTjaP8V2A2obQE+s5ltKRwYlwdpArz9xVbp0tF3b0VV2ACNPn'
+        );
+        script.onload = () => {
+          var GUEST_INFO = ['nick', 'mail', 'link'];
+          var guest_info = 'nick,mail,link'.split(',').filter((item) => {
+            return GUEST_INFO.indexOf(item) > -1
+          });
+          var recordIP = JSON.parse('true');
+          var highlight = JSON.parse('true');
+          var visitor = JSON.parse('false');
+          var serverURLs = undefined;
+
+          if (window.Valine) {
+            new Valine({
+              el: '.valine-comment',
+              appId: "",
+              appKey: "",
+              placeholder: "Just go go",
+              pageSize: '10',
+              avatar: 'mp',
+              lang: document.documentElement.lang || 'en',
+              recordIP: recordIP,
+              highlight: highlight,
+              visitor: visitor,
+              requiredFields: guest_info,
+              path: window.location.pathname,
+              serverURLs
+            });
+          }
+        };
+        document.head.appendChild(script);
+      }
+    },
+    waline: {
+      enable: false,
+      load: async () => {
+        const container = document.querySelector('.waline-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        let walineInit;
+        const walineCdn = 'https://npm.webcache.cn/@waline/client@2.15.8/dist/waline.mjs';
+        const walineIntegrity = 'sha384-9sbqJjrfGjbkI6/PI4nU/MvBfEmkkPC4YK9I4zBeMIf1CVCZdCMH/KinBEAZII/5';
+
+        const module = await safeImport(walineCdn, walineIntegrity);
+        walineInit = module.init;
+
+        window.walineInstance = walineInit({
+          el: '.waline-comment',
+          serverURL: 'https://6dfzn3xp.api.lncldglobal.com',
+          lang: document.documentElement.lang || 'en',
+          locale: {},
+          emoji: ["https://unpkg.com/@waline/emojis@1.2.0/weibo","https://unpkg.com/@waline/emojis@1.2.0/alus","https://unpkg.com/@waline/emojis@1.2.0/bilibili","https://unpkg.com/@waline/emojis@1.2.0/qq","https://unpkg.com/@waline/emojis@1.2.0/tieba","https://unpkg.com/@waline/emojis@1.2.0/tw-emoji"],
+          meta: ["nick","mail","link"],
+          requiredMeta: ["nick","mail"],
+          wordLimit: JSON.parse('0'),
+          comment: true,
+          pageSize: JSON.parse('10'),
+          dark: 'html[data-theme="dark"]',
+          pageview: JSON.parse('true'),
+        });
+      }
+    },
+    twikoo: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.twikoo-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/twikoo@1.6.44/dist/twikoo.all.min.js',
+          'sha384-kwWLC0HjeZZnVPqCJ1AncI8tsk+kQqF9TbAmCclcc9Z0hGkfgHRzeQZxmdmZhE0K'
+        );
+
+        script.onload = () => {
+          if (window.twikoo) {
+            twikoo.init({
+              envId: '',
+              el: '.twikoo-comment',
+              region: '',
+              lang: document.documentElement.lang || 'en',
+            });
+
+            twikoo.getCommentsCount({
+              envId: '',
+              region: '',
+              urls: [
+                '/friend/index.html'
+              ],
+              includeReply: false
+            }).then((res) => {
+              _$('.twikoo-comment-count').innerText = res[0].count;
+            }).catch((err) => {
+              console.error(err);
+            });
+          }
+        } 
+        document.head.appendChild(script);
+      }
+    },
+    gitalk: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.gitalk-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/gitalk@1.8.0/dist/gitalk.min.js',
+          'sha384-kspnZUWBoSWwoJHa0hBCXYbHGbhvU/lcEH5O8eVbSDhbPwsiVUTp/aGX/z/5EuMA'
+        );
+
+        script.onload = () => {
+          if (false) {
+            const md5Script = loadScript(
+              'https://npm.webcache.cn/blueimp-md5@2.19.0/js/md5.min.js',
+              'sha384-JmVtRz6RWiXnA14QbIOJzPuU3MidULOpBP66deeLLyyoF4Tr/gZlbkHkL6vTthxH'
+            );
+            md5Script.onload = initGitalk;
+            document.head.appendChild(md5Script);
+          } else {
+            initGitalk();
+          }
+        }
+        document.head.appendChild(script);
+
+        function initGitalk() {
+          var gitalkId = location.pathname;
+          var gitalk = new Gitalk({
+            clientID: '',
+            clientSecret: '',
+            repo: '',
+            owner: '',
+            admin: null,
+            id: gitalkId,
+            distractionFreeMode: false,
+            language: document.documentElement.lang || 'en',
+          })
+          gitalk.render('gitalk-comment');
+        }
+      }
+    },
+    giscus: {
+      enable: true,
+      load: () => {
+        const container = document.querySelector('.giscus-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        // 删除可能已存在的 giscus 脚本和 iframe
+        const existingScript = container.querySelector('script[src*="giscus.app/client.js"]');
+        if (existingScript) existingScript.remove();
+        const existingFrame = document.querySelector('iframe.giscus-frame');
+        if (existingFrame) existingFrame.remove();
+
+        const giscusScript = document.createElement('script');
+        const domMode = document.documentElement.getAttribute("data-theme");
+
+        const docLang = document.documentElement.lang || 'en';
+        const langBase = docLang.split('-')[0];
+        const supportedLangs = ['ar', 'be', 'bg', 'ca', 'cs', 'da', 'de', 'en', 
+        'eo', 'es', 'eu', 'fa', 'fr', 'gr', 'hbs', 'he', 'hu', 'id', 'it', 'ja', 
+        'kh', 'ko', 'nl', 'pl', 'pt', 'ro', 'ru', 'th', 'tr', 'uk', 'uz', 'vi', 'zh-CN', 'zh-HK', 'zh-TW'];
+        const giscusLang = supportedLangs.includes(docLang) ? docLang : supportedLangs.includes(langBase) ? langBase : 'en';
+
+        giscusScript.src = 'https://giscus.app/client.js';
+        giscusScript.setAttribute('data-repo', 'MYxiaoyi/MYxiaoyi.github.io');
+        giscusScript.setAttribute('data-repo-id', 'R_kgDOPMp1Fg');
+        giscusScript.setAttribute('data-category', 'Announcements'); 
+        giscusScript.setAttribute('data-category-id', 'DIC_kwDOPMp1Fs4CtAct');
+        giscusScript.setAttribute('data-mapping', '0');
+        giscusScript.setAttribute('data-strict', '0');
+        giscusScript.setAttribute('data-reactions-enabled', '1');
+        giscusScript.setAttribute('data-emit-metadata', '0');
+        giscusScript.setAttribute('data-input-position', 'bottom');
+        giscusScript.setAttribute('data-theme', domMode === 'dark' ? 'dark' : 'light');
+        giscusScript.setAttribute('data-lang', giscusLang);
+        giscusScript.setAttribute('crossorigin', 'anonymous');
+        giscusScript.async = true;
+        container.appendChild(giscusScript);
+        document.body.addEventListener('light-theme-set', () => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: 'light' } } }, 'https://giscus.app');
+        });
+        document.body.addEventListener('dark-theme-set', () => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: 'dark' } } }, 'https://giscus.app');
+        });
+      }
+    }
+  }
+  commentConfig.enable = commentConfigKeys.some(key => commentConfig[key].enable);
+
+  var defaultComment = '';
+  if (commentConfig.enable) {
+    // 1. 首先检查localStorage中是否有保存的评论类型
+    var savedCommentType = localStorage.getItem('commentType');
+    
+    // 2. 如果localStorage中有值且对应的评论系统可用，就使用它
+    if (savedCommentType) {
+      if (commentConfig[savedCommentType]?.enable) {
+        defaultComment = savedCommentType;
+      }
+    }
+    
+    // 3. 如果localStorage无效，检查配置的默认评论系统
+    if (!defaultComment) {
+      var configDefault = 'waline';
+      if (commentConfig[configDefault]?.enable) {
+        defaultComment = configDefault;
+      }
+    }
+    
+    // 4. 如果前两项都无效，按指定顺序找到第一个可用的评论系统
+    if (!defaultComment) {
+      defaultComment = commentConfigKeys.find(sys => commentConfig[sys].enable) || '';
+    }
+  }
+  function loadComments() {
+    if (!commentConfig.enable) return;
+    // 评论组件加载状态跟踪
+    const loadedComments = {
+      valine: false,
+      waline: false,
+      twikoo: false,
+      gitalk: false,
+      giscus: false
+    };
+
+    // 隐藏所有评论容器
+    const hideAllComments = () => {
+      const commentContainers = document.querySelectorAll('.comment');
+      commentContainers.forEach(container => {
+        container.style.display = 'none';
+      });
+    };
+
+    // 按需加载评论系统
+    const loadCommentSystem = (type) => {
+      if (loadedComments[type]) {
+        // 如果已加载，只需显示对应容器
+        document.querySelector(`.${type}-comment`).style.display = 'block';
+        return;
+      }
+
+      // 根据类型加载对应的脚本
+      commentConfig[type]?.load();
+      loadedComments[type] = true;
+    };
+
+    // 评论组件选择器
+    const changeActiveCommentItems = (item) => {
+      const commentItems = document.querySelectorAll('.selector-item');
+      for (let i = 0; i < commentItems.length; i++) {
+        commentItems[i].classList.remove('active');
+      }
+      item.classList.add('active');
+
+      // 获取要加载的评论系统类型
+      const commentType = item.getAttribute('data-selector');
+
+      // 隐藏所有评论系统
+      hideAllComments();
+
+      // 加载选中的评论系统
+      loadCommentSystem(commentType);
+    };
+
+    const commentInit = () => {
+      // 评论组件选择器点击事件
+      const commentItems = document.querySelectorAll('.selector-item');
+      for (let item of commentItems) {
+        item.addEventListener('click', () => {
+          // 保存选择器状态
+          const commentType = item.getAttribute('data-selector');
+          window.localStorage.setItem('commentType', commentType);
+          // 切换选中状态
+          changeActiveCommentItems(item);
+        });
+      }
+
+      // 检查是否需要加载默认评论系统
+      if (defaultComment) {
+        const defaultSelectorItem = document.querySelector(`[data-selector="${defaultComment}"]`);
+        if (!defaultSelectorItem) return;
+        defaultSelectorItem.style.display = 'block';
+        defaultSelectorItem.classList.add('active');
+        loadCommentSystem(defaultComment);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', commentInit);
+    } else {
+      commentInit();
+    }
+  };
+  loadComments();
+</script>
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.9.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+    
+<script src="https://npm.webcache.cn/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF&#x2F;RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh&#x2F;OJfpU0jr6" crossorigin="anonymous" defer data-pjax></script>
+
+    
+<script src="https://npm.webcache.cn/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous" defer onload="renderMathInElement(_$(&#39;article&#39;), {delimiters: [{left: &#39;$$&#39;, right: &#39;$$&#39;, display: true},{left: &#39;$&#39;, right: &#39;$&#39;, display: false}]});" data-pjax></script>
+
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.js" integrity="sha384-gdGYZwHnfJM54evoZhpO0s6ZF5BQiybkiyW7VXr+h5UfruuRL&#x2F;aORyw+5+HZoU6e" crossorigin="anonymous"></script>
+
+  
+
+
+
+  
+  <script>
+    var isMobile = window.matchMedia('(max-width: 959px)').matches;
+    if (isMobile) {
+      const meting = _$('meting-js');
+      if (meting) {
+        meting.setAttribute('fixed', 'true');
+        const aside = meting.parentNode;
+        if (aside?.tagName === 'ASIDE') {
+          aside.removeChild(meting);
+          document.body.appendChild(meting);
+        }
+      }
+    }
+  </script>
+  
+<script src="https://npm.webcache.cn/meting@2.0.1/dist/Meting.min.js" integrity="sha384-ASVlpKF80A22OXTK3tfEjZm1EL6uFMKIC4p8+0maanw1S&#x2F;IyB+Y4JG+ZDU7GpKE8" crossorigin="anonymous"></script>
+
+
+
+
+    
+  </body>
+  </html>
+

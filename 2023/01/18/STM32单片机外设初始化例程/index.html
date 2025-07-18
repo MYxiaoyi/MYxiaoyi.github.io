@@ -1,0 +1,2061 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+  <script src="https://www.googletagmanager.com/gtag/js?id=true"></script>
+  <script data-pjax>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'true');
+  </script>
+
+
+  
+  <script>
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "true");
+  </script>
+
+
+  
+  <script async src="https://hm.baidu.com/hm.js?true"></script>
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    _hmt.push(["_trackPageview", location.pathname]);
+  </script>
+
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":false,"count":50,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://myxiaoyi.github.io';window.REIMU_CONFIG.i18n_languages = ["en"];</script>
+  
+  <title>
+    STM32单片机外设初始化例程 |
+    
+    冯笑一的小窝
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="STM32单片机外设初始化例程  一、起因 由于自己学习STM32单片机是零零散散的学习的，没有系统的进行学习，学习的东西非常的混乱，没有做过什么整体的框架整理，所以在此将STM32的外设的初始化进行系统的打包成一个文档，把程序的过程进行整理。  二、基本流程  1、基本STM32硬件知识点 STM32的单片机的开发程序发展的流程基本都是从寄存器阶段到标准库阶段到现在的HAL库、RTOS。所以第">
+<meta property="og:type" content="article">
+<meta property="og:title" content="STM32单片机外设初始化例程">
+<meta property="og:url" content="https://myxiaoyi.github.io/2023/01/18/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/index.html">
+<meta property="og:site_name" content="冯笑一的小窝">
+<meta property="og:description" content="STM32单片机外设初始化例程  一、起因 由于自己学习STM32单片机是零零散散的学习的，没有系统的进行学习，学习的东西非常的混乱，没有做过什么整体的框架整理，所以在此将STM32的外设的初始化进行系统的打包成一个文档，把程序的过程进行整理。  二、基本流程  1、基本STM32硬件知识点 STM32的单片机的开发程序发展的流程基本都是从寄存器阶段到标准库阶段到现在的HAL库、RTOS。所以第">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://myxiaoyi.github.io/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/1.webp">
+<meta property="og:image" content="https://myxiaoyi.github.io/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/2.webp">
+<meta property="og:image" content="https://myxiaoyi.github.io/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/4.webp">
+<meta property="og:image" content="https://myxiaoyi.github.io/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/3.webp">
+<meta property="og:image" content="https://myxiaoyi.github.io/images/posts/4.png">
+<meta property="og:image" content="https://myxiaoyi.github.io/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/5.png">
+<meta property="og:image" content="https://myxiaoyi.github.io/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/6.png">
+<meta property="og:image" content="https://myxiaoyi.github.io/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/7.png">
+<meta property="og:image" content="https://myxiaoyi.github.io/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/8.png">
+<meta property="og:image" content="https://myxiaoyi.github.io/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/9.png">
+<meta property="article:published_time" content="2023-01-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-07-16T09:01:59.164Z">
+<meta property="article:author" content="冯笑一">
+<meta property="article:tag" content="嵌入式">
+<meta property="article:tag" content="C语言">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content="单片机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://myxiaoyi.github.io/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/1.webp">
+  
+  
+    <link rel="alternate" href="/404.html" title="冯笑一的小窝" >
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l&#x2F;9On385z&#x2F;&#x2F;&#x2F;+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.css" integrity="sha384-tLMkTWh2pfXNWGFlUS0w1TFtRG5xZ9lPWFOooj+vDDLIL+xBGQU&#x2F;voDBY5XE2lVh" crossorigin="anonymous">
+
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi ">
+        
+          <img src="/images/taichi.svg" alt="loading" />
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">进入珊瑚宫中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+<div id="heatmap-tooltip"></div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="home icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="archives icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/archives/">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="about icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/about/">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                <img src="/images/taichi.svg" alt="friend icon" style="height: 1em;">
+              
+             
+          </div>
+          <a class="main-nav-link" href="/friend/">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/404.html" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜索"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">简体中文</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" class="selected">简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2023/01/18/STM32单片机外设初始化例程/';
+            
+              langMap['en'] = '/en/2023/01/18/STM32单片机外设初始化例程/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img style="position: absolute;top: 0;left: 0;width: 100%;height: 150%;z-index: -2;display: block;background: rgba(138, 237, 234, 0.47);mask: linear-gradient(to top, transparent, #fff 50%);"></img>
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">STM32单片机外设初始化例程</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#stm32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text"> STM32单片机外设初始化例程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%B5%B7%E5%9B%A0"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、起因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、基本流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E6%9C%ACstm32%E7%A1%AC%E4%BB%B6%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 1、基本STM32硬件知识点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E5%BA%93%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 内核库文件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#cor_cm3h"><span class="toc-number">1.2.2.1.</span> <span class="toc-text"> cor_cm3.h</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#misch"><span class="toc-number">1.2.2.2.</span> <span class="toc-text"> misc.h</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#miscc"><span class="toc-number">1.2.2.3.</span> <span class="toc-text"> misc.c</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E5%A4%96%E8%AE%BE%E5%BA%93%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.2.3.</span> <span class="toc-text"> 处理器外设库文件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#startup_stm32f10x_hds"><span class="toc-number">1.2.3.1.</span> <span class="toc-text"> startup_stm32f10x_hd.s</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#system_stm32f10xc"><span class="toc-number">1.2.3.2.</span> <span class="toc-text"> system_stm32f10x.c</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#stm32f10xh"><span class="toc-number">1.2.3.3.</span> <span class="toc-text"> Stm32f10x.h</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#stm32f10x_xxxh"><span class="toc-number">1.2.3.4.</span> <span class="toc-text"> stm32f10x_xxx.h</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#stm32f10x_xxxc"><span class="toc-number">1.2.3.5.</span> <span class="toc-text"> stm32f10x_xxx.c</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#systeminit-%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98"><span class="toc-number">1.2.4.</span> <span class="toc-text"> SystemInit 相关问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#font-stylecolorrgb18-18-182-%E5%9F%BA%E6%9C%ACstm32%E5%A4%96%E8%AE%BE%E9%85%8D%E7%BD%AE%E6%B5%81%E7%A8%8Bfont"><span class="toc-number">1.3.</span> <span class="toc-text"> 2、基本stm32外设配置流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%E7%94%B3%E6%98%8E%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">1.3.0.1.</span> <span class="toc-text"> 第一步：申明结构体；</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E5%BC%80%E5%90%AF%E6%97%B6%E9%92%9F"><span class="toc-number">1.3.0.2.</span> <span class="toc-text"> 第二步：开启时钟；</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">1.3.0.3.</span> <span class="toc-text"> 第三步：初始化结构体；</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8B%A5%E6%9C%89%E8%AE%BE%E7%BD%AE%E4%B8%AD%E6%96%AD"><span class="toc-number">1.3.1.</span> <span class="toc-text"> *若有设置中断</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%E4%BD%BF%E8%83%BD%E5%A4%96%E8%AE%BE%E6%9F%90%E7%89%B9%E5%AE%9A%E4%B8%AD%E6%96%AD%E5%AE%9A%E6%97%B6%E5%99%A8%E4%B8%B2%E5%8F%A3adc"><span class="toc-number">1.3.1.1.</span> <span class="toc-text"> 第一步：使能外设某特定中断（定时器，串口，ADC）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E5%88%9D%E5%A7%8B%E5%8C%96-nvic"><span class="toc-number">1.3.1.2.</span> <span class="toc-text"> 第二步：初始化 NVIC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%E8%AE%BE%E7%BD%AE%E7%B3%BB%E7%BB%9F%E4%B8%AD%E6%96%AD%E4%BC%98%E5%85%88%E7%BA%A7%E5%88%86%E7%BB%84%E9%80%9A%E5%B8%B8%E5%9C%A8%E4%B8%BB%E5%87%BD%E6%95%B0%E4%B8%AD%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.1.3.</span> <span class="toc-text"> 第三步：设置系统中断优先级分组(通常在主函数中配置）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#end%E5%AE%9A%E6%97%B6%E5%99%A8%E4%B8%B2%E5%8F%A3adc%E4%BD%BF%E8%83%BD"><span class="toc-number">1.3.2.</span> <span class="toc-text"> END.定时器&#x2F;串口&#x2F;ADC使能</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%BB%93%E6%9E%84%E4%BD%93%E5%8F%98%E9%87%8F%E9%85%8D%E7%BD%AE%E5%85%B7%E4%BD%93%E5%BD%A2%E5%BC%8F"><span class="toc-number">1.4.</span> <span class="toc-text"> 3、结构体变量配置具体形式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%9D%E5%A7%8B%E5%8C%96-gpio-%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.0.1.</span> <span class="toc-text"> 初始化结构体初始化 GPIO 的常用格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%9D%E5%A7%8B%E5%8C%96-usart-%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.0.2.</span> <span class="toc-text"> 初始化结构体初始化 USART 的常用格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%9D%E5%A7%8B%E5%8C%96-nvic-%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.0.3.</span> <span class="toc-text"> 初始化结构体初始化 NVIC 的常用格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%9D%E5%A7%8B%E5%8C%96%E5%A4%96%E9%83%A8%E4%B8%AD%E6%96%AD%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.0.4.</span> <span class="toc-text"> 初始化结构体初始化外部中断的常用格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%9D%E5%A7%8B%E5%8C%96%E5%AE%9A%E6%97%B6%E5%99%A8%E4%B8%AD%E6%96%AD%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.0.5.</span> <span class="toc-text"> 初始化结构体初始化定时器中断的常用格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BE%93%E5%87%BA%E6%AF%94%E8%BE%83%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.0.6.</span> <span class="toc-text"> 初始化结构体初始化输出比较的常用格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE-adc-%E7%9A%84%E9%80%9A%E7%94%A8%E6%8E%A7%E5%88%B6%E5%AF%84%E5%AD%98%E5%99%A8-ccr-common-control-register"><span class="toc-number">1.4.0.7.</span> <span class="toc-text"> 设置 ADC 的通用控制寄存器 CCR( common control register)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%9D%E5%A7%8B%E5%8C%96adc%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.0.8.</span> <span class="toc-text"> 初始化结构体初始化ADC的常用格式</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89-gpio%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text"> 三、GPIO配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-number">2.0.1.</span> <span class="toc-text"> 1、常用函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#font-stylecolorrgb77-77-77%E8%AE%BE%E8%AE%A1%E6%A1%86%E5%9B%BEfont"><span class="toc-number">2.0.2.</span> <span class="toc-text"> 设计框图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#font-stylecolorrgb77-77-77%E4%BE%8B%E7%A8%8B%E4%BB%A3%E7%A0%81font"><span class="toc-number">2.0.3.</span> <span class="toc-text"> 例程代码</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%B8%80font-stylecolorrgb77-77-77led%E7%81%AF%E5%88%9D%E5%A7%8B%E5%8C%96gpio%E5%8F%A3%E4%BE%8B%E7%A8%8Bfont"><span class="toc-number">2.0.3.1.</span> <span class="toc-text"> 示例一:LED灯初始化GPIO口例程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BA%8C%E6%8A%8Agpio%E9%85%8D%E7%BD%AE%E6%88%90%E8%BE%93%E5%85%A5"><span class="toc-number">2.0.3.2.</span> <span class="toc-text"> 示例二:把GPIO配置成输入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#font-stylecolorrgb51-51-51%E7%A4%BA%E4%BE%8B%E4%B8%89%E9%85%8D%E7%BD%AE%E5%A4%8D%E7%94%A8%E5%8A%9F%E8%83%BD-pa9-pa10-%E9%85%8D%E7%BD%AE%E6%88%90%E4%B8%B2%E5%8F%A31%E7%9A%84%E6%94%B6%E5%8F%91%E6%8E%A5%E5%8F%A3font"><span class="toc-number">2.0.3.3.</span> <span class="toc-text"> 示例三:配置复用功能 PA9 PA10 配置成串口1的收发接口</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B-%E5%A4%96%E9%83%A8%E4%B8%AD%E6%96%AD"><span class="toc-number">3.</span> <span class="toc-text"> 四、外部中断</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0-2"><span class="toc-number">3.0.1.</span> <span class="toc-text"> 1、常用函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E6%A1%86%E5%9B%BE"><span class="toc-number">3.0.2.</span> <span class="toc-text"> 设计框图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E7%A8%8B%E4%BB%A3%E7%A0%81"><span class="toc-number">3.0.3.</span> <span class="toc-text"> 例程代码</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="toc-number">3.0.3.1.</span> <span class="toc-text"> 完整代码</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94-%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text"> 五、定时器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0-3"><span class="toc-number">4.0.1.</span> <span class="toc-text"> 1、常用函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E6%A1%86%E5%9B%BE-2"><span class="toc-number">4.0.2.</span> <span class="toc-text"> 设计框图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E7%A8%8B%E4%BB%A3%E7%A0%81-2"><span class="toc-number">4.0.3.</span> <span class="toc-text"> 例程代码</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="冯笑一" class="lazyload">
+  <div class="sidebar-author-name">冯笑一</div>
+  <div class="sidebar-description">电子信息爱好者</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">16</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">17</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a href=mailto:qingchunhuoli@live.com itemprop="url" target="_blank" aria-label="email" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/MYxiaoyi itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://space.bilibili.com/5463002 itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="home icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives/" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="archives icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about/" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="about icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend/" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="friend icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-STM32单片机外设初始化例程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2023-01-17T16:00:00.000Z" itemprop="datePublished">2023-01-18</time>
+    <time style="display: none;" id="post-update-time">2025-07-16</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/" data-aos="zoom-in">嵌入式</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="stm32单片机外设初始化例程"><a class="markdownIt-Anchor" href="#stm32单片机外设初始化例程"></a> STM32单片机外设初始化例程</h1>
+<h2 id="一-起因"><a class="markdownIt-Anchor" href="#一-起因"></a> 一、起因</h2>
+<p>由于自己学习STM32单片机是零零散散的学习的，没有系统的进行学习，学习的东西非常的混乱，没有做过什么整体的框架整理，所以在此将STM32的外设的初始化进行系统的打包成一个文档，把程序的过程进行整理。</p>
+<h2 id="二-基本流程"><a class="markdownIt-Anchor" href="#二-基本流程"></a> 二、基本流程</h2>
+<h3 id="1-基本stm32硬件知识点"><a class="markdownIt-Anchor" href="#1-基本stm32硬件知识点"></a> 1、基本STM32硬件知识点</h3>
+<p>STM32的单片机的开发程序发展的流程基本都是从寄存器阶段到标准库阶段到现在的HAL库、RTOS。所以第一步我们需要清楚单片机的整体工作流程。</p>
+<p><img src="/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/1.webp" alt="" /></p>
+<p>通过图上可以看出，STM32单片机有一个Cortex-M3的内核CPU控制，分出三条数据总线控制各个外设：</p>
+<ul>
+<li><strong>指令存储区总线（两条）</strong>：I-Code总线和D-Code总线</li>
+<li><strong>系统总线（System）</strong>：用于访问内存和外设</li>
+<li><strong>私有外设总线</strong>：负责一部分私有外设的访问，主要就是访问调试组件</li>
+</ul>
+<p>I-Code用于取指，D-Code用于查表等操作，它们按最佳执行速度进行优化。</p>
+<p>系统总线（System）用于访问内存和外设，覆盖的区域包括SRAM，片上外设，片外RAM，片外扩展设备，以及系统级存储区的部分空间。</p>
+<p>私有外设总线负责一部分私有外设的访问，主要就是访问调试组件。它们也在系统级存储区。</p>
+<p>还有一个DMA总线，从字面上看，DMA是data memory access的意思，是一种连接内核和外设的桥梁，它可以访问外设、内存，传输不受CPU的控制，并且是双向通信。简而言之，这个家伙就是一个速度很快的且不受老大控制的数据搬运工。</p>
+<p>从结构框图上看，STM32的外设有串口、定时器、IO口、FSMC、SDIO、SPI、I2C等，这些外设按照速度的不同，分别挂载到AHB、APB2、APB1这三条总线上。</p>
+<p>其中寄存器其实可以理解为内存的地址，cpu通过地址访问对应的空间的内存数据，这个内存数据用来控制各个外设的开关。</p>
+<p><code>stm32</code>的函数一切库的封装始于寄存器的映射操作。<br />
+<img src="/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/2.webp" alt="" /><br />
+<img src="/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/4.webp" alt="" /></p>
+<p>如果进行寄存器开发，就需要怼地址以及对寄存器进行字节赋值，不仅效率低而且容易出错。</p>
+<p>因此我们开始使用库函数进行编程。<br />
+<img src="/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/3.webp" alt="" /></p>
+<h3 id="内核库文件分析"><a class="markdownIt-Anchor" href="#内核库文件分析"></a> 内核库文件分析</h3>
+<h4 id="cor_cm3h"><a class="markdownIt-Anchor" href="#cor_cm3h"></a> <code>cor_cm3.h</code></h4>
+<p>这个头文件实现了：</p>
+<ol>
+<li>内核结构体寄存器定义</li>
+<li>内核寄存器内存映射</li>
+<li>内存寄存器位定义</li>
+</ol>
+<blockquote>
+<p>跟处理器相关的头文件<code>stm32f10x.h</code>实现的功能一样，一个是针对内核的寄存器，一个是针对内核之外，即处理器的寄存器。</p>
+</blockquote>
+<h4 id="misch"><a class="markdownIt-Anchor" href="#misch"></a> <code>misc.h</code></h4>
+<p>内核应用函数库头文件，对应<code>stm32f10x_xxx.h</code>。</p>
+<h4 id="miscc"><a class="markdownIt-Anchor" href="#miscc"></a> <code>misc.c</code></h4>
+<p>内核应用函数库文件，对应<code>stm32f10x_xxx.c</code>。</p>
+<p>在CM3这个内核里面还有一些功能组件，如：</p>
+<ul>
+<li><code>NVIC</code></li>
+<li><code>SCB</code></li>
+<li><code>ITM</code></li>
+<li><code>MPU</code></li>
+<li><code>CoreDebug</code></li>
+</ul>
+<blockquote>
+<p>CM3带有非常丰富的功能组件，但是芯片厂商在设计MCU的时候有一些并不是非要不可的，是可裁剪的，比如<code>MPU</code>、<code>ITM</code>等在STM32里面就没有。<br />
+其中<code>NVIC</code>在每一个CM3内核的单片机中都会有，但都会被裁剪，只能是CM3 NVIC的一个子集。在<code>NVIC</code>里面还有一个<code>SysTick</code>，是一个系统定时器，可以提供时基，一般为操作系统定时器所用。</p>
+</blockquote>
+<p><code>misc.h</code>和<code>mics.c</code>这两个文件提供了操作这些组件的函数，并可以在CM3内核单片机直接移植。</p>
+<hr />
+<h3 id="处理器外设库文件分析"><a class="markdownIt-Anchor" href="#处理器外设库文件分析"></a> 处理器外设库文件分析</h3>
+<h4 id="startup_stm32f10x_hds"><a class="markdownIt-Anchor" href="#startup_stm32f10x_hds"></a> <code>startup_stm32f10x_hd.s</code></h4>
+<p>这个是由汇编编写的启动文件，是STM32上电启动的第一个程序，启动文件主要实现了：</p>
+<ul>
+<li>初始化堆栈指针 <code>SP</code></li>
+<li>设置 <code>PC</code> 指针<code>=Reset_Handler</code></li>
+<li>设置向量表的地址，并初始化向量表（向量表里面放的是 STM32 所有中断函数的入口地址）</li>
+<li>调用库函数 <code>SystemInit</code>（把系统时钟配置成 72M，<code>SystemInit</code> 在库文件 <code>stytem_stm32f10x.c</code> 中定义）</li>
+<li>跳转到标号<code>_main</code>，最终去到 C 的世界</li>
+</ul>
+<h4 id="system_stm32f10xc"><a class="markdownIt-Anchor" href="#system_stm32f10xc"></a> <code>system_stm32f10x.c</code></h4>
+<p>这个文件的作用是里面实现了各种常用的系统时钟设置函数，有：</p>
+<ul>
+<li>72M</li>
+<li>56M</li>
+<li>48M</li>
+<li>36M</li>
+<li>24M</li>
+<li>8M</li>
+</ul>
+<blockquote>
+<p>我们使用的是把系统时钟设置成72M。</p>
+</blockquote>
+<h4 id="stm32f10xh"><a class="markdownIt-Anchor" href="#stm32f10xh"></a> <code>Stm32f10x.h</code></h4>
+<p>这个头文件非常重要，实现了：</p>
+<ol>
+<li>处理器外设寄存器的结构体定义</li>
+<li>处理器外设的内存映射</li>
+<li>处理器外设寄存器的位定义</li>
+</ol>
+<blockquote>
+<p>关于1和2我们在用寄存器点亮LED的时候有讲解。</p>
+</blockquote>
+<p><strong>关于第3点说明：</strong><br />
+处理器外设寄存器的位定义就是把外设的每个寄存器的每一个位写1的16进制数定义成一个宏，宏名即用该位的名称表示。</p>
+<p><strong>示例：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 一般的操作方法</span></span><br><span class="line">ADC-&gt;CR2 = <span class="number">0x00000001</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用位定义后的操作</span></span><br><span class="line">ADC-&gt;CR2 = ADC_CR2_ADON;</span><br></pre></td></tr></table></figure>
+<h4 id="stm32f10x_xxxh"><a class="markdownIt-Anchor" href="#stm32f10x_xxxh"></a> <code>stm32f10x_xxx.h</code></h4>
+<p>外设xxx应用函数库头文件，这里面主要定义了实现外设某一功能的结构体。</p>
+<blockquote>
+<p>比如通用定时器有很多功能：定时功能、输出比较功能、输入捕捉功能。这个头文件就为我们打包好了要实现某一个功能的寄存器（以结构体的形式定义）。</p>
+</blockquote>
+<h4 id="stm32f10x_xxxc"><a class="markdownIt-Anchor" href="#stm32f10x_xxxc"></a> <code>stm32f10x_xxx.c</code></h4>
+<p>外设xxx应用函数库，这里面写好了操作xxx外设的所有常用的函数。</p>
+<blockquote>
+<p>我们使用库编程的时候，使用的最多的就是这里的函数。</p>
+</blockquote>
+<hr />
+<h3 id="systeminit-相关问题"><a class="markdownIt-Anchor" href="#systeminit-相关问题"></a> SystemInit 相关问题</h3>
+<p>在工程中新建<code>main.c</code>后直接编译会报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Undefined symbol SystemInit (referred from startup_stm32f10x_hd.o).</span><br></pre></td></tr></table></figure>
+<p><strong>原因分析：</strong><br />
+从启动文件<code>startup_stm32f10x_hd.s</code>中我们知道：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">;Reset handler</span><br><span class="line">Reset_Handler PROC</span><br><span class="line">    EXPORT Reset_Handler [WEAK]</span><br><span class="line">    IMPORT __main</span><br><span class="line">    ;IMPORT SystemInit</span><br><span class="line">    ;LDR R0, =SystemInit</span><br><span class="line">    BLX R0</span><br><span class="line">    LDR R0, =__main</span><br><span class="line">    BX R0</span><br><span class="line">ENDP</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>汇编中<code>;</code>分号是注释的意思<br />
+<code>Reset_Handler</code>调用了<code>SystemInit</code>函数（用来初始化系统时钟），该函数是在库文件<code>system_stm32f10x.c</code>中实现的。</p>
+</blockquote>
+<p><strong>解决方案：</strong><br />
+在main文件里面定义一个<code>SystemInit</code>空函数，为的是骗过编译器，把这个错误去掉。</p>
+<blockquote>
+<p>关于配置系统时钟之后会出文章RCC时钟树详细介绍，主要配置：</p>
+<ul>
+<li>时钟控制寄存器(RCC_CR)</li>
+<li>时钟配置寄存器(RCC_CFGR)</li>
+</ul>
+<p>但最好是直接使用CubeMX直接生成，因为它的配置过程有些冗长。<br />
+如果使用库，库函数<code>SystemInit</code>会帮我们把系统时钟设置成72M。</p>
+</blockquote>
+<h2 id="font-stylecolorrgb18-18-182-基本stm32外设配置流程font"><a class="markdownIt-Anchor" href="#font-stylecolorrgb18-18-182-基本stm32外设配置流程font"></a> <font style="color:rgb(18, 18, 18);">2、基本stm32外设配置流程</font></h2>
+<p><strong>程序模板</strong></p>
+<h4 id="第一步申明结构体"><a class="markdownIt-Anchor" href="#第一步申明结构体"></a> 第一步：申明结构体；</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx_InitTypeDef xxx_InitStructure;</span><br></pre></td></tr></table></figure>
+<h4 id="第二步开启时钟"><a class="markdownIt-Anchor" href="#第二步开启时钟"></a> 第二步：开启时钟；</h4>
+<p>（第一步和第二步顺序不能调换：标准c要求所有变量/结构体,都必须在代码段之前声明）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RCC_xPeriphClockCmd(RCC_AxBxPeriph_xxx, ENABLE)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>*2.5：引脚复用（如果有）并且开启复用的时钟</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GPIO_PinAFConfig(GPIOx,GPIO_PinSourcex,GPIO_AF_x)</span><br></pre></td></tr></table></figure>
+<h4 id="第三步初始化结构体"><a class="markdownIt-Anchor" href="#第三步初始化结构体"></a> 第三步：初始化结构体；</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx_Init(xxx,&amp;xxx_InitStructure)</span><br></pre></td></tr></table></figure>
+<h3 id="若有设置中断"><a class="markdownIt-Anchor" href="#若有设置中断"></a> *若有设置中断</h3>
+<blockquote>
+<p>中断名在startup_stm32f40_41xx.s中定义。</p>
+</blockquote>
+<h4 id="第一步使能外设某特定中断定时器串口adc"><a class="markdownIt-Anchor" href="#第一步使能外设某特定中断定时器串口adc"></a> 第一步：使能外设某特定中断（定时器，串口，ADC）</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx_ITConfig(xxx, xxx, ENABLE);</span><br></pre></td></tr></table></figure>
+<h4 id="第二步初始化-nvic"><a class="markdownIt-Anchor" href="#第二步初始化-nvic"></a> 第二步：初始化 NVIC</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NVIC_Init(&amp;NVIC_InitStructure);</span><br></pre></td></tr></table></figure>
+<h4 id="第三步设置系统中断优先级分组通常在主函数中配置"><a class="markdownIt-Anchor" href="#第三步设置系统中断优先级分组通常在主函数中配置"></a> 第三步：设置系统中断优先级分组(通常在主函数中配置）</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NVIC_PriorityGroupConfig(NVIC_PriorityGroup_x);</span><br></pre></td></tr></table></figure>
+<p>中断服务函数(典型）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">xxx_IRQHandler</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(xxx_GetITStatus(xxx)!=RESET)<span class="comment">//判断某个线上的中断是否发生 </span></span><br><span class="line">  &#123; …中断逻辑…</span><br><span class="line">      xxx_ClearITPendingBit(xxx); <span class="comment">//清除 LINE 上的中断标志位 </span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其它中断相关</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xxx_GetITStatus(xxx)<span class="comment">//获取中断状态，查看中断是否发生 </span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line">xxx_ClearITPendingBit(xxx)；<span class="comment">//清除</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">xxx_ClearFlag(xxx);<span class="comment">//清除</span></span><br><span class="line"><span class="comment">//前者会先判断这种中断是否使能，使能了才去判断中断标志位，</span></span><br><span class="line"><span class="comment">//而后者直接用来判断状态标志位。</span></span><br></pre></td></tr></table></figure>
+<h3 id="end定时器串口adc使能"><a class="markdownIt-Anchor" href="#end定时器串口adc使能"></a> END.定时器/串口/ADC使能</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx_Cmd(xxx, ENABLE);</span><br></pre></td></tr></table></figure>
+<h2 id="3-结构体变量配置具体形式"><a class="markdownIt-Anchor" href="#3-结构体变量配置具体形式"></a> 3、结构体变量配置具体形式</h2>
+<h4 id="初始化结构体初始化-gpio-的常用格式"><a class="markdownIt-Anchor" href="#初始化结构体初始化-gpio-的常用格式"></a> 初始化结构体初始化 GPIO 的常用格式</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GPIO_InitTypeDef GPIO_InitStructure;</span><br><span class="line">GPIO_InitStructure.GPIO_Pin = GPIO_Pin_x | GPIO_Pin_x;</span><br><span class="line">GPIO_InitStructure.GPIO_Mode = GPIO_Mode_xxx;</span><br><span class="line">GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;</span><br><span class="line">GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;</span><br><span class="line">GPIO_Init(GPIOx,&amp;GPIO_InitStructure);</span><br></pre></td></tr></table></figure>
+<h4 id="初始化结构体初始化-usart-的常用格式"><a class="markdownIt-Anchor" href="#初始化结构体初始化-usart-的常用格式"></a> 初始化结构体初始化 USART 的常用格式</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">USART_InitTypeDef USART_InitStructure;</span><br><span class="line">USART_InitStructure.USART_BaudRate = bound;<span class="comment">//一般设置为 9600;</span></span><br><span class="line">USART_InitStructure.USART_WordLength = USART_WordLength_8b;<span class="comment">//字长为 8 位数据格式</span></span><br><span class="line">USART_InitStructure.USART_StopBits = USART_StopBits_1;<span class="comment">//一个停止位</span></span><br><span class="line">USART_InitStructure.USART_Parity = USART_Parity_No;<span class="comment">//无奇偶校验位</span></span><br><span class="line">USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;</span><br><span class="line">USART_InitStructure.USART_Mode = USART_Mode_Rx |USART_Mode_Tx;<span class="comment">//收发模式</span></span><br><span class="line">USART_Init(USARTX, &amp;USART_InitStructure); <span class="comment">//初始化串口</span></span><br></pre></td></tr></table></figure>
+<h4 id="初始化结构体初始化-nvic-的常用格式"><a class="markdownIt-Anchor" href="#初始化结构体初始化-nvic-的常用格式"></a> 初始化结构体初始化 NVIC 的常用格式</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">NVIC_InitTypeDef NVIC_InitStructure;</span><br><span class="line">NVIC_InitStructure.NVIC_IRQChannel = xxx_IRQn;<span class="comment">//设置中断名</span></span><br><span class="line">NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=<span class="number">3</span>;<span class="comment">//抢占优先级 3</span></span><br><span class="line">NVIC_InitStructure.NVIC_IRQChannelSubPriority =<span class="number">3</span>; <span class="comment">//响应优先级 3</span></span><br><span class="line">NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; <span class="comment">//IRQ 通道使能</span></span><br><span class="line">NVIC_Init(&amp;NVIC_InitStructure); <span class="comment">//根据指定的参数初始化 VIC 寄存器、</span></span><br></pre></td></tr></table></figure>
+<h4 id="初始化结构体初始化外部中断的常用格式"><a class="markdownIt-Anchor" href="#初始化结构体初始化外部中断的常用格式"></a> 初始化结构体初始化外部中断的常用格式</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">EXTI_InitTypeDef EXTI_InitStructure;</span><br><span class="line">EXTI_InitStructure.EXTI_Line=EXTI_Linex;</span><br><span class="line">EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;</span><br><span class="line">EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_xxx;<span class="comment">//上升，下降沿或任意电平</span></span><br><span class="line">EXTI_InitStructure.EXTI_LineCmd = ENABLE;</span><br><span class="line">EXTI_Init(&amp;EXTI_InitStructure); <span class="comment">//初始化外设 EXTI 寄存器</span></span><br></pre></td></tr></table></figure>
+<h4 id="初始化结构体初始化定时器中断的常用格式"><a class="markdownIt-Anchor" href="#初始化结构体初始化定时器中断的常用格式"></a> 初始化结构体初始化定时器中断的常用格式</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;</span><br><span class="line">TIM_TimeBaseStructure.TIM_Period = xxx;</span><br><span class="line">TIM_TimeBaseStructure.TIM_Prescaler =xxx; </span><br><span class="line">TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIVx; </span><br><span class="line">TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_x;</span><br><span class="line">TIM_TimeBaseInit(TIMx, &amp;TIM_TimeBaseStructure);</span><br></pre></td></tr></table></figure>
+<h4 id="初始化结构体初始化输出比较的常用格式"><a class="markdownIt-Anchor" href="#初始化结构体初始化输出比较的常用格式"></a> 初始化结构体初始化输出比较的常用格式</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">TIM_OCInitTypeDef TIM_OCInitStructure;</span><br><span class="line">TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWMx; <span class="comment">//选择模式 PWM</span></span><br><span class="line">TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; <span class="comment">//比较输出使能</span></span><br><span class="line">TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_xxx; <span class="comment">//输出极性</span></span><br><span class="line">TIM_OCxInit(TIMx, &amp;TIM_OCInitStructure); <span class="comment">//根据T指定的参数初始化外设</span></span><br></pre></td></tr></table></figure>
+<h4 id="设置-adc-的通用控制寄存器-ccr-common-control-register"><a class="markdownIt-Anchor" href="#设置-adc-的通用控制寄存器-ccr-common-control-register"></a> 设置 ADC 的通用控制寄存器 CCR( common control register)</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ADC_CommonInitTypeDef ADC_CommonInitStructure;</span><br><span class="line">ADC_CommonInitStructure.ADC_Mode = ADC_Mode_Independent;<span class="comment">//独立模式</span></span><br><span class="line">ADC_CommonInitStructure.ADC_TwoSamplingDelay = ADC_TwoSamplingDelay_xCycles;<span class="comment">//两个采样阶段之间的延迟周期数，5~20</span></span><br><span class="line">ADC_CommonInitStructure.ADC_DMAAccessMode = ADC_DMAAccessMode_Disabled;</span><br><span class="line">ADC_CommonInitStructure.ADC_Prescaler = ADC_Prescaler_Div4;<span class="comment">//需保证 ADC1 的时钟频率不超过 36MHz。</span></span><br><span class="line">ADC_CommonInit(&amp;ADC_CommonInitStructure);<span class="comment">//初始化</span></span><br></pre></td></tr></table></figure>
+<h4 id="初始化结构体初始化adc的常用格式"><a class="markdownIt-Anchor" href="#初始化结构体初始化adc的常用格式"></a> 初始化结构体初始化ADC的常用格式</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ADC_InitTypeDef ADC_InitStructure;</span><br><span class="line">ADC_InitStructure.ADC_Resolution = ADC_Resolution_xb;<span class="comment">//6,8,10,12</span></span><br><span class="line">ADC_InitStructure.ADC_ScanConvMode = DISABLE;<span class="comment">//非扫描模式</span></span><br><span class="line">ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;<span class="comment">//关闭连续模式</span></span><br><span class="line">ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;</span><br><span class="line"><span class="comment">//禁止触发检测，使用软件触发</span></span><br><span class="line">ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;<span class="comment">//右对齐</span></span><br><span class="line">ADC_InitStructure.ADC_NbrOfConversion = <span class="number">1</span>;<span class="comment">//1 个转换在规则序列中</span></span><br><span class="line">ADC_Init(ADC1, &amp;ADC_InitStructure);<span class="comment">//ADC 初始化</span></span><br></pre></td></tr></table></figure>
+<h1 id="三-gpio配置"><a class="markdownIt-Anchor" href="#三-gpio配置"></a> 三、GPIO配置</h1>
+<h3 id="1-常用函数"><a class="markdownIt-Anchor" href="#1-常用函数"></a> 1、常用函数</h3>
+<blockquote>
+<p><strong>GPIO_Init</strong> 初始化GPIO，设置GPIO的模式，速度，引脚数<br />
+<strong>GPIO_ReadInputDataBit</strong>读取一位GPIO的输入数据	<br />
+<strong>GPIO_ReadInputData</strong>	读取GPIOx的输入数据	<br />
+<strong>GPIO_ReadOutputDataBit</strong>	读取一位GPIO的输出数据	<br />
+<strong>GPIO_ReadOutputDat</strong>a	读取GPIOx的输出数据	<br />
+<strong>GPIO_SetBits</strong>	使GPIO设置为高电平，可一起设置多，也可以设置一个	<br />
+<strong>GPIO_ResetBits</strong>	使GPIO设置为高电平，课一起设置多，也可以设置一个	<br />
+<strong>GPIO_WriteBit</strong>	设置GPIO的一个管脚	<br />
+<strong>GPIO_Write</strong>	设置GPIOx全部管脚	<br />
+<strong>GPIO_ToggleBits</strong> 翻转指定的GPIO口<br />
+<strong>GPIO_PinAFConfig</strong> 改变指定管脚的映射关系，即配置指定管脚的复用功能</p>
+</blockquote>
+<h3 id="font-stylecolorrgb77-77-77设计框图font"><a class="markdownIt-Anchor" href="#font-stylecolorrgb77-77-77设计框图font"></a> <font style="color:rgb(77, 77, 77);">设计框图</font></h3>
+<p><img src="/images/posts/4.png" alt="" /></p>
+<h3 id="font-stylecolorrgb77-77-77例程代码font"><a class="markdownIt-Anchor" href="#font-stylecolorrgb77-77-77例程代码font"></a> <font style="color:rgb(77, 77, 77);">例程代码</font></h3>
+<h4 id="示例一font-stylecolorrgb77-77-77led灯初始化gpio口例程font"><a class="markdownIt-Anchor" href="#示例一font-stylecolorrgb77-77-77led灯初始化gpio口例程font"></a> 示例一:<font style="color:rgb(77, 77, 77);">LED灯初始化GPIO口例程</font></h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">LED_GPIO_Config</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;		</span><br><span class="line">		<span class="comment">/*定义一个GPIO_InitTypeDef类型的结构体*/</span></span><br><span class="line">		GPIO_InitTypeDef GPIO_InitStructure;</span><br><span class="line">		<span class="comment">/*开启LED相关的GPIO外设时钟*/</span></span><br><span class="line">		RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOB,ENABLE);</span><br><span class="line">		<span class="comment">/*选择要控制的GPIO引脚*/</span></span><br><span class="line">		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;</span><br><span class="line">		<span class="comment">/*设置引脚模式为通用推挽输出*/</span></span><br><span class="line">		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;   </span><br><span class="line">		<span class="comment">/*设置引脚速率为50MHz */</span>   </span><br><span class="line">		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; </span><br><span class="line">		<span class="comment">/*调用库函数，初始化GPIO*/</span></span><br><span class="line">		GPIO_Init(GPIOC, &amp;GPIO_InitStructure);	</span><br><span class="line">		<span class="comment">/*选择要控制的GPIO引脚*/</span></span><br><span class="line">		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;</span><br><span class="line">		<span class="comment">/*调用库函数，初始化GPIO*/</span></span><br><span class="line">		GPIO_Init(GPIOB, &amp;GPIO_InitStructure);</span><br><span class="line">		<span class="comment">/*选择要控制的GPIO引脚*/</span></span><br><span class="line">		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;</span><br><span class="line">		<span class="comment">/*调用库函数，初始化GPIO*/</span></span><br><span class="line">		GPIO_Init(GPIOC, &amp;GPIO_InitStructure);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参数：<strong>GPIO_InitStruct</strong>，GPIO的初始化相关结构体。该结构体里的成员变量决定了我们具体的初始化参数。以下进行说明：</p>
+<pre><code>          GPIO_Pin：指定具体的io脚，如GPIO_Pin_0，GPIO_Pin_1这样的宏定义。
+
+          GPIO_Mode：指定GPIO的模式，
+</code></pre>
+<p><strong>输入模式</strong></p>
+<pre><code>	+ 输入浮空： GPIO_Mode_IN_FLOATING
+	+  输入上拉： GPIO_Mode_IPU
+	+  输入下拉 ：GPIO_Mode_IPD
+	+  模拟输入 ：GPIO_Mode_AIN
+</code></pre>
+<p><strong>输出模式</strong></p>
+<pre><code>        +  开漏输出 GPIO_Mode_Out_OD
+        + 推挽输出 GPIO_Mode_Out_PP
+        + 复用功能推挽 GPIO_Mode_AF_PP
+        +  复用功能开漏 GPIO_Mode_AF_OD
+</code></pre>
+<p>GPIO_Speed：指定IO最快翻转速度，也就是当使用IO产生频率（如PWM）的最大速度：</p>
+<pre><code>        + GPIO_Speed_10MHz,
+        + GPIO_Speed_2MHz, 
+        + GPIO_Speed_50MHz等
+</code></pre>
+<h4 id="示例二把gpio配置成输入"><a class="markdownIt-Anchor" href="#示例二把gpio配置成输入"></a> 示例二:把GPIO配置成输入</h4>
+<blockquote>
+<p>常规方式按键使用中断触发，本案例很少被使用在按键中。</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">KEY_Init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">GPIO_InitTypeDef GPIO_InitStructure;</span><br><span class="line"><span class="comment">//结构体定义</span></span><br><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOC,ENABLE);</span><br><span class="line"><span class="comment">//使能 PORTA,PORTC 时钟</span></span><br><span class="line">GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;</span><br><span class="line"><span class="comment">//PA15</span></span><br><span class="line">GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; </span><br><span class="line"><span class="comment">//设置成上拉输入</span></span><br><span class="line">GPIO_Init(GPIOA, &amp;GPIO_InitStructure);</span><br><span class="line"><span class="comment">//初始化 GPIOA15</span></span><br><span class="line">GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;</span><br><span class="line"><span class="comment">//PC5</span></span><br><span class="line">GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; </span><br><span class="line"><span class="comment">//设置成上拉输入</span></span><br><span class="line">GPIO_Init(GPIOC, &amp;GPIO_InitStructure);</span><br><span class="line"><span class="comment">//初始化 GPIOC5</span></span><br><span class="line">GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;</span><br><span class="line"><span class="comment">//PA0</span></span><br><span class="line">GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD; </span><br><span class="line"><span class="comment">//PA0 设置成输入，默认下拉 </span></span><br><span class="line">GPIO_Init(GPIOA, &amp;GPIO_InitStructure);</span><br><span class="line"><span class="comment">//初始化 GPIOA.0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="font-stylecolorrgb51-51-51示例三配置复用功能-pa9-pa10-配置成串口1的收发接口font"><a class="markdownIt-Anchor" href="#font-stylecolorrgb51-51-51示例三配置复用功能-pa9-pa10-配置成串口1的收发接口font"></a> <font style="color:rgb(51, 51, 51);">示例三:配置复用功能 PA9 PA10 配置成串口1的收发接口</font></h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GPIO_InitTypeDef GPIO_InitStructure;</span><br><span class="line">RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA,ENABLE);<span class="comment">//使能GPIOA时钟</span></span><br><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1,ENABLE);<span class="comment">//使能USART1时钟</span></span><br><span class="line"><span class="comment">//串口1对应引脚复用映射</span></span><br><span class="line">GPIO_PinAFConfig(GPIOA,GPIO_PinSource9,GPIO_AF_USART1);<span class="comment">//GPIOA9复用为USART1</span></span><br><span class="line">GPIO_PinAFConfig(GPIOA,GPIO_PinSource10,GPIO_AF_USART1);<span class="comment">//GPIOA10复用为USART1</span></span><br><span class="line"><span class="comment">//USART1端口配置</span></span><br><span class="line">GPIO_InitStructure.GPIO_Pin= GPIO_Pin_9 | GPIO_Pin_10; <span class="comment">//GPIOA9与GPIOA10</span></span><br><span class="line">GPIO_InitStructure.GPIO_Mode= GPIO_Mode_AF;<span class="comment">//复用功能</span></span><br><span class="line">GPIO_InitStructure.GPIO_Speed= GPIO_Speed_50MHz;      <span class="comment">//速度50MHz</span></span><br><span class="line">GPIO_InitStructure.GPIO_OType= GPIO_OType_PP; <span class="comment">//推挽复用输出</span></span><br><span class="line">GPIO_InitStructure.GPIO_PuPd= GPIO_PuPd_UP; <span class="comment">//上拉</span></span><br><span class="line">GPIO_Init(GPIOA,&amp;GPIO_InitStructure);<span class="comment">//初始化PA9，PA10</span></span><br></pre></td></tr></table></figure>
+<h1 id="四-外部中断"><a class="markdownIt-Anchor" href="#四-外部中断"></a> 四、外部中断</h1>
+<h3 id="1-常用函数-2"><a class="markdownIt-Anchor" href="#1-常用函数-2"></a> 1、常用函数</h3>
+<blockquote>
+<p>void EXTI_DeInit(void); 重设为缺省值<br />
+void EXTI_Init(EXTI_InitTypeDef* EXTI_InitStruct); 根据EXTI_InitStruct结构体的配置进行初始化<br />
+void EXTI_StructInit(EXTI_InitTypeDef* EXTI_InitStruct);把结构体变量的每一个变量按照缺省值填入。<br />
+void EXTI_GenerateSWInterrupt(uint32_t EXTI_Line);产生一个中断<br />
+FlagStatus EXTI_GetFlagStatus(uint32_t EXTI_Line);获取指定的EXTI线路挂起的标志位<br />
+void EXTI_ClearFlag(uint32_t EXTI_Line);清楚EXTI的挂起标志位<br />
+ITStatus EXTI_GetITStatus(uint32_t EXTI_Line);检查指定的EXTI线路触发请求发送与否<br />
+void EXTI_ClearITPendingBit(uint32_t EXTI_Line);清楚EXTI线路挂起位</p>
+</blockquote>
+<hr />
+<p>voidNVIC_PriorityGroupConfig(uint32_t NVIC_PriorityGroup)<font style="color:rgb(77, 77, 77);">中断优先级分组</font></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><strong><font style="color:rgb(79, 79, 79);">分组号</font></strong></th>
+<th style="text-align:center"><strong><font style="color:rgb(79, 79, 79);">4 bit 分配情况</font></strong></th>
+<th style="text-align:center"><strong><font style="color:rgb(79, 79, 79);">说明</font></strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">第0组</font></td>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">0 : 4</font></td>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">无抢占式优先级，16 个子优先级</font></td>
+</tr>
+<tr>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">第1组</font></td>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">1 : 3</font></td>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">2 个抢占式优先级，8 个子优先级</font></td>
+</tr>
+<tr>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">第2组</font></td>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">2 : 2</font></td>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">4 个抢占式优先级，4 个子优先级</font></td>
+</tr>
+<tr>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">第3组</font></td>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">3 : 1</font></td>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">8 个抢占式优先级，2 个子优先级</font></td>
+</tr>
+<tr>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">第4组</font></td>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">4 : 0</font></td>
+<td style="text-align:center"><font style="color:rgb(79, 79, 79);">16 个抢占式优先级，无子优先级</font></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>如果用户没有设置优先级分组，即用户没有调用&quot;&gt;NVIC_PriorityGroupConfig(uint32_t NVIC_PriorityGroup)则优先级分组默认设置为分组 0，即无抢占式优先级、16个子优先级。<br />
+NVIC_Init(&amp;NVIC_InitStruct); 根据NVIC_InitStruct结构体的配置进行初始化</p>
+</blockquote>
+<h3 id="设计框图"><a class="markdownIt-Anchor" href="#设计框图"></a> 设计框图</h3>
+<p><img src="/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/5.png" alt="" /></p>
+<p><img src="/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/6.png" alt="" /></p>
+<h3 id="例程代码"><a class="markdownIt-Anchor" href="#例程代码"></a> 例程代码</h3>
+<p><strong><font style="color:rgb(77, 77, 77);">相关配置代码的介绍</font></strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//0、初始化GPIO</span></span><br><span class="line">GPIO_InitTypeDef GPIO_InitStructure;</span><br><span class="line">GPIO_StructInit(&amp;GPIO_InitStructure);</span><br><span class="line">GPIO_InitStructure.GPIO_Pin = Z_GPIO_PIN;</span><br><span class="line">GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; <span class="comment">//浮空输入</span></span><br><span class="line">GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">GPIO_Init(Z_GPIO_PORT, &amp;GPIO_InitStructure);</span><br><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);	<span class="comment">//使能复用功能时钟</span></span><br><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB, ENABLE);</span><br><span class="line"><span class="comment">//1.配置中断线</span></span><br><span class="line">EXTI_InitTypeDef EXTI_InitStruct;<span class="comment">//创建结构体来初始化中断线</span></span><br><span class="line">EXTI_ClearITPendingBit(EXTI_Line9);     <span class="comment">//清除中断标志位</span></span><br><span class="line">GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource5);</span><br><span class="line">EXTI_InitStructure.EXTI_Line = EXTI_Line13;<span class="comment">//选择EXTI的信号源</span></span><br><span class="line">EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;<span class="comment">/* EXTI为中断模式 */</span></span><br><span class="line">EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;<span class="comment">/* 下降沿中断 */</span></span><br><span class="line">EXTI_InitStructure.EXTI_LineCmd = ENABLE;<span class="comment">/* 使能中断 */</span>	</span><br><span class="line">EXTI_Init(&amp;EXTI_InitStructure);</span><br><span class="line"><span class="comment">//2.配置NVIC中断优先级</span></span><br><span class="line">NVIC_InitTypeDef NVIC_InitStructure;<span class="comment">//创建结构体来初始化中断优先级</span></span><br><span class="line">NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);<span class="comment">//配置分组号</span></span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannel = EXTI0_IRQn;</span><br><span class="line"><span class="comment">//使能按键所在的外部中断通道</span></span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;</span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = <span class="number">0x02</span>;<span class="comment">//设置抢占优先级</span></span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelSubPriority = <span class="number">0x01</span>;<span class="comment">//设置子优先级</span></span><br><span class="line">NVIC_Init(&amp;NVIC_InitStruct);</span><br><span class="line"><span class="comment">//3.实现中断服务函数（注意配置完之后清除函数的挂起）</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">EXTI0_IRQHandler</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	delay_ms(<span class="number">10</span>); <span class="comment">//消抖?</span></span><br><span class="line">	<span class="keyword">if</span> (WK_UP == <span class="number">1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		LED0 = <span class="number">1</span>;<span class="comment">//led函数宏</span></span><br><span class="line">		LED1 = <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	EXTI_ClearITPendingBit(EXTI_Line0); <span class="comment">//清除 EXTI0 线路挂起，清除位</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>NVIC_InitTypeDef 结构体中间有四个成员变量，这四个成员变量的作用是：</p>
+<ul>
+<li>NVIC_IRQChannel：定义初始化的是哪个中断，这个我们可以在 stm32f10x.h 中找到每个中断对应的名字。</li>
+<li>NVIC_IRQChannelPreemptionPriority：定义这个中断的抢占优先级别。</li>
+<li>NVIC_IRQChannelSubPriority：定义这个中断的子优先级别。</li>
+<li>NVIC_IRQChannelCmd：使能or失能NVIC</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><font >EXTI的配置，EXTI_Trigger这里支持三种模式；</font></p>
+<ul>
+<li><font >EXTI_Trigger_Rising 上升沿触发；</font></li>
+<li><font >EXTI_Trigger_Falling 下降沿触发；</font></li>
+<li><font >EXTI_Trigger_Rising_Falling 上升沿和下降沿都可以触发；</font></li>
+</ul>
+</blockquote>
+<p><strong>中断服务函数在stm32f10x_it.c中编写，在汇编文件中查询</strong></p>
+<h4 id="完整代码"><a class="markdownIt-Anchor" href="#完整代码"></a> 完整代码</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">CountSensor_Init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);</span><br><span class="line">	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);</span><br><span class="line">	</span><br><span class="line">	GPIO_InitTypeDef GPIO_InitStructure;</span><br><span class="line">	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;</span><br><span class="line">	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;</span><br><span class="line">	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">	GPIO_Init(GPIOB, &amp;GPIO_InitStructure);</span><br><span class="line">	</span><br><span class="line">	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource14);</span><br><span class="line">	</span><br><span class="line">	EXTI_InitTypeDef EXTI_InitStructure;</span><br><span class="line">	EXTI_InitStructure.EXTI_Line = EXTI_Line14;</span><br><span class="line">	EXTI_InitStructure.EXTI_LineCmd = ENABLE;</span><br><span class="line">	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;</span><br><span class="line">	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;</span><br><span class="line">	EXTI_Init(&amp;EXTI_InitStructure);</span><br><span class="line">	</span><br><span class="line">	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);</span><br><span class="line">	</span><br><span class="line">	NVIC_InitTypeDef NVIC_InitStructure;</span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;</span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;</span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = <span class="number">1</span>;</span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannelSubPriority = <span class="number">1</span>;</span><br><span class="line">	NVIC_Init(&amp;NVIC_InitStructure);</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">EXTI15_10_IRQHandler</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (EXTI_GetITStatus(EXTI_Line14) == SET)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_14) == <span class="number">0</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			CountSensor_Count ++;</span><br><span class="line">		&#125;</span><br><span class="line">		EXTI_ClearITPendingBit(EXTI_Line14);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="五-定时器"><a class="markdownIt-Anchor" href="#五-定时器"></a> 五、定时器</h1>
+<h3 id="1-常用函数-3"><a class="markdownIt-Anchor" href="#1-常用函数-3"></a> 1、常用函数</h3>
+<blockquote>
+<p>void TIM_DeInit<br />
+void TIM_TimeBaseInit<br />
+void TIM_OC1Init<br />
+void TIM_OC2Init<br />
+void TIM_OC3Init<br />
+void TIM_OC4Init<br />
+void TIM_ICInit<br />
+void TIM_PWMIConfig<br />
+void TIM_BDTRConfig<br />
+void TIM_TimeBaseStructInit<br />
+void TIM_OCStructInit<br />
+void TIM_ICStructInit<br />
+void TIM_BDTRStructInit<br />
+void TIM_Cmd<br />
+void TIM_CtrlPWMOutputs<br />
+void TIM_ITConfig<br />
+void TIM_GenerateEvent<br />
+void TIM_DMAConfig<br />
+void TIM_DMACmd<br />
+void TIM_InternalClockConfig<br />
+void TIM_ITRxExternalClockConfig<br />
+void TIM_TIxExternalClockConfig<br />
+void TIM_ETRClockMode1Config<br />
+void TIM_ETRClockMode2Config<br />
+void TIM_ETRConfig<br />
+void TIM_PrescalerConfig<br />
+void TIM_CounterModeConfig<br />
+void TIM_SelectInputTrigger<br />
+void TIM_EncoderInterfaceConfig<br />
+void TIM_ForcedOC1Config<br />
+void TIM_ForcedOC2Config<br />
+void TIM_ForcedOC3Config<br />
+void TIM_ForcedOC4Config<br />
+void TIM_ARRPreloadConfig<br />
+void TIM_SelectCOM<br />
+void TIM_SelectCCDMA<br />
+void TIM_CCPreloadControl<br />
+void TIM_OC1PreloadConfig<br />
+void TIM_OC2PreloadConfig<br />
+void TIM_OC3PreloadConfig<br />
+void TIM_OC4PreloadConfig<br />
+void TIM_OC1FastConfig<br />
+void TIM_OC2FastConfig<br />
+void TIM_OC3FastConfig<br />
+void TIM_OC4FastConfig<br />
+void TIM_ClearOC1Ref<br />
+void TIM_ClearOC2Ref<br />
+void TIM_ClearOC3Ref<br />
+void TIM_ClearOC4Ref<br />
+void TIM_OC1PolarityConfig<br />
+void TIM_OC1NPolarityConfig<br />
+void TIM_OC2PolarityConfig<br />
+void TIM_OC2NPolarityConfig<br />
+void TIM_OC3PolarityConfig<br />
+void TIM_OC3NPolarityConfig<br />
+void TIM_OC4PolarityConfig(TIM_TypeDef* TIMx, uint16_t TIM_OCPolarity);<br />
+void TIM_CCxCmd(TIM_TypeDef* TIMx, uint16_t TIM_Channel, uint16_t TIM_CCx);<br />
+void TIM_CCxNCmd(TIM_TypeDef* TIMx, uint16_t TIM_Channel, uint16_t TIM_CCxN);<br />
+void TIM_SelectOCxM(TIM_TypeDef* TIMx, uint16_t TIM_Channel, uint16_t TIM_OCMode);<br />
+void TIM_UpdateDisableConfig(TIM_TypeDef* TIMx, FunctionalState NewState);<br />
+void TIM_UpdateRequestConfig(TIM_TypeDef* TIMx, uint16_t TIM_UpdateSource);<br />
+void TIM_SelectHallSensor(TIM_TypeDef* TIMx, FunctionalState NewState);<br />
+void TIM_SelectOnePulseMode(TIM_TypeDef* TIMx, uint16_t TIM_OPMode);<br />
+void TIM_SelectOutputTrigger(TIM_TypeDef* TIMx, uint16_t TIM_TRGOSource);<br />
+void TIM_SelectSlaveMode(TIM_TypeDef* TIMx, uint16_t TIM_SlaveMode);<br />
+void TIM_SelectMasterSlaveMode(TIM_TypeDef* TIMx, uint16_t TIM_MasterSlaveMode);<br />
+void TIM_SetCounter(TIM_TypeDef* TIMx, uint16_t Counter);<br />
+void TIM_SetAutoreload(TIM_TypeDef* TIMx, uint16_t Autoreload);<br />
+void TIM_SetCompare1(TIM_TypeDef* TIMx, uint16_t Compare1);<br />
+void TIM_SetCompare2(TIM_TypeDef* TIMx, uint16_t Compare2);<br />
+void TIM_SetCompare3(TIM_TypeDef* TIMx, uint16_t Compare3);<br />
+void TIM_SetCompare4(TIM_TypeDef* TIMx, uint16_t Compare4);<br />
+void TIM_SetIC1Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC);<br />
+void TIM_SetIC2Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC);<br />
+void TIM_SetIC3Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC);<br />
+void TIM_SetIC4Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC);<br />
+void TIM_SetClockDivision(TIM_TypeDef* TIMx, uint16_t TIM_CKD);<br />
+uint16_t TIM_GetCapture1(TIM_TypeDef* TIMx);<br />
+uint16_t TIM_GetCapture2(TIM_TypeDef* TIMx);<br />
+uint16_t TIM_GetCapture3(TIM_TypeDef* TIMx);<br />
+uint16_t TIM_GetCapture4(TIM_TypeDef* TIMx);<br />
+uint16_t TIM_GetCounter(TIM_TypeDef* TIMx);<br />
+uint16_t TIM_GetPrescaler(TIM_TypeDef* TIMx);<br />
+FlagStatus TIM_GetFlagStatus(TIM_TypeDef* TIMx, uint16_t TIM_FLAG);<br />
+void TIM_ClearFlag(TIM_TypeDef* TIMx, uint16_t TIM_FLAG);<br />
+ITStatus TIM_GetITStatus(TIM_TypeDef* TIMx, uint16_t TIM_IT);<br />
+void TIM_ClearITPendingBit(TIM_TypeDef* TIMx, uint16_t TIM_IT);</p>
+</blockquote>
+<h3 id="设计框图-2"><a class="markdownIt-Anchor" href="#设计框图-2"></a> 设计框图</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">编号</th>
+<th style="text-align:center">总线</th>
+<th style="text-align:center">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><font style="color:black;">高级定时器</font></td>
+<td style="text-align:center"><font style="color:black;">TIM1</font><font style="color:black;">、</font><font style="color:black;">TIM8</font></td>
+<td style="text-align:center"><font style="color:black;">APB2</font></td>
+<td style="text-align:center"><font style="color:black;">拥有通用定时器全部功能，并额外具有重复计数器、死区生成、互补输出、刹车输入等功能</font></td>
+</tr>
+<tr>
+<td style="text-align:center"><font style="color:black;">通用定时器</font></td>
+<td style="text-align:center"><font style="color:black;">TIM2</font><font style="color:black;">、</font><font style="color:black;">TIM3</font><font style="color:black;">、</font><font style="color:black;">TIM4</font><font style="color:black;">、</font><font style="color:black;">TIM5</font></td>
+<td style="text-align:center"><font style="color:black;">APB1</font></td>
+<td style="text-align:center"><font style="color:black;">拥有基本定时器全部功能，并额外具有内外时钟源选择、输入捕获、输出比较、编码器接口、主从触发模式等功能</font></td>
+</tr>
+<tr>
+<td style="text-align:center"><font style="color:black;">基本定时器</font></td>
+<td style="text-align:center"><font style="color:black;">TIM6</font><font style="color:black;">、</font><font style="color:black;">TIM7</font></td>
+<td style="text-align:center"><font style="color:black;">APB1</font></td>
+<td style="text-align:center"><font style="color:black;">拥有定时中断、主模式触发</font><font style="color:black;">DAC</font><font style="color:black;">的功能</font></td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/7.png" alt="" /><br />
+<img src="/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/8.png" alt="" /><br />
+<img src="/images/posts/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/9.png" alt="" /></p>
+<h3 id="例程代码-2"><a class="markdownIt-Anchor" href="#例程代码-2"></a> 例程代码</h3>
+<p>定时器中断实现步骤</p>
+<p>① 能定时器时钟。</p>
+<pre><code>   RCC_APB1PeriphClockCmd();
+</code></pre>
+<p>②  初始化定时器，配置ARR,PSC。</p>
+<pre><code>  TIM_TimeBaseInit();
+</code></pre>
+<p>③开启定时器中断，配置NVIC。</p>
+<pre><code>  void TIM_ITConfig();
+
+  NVIC_Init();
+</code></pre>
+<p>④  使能定时器。</p>
+<pre><code>  TIM_Cmd();
+</code></pre>
+<p>⑥  编写中断服务函数。</p>
+<pre><code>  TIMx_IRQHandler();
+</code></pre>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">TIM3_Int_Init</span><span class="params">(u16 arr,u16 psc)</span></span><br><span class="line">&#123;</span><br><span class="line">    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;</span><br><span class="line">	NVIC_InitTypeDef NVIC_InitStructure;</span><br><span class="line"> </span><br><span class="line">	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE); <span class="comment">//时钟使能</span></span><br><span class="line">	TIM_InternalClockConfig(TIM3);</span><br><span class="line">	<span class="comment">//定时器TIM3初始化</span></span><br><span class="line">	TIM_TimeBaseInitStructure.TIM_Period = <span class="number">10000</span> - <span class="number">1</span>; <span class="comment">//设置在下一个更新事件装入活动的自动重装载寄存器周期的值	</span></span><br><span class="line">	TIM_TimeBaseInitStructure.TIM_Prescaler = <span class="number">7200</span> - <span class="number">1</span>; <span class="comment">//设置用来作为TIMx时钟频率除数的预分频值</span></span><br><span class="line">	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; <span class="comment">//设置时钟分割:TDTS = Tck_tim</span></span><br><span class="line">	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  <span class="comment">//TIM向上计数模式</span></span><br><span class="line">	TIM_TimeBaseInit(TIM3, &amp;TIM_TimeBaseStructure); <span class="comment">//根据指定的参数初始化TIMx的时间基数单位</span></span><br><span class="line"></span><br><span class="line">    TIM_ClearFlag(TIM3, TIM_FLAG_Update);<span class="comment">//清除标志位</span></span><br><span class="line">	TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE ); <span class="comment">//使能指定的TIM3中断,允许更新中断</span></span><br><span class="line"> </span><br><span class="line">	<span class="comment">//中断优先级NVIC设置</span></span><br><span class="line">    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);<span class="comment">//选择分组</span></span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  <span class="comment">//TIM3中断</span></span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = <span class="number">0</span>;  <span class="comment">//先占优先级0级</span></span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannelSubPriority = <span class="number">3</span>;  <span class="comment">//从优先级3级</span></span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; <span class="comment">//IRQ通道被使能</span></span><br><span class="line">	NVIC_Init(&amp;NVIC_InitStructure);  <span class="comment">//初始化NVIC寄存器</span></span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">	TIM_Cmd(TIM3, ENABLE);  <span class="comment">//使能TIMx					 </span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//定时器3中断服务程序</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">TIM3_IRQHandler</span><span class="params">(<span class="type">void</span>)</span>   <span class="comment">//TIM3中断</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)  <span class="comment">//检查TIM3更新中断发生与否</span></span><br><span class="line">		&#123;</span><br><span class="line">		TIM_ClearITPendingBit(TIM3, TIM_IT_Update  );  <span class="comment">//清除TIMx更新中断标志 </span></span><br><span class="line">		LED1=!LED1;</span><br><span class="line">		&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">赞助</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">请作者喝杯咖啡吧</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/wechat.png" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B&amp;desc=STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B&amp;source=https%3A%2F%2Fmyxiaoyi.github.io" target="_blank" rel="noopener noreferrer" title="STM32单片机外设初始化例程">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="STM32单片机外设初始化例程">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner"> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">单片机</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/" rel="tag">嵌入式</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="https://upload-bbs.miyoushe.com/upload/2024/02/14/292762008/f0cb3676199b75980959b7d972a0771f_384819317620854048.jpg?x-oss-process=image/resize,s_600/quality,q_80/auto-orient,0/interlace,1/format,jpg" data-sizes="auto" alt="恋爱倒计时" class="lazyload">
+        
+        <a href="/2023/09/15/longtimelove/"></a>
+        <div class="article-nav-caption">前一篇</div>
+        <h3 class="article-nav-title">
+          
+            恋爱倒计时
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="https://pica.zhimg.com/v2-8709c5a380382373990a2ac5929b6b9c_1440w.jpg" data-sizes="auto" alt="C语言函数指针作为结构体成员实现成员操作" class="lazyload">
+        
+      
+      <a href="/2022/11/16/C%E8%AF%AD%E8%A8%80%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88%E4%BD%9C%E4%B8%BA%E7%BB%93%E6%9E%84%E4%BD%93%E6%88%90%E5%91%98%E5%AE%9E%E7%8E%B0%E6%88%90%E5%91%98%E6%93%8D%E4%BD%9C/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          C语言函数指针作为结构体成员实现成员操作
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+  <section id="comments" data-aos="fade-up">
+    <div class="comment-header">
+      
+      
+        
+      
+      <h2 class="comment-title">说些什么吧！</h2>
+      <div class="comment-selector">
+        <div class="comment-selector-wrap">
+            
+            <div class="selector-item" data-selector="giscus">
+              <span>giscus</span>
+            </div>
+            
+        </div>
+      </div>
+    </div>
+    <div class="comment-content">
+      
+        <div class="comment giscus-comment" data-aos="fade-up"
+          id="giscus-comment">
+        </div>
+      
+    </div>
+  </section>
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2021-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      冯笑一
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        44.1k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        03:12
+      </div>
+    
+    
+      <div class="footer-beian">
+        <a target="_blank" rel="noopener external nofollow noreferrer" href="https://beian.miit.gov.cn" data-pjax-state="">赣ICP备2021007570号-1</a>
+      </div>
+    
+    
+      <div class="footer-beian">
+        <img style="object-fit: contain;margin-right: 2px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAWCAMAAAD3n0w0AAAC4lBMVEUAAAD+/ODz6Kr//+PYrn3x167oxnyaaVzhs2ifaFXbrGLkvFnpyF7v2X/kwm3cp1nhsGfqw3rZqG3ntVzjrFPt3oDjvGnfr2fbnFGti3q0lH7ktoLep1zdqVPryXn9v1T4znr/74bnvGz034v+2I/ktoDz6ZLkwY/Dfz7buoftzYbq2IPr0pjs3bLv6KPRrnbKhFv79ND488n/+dDZr4Lx38f/+cH/95f42oL7/97s2Y3++uzw1rvTk3ABAW0AAHnqxl7ktV3/0ljksE7XPiDWHRfOAAJrdodyeIKUj4EAAIAABHfyy24GA2ftzWYAAGPpwWD/217syVuTeFrqvVnmuVnrwFfislP+xVLnwFHpuFDVkEbdmkXysETeoETpgj7ThT3XdTg5FDjdhTXWZTDaTCm7TCbSOSDUIRnJJxPQFg2Ej5kcPpdyhZSptJEACJFpfo4AG44XMInFvYfTvIejmYS9un7FrnwAEHp8enny2HjWwHjKtnhcX3jYzHeNhnfu2HWUjHX34nSsonPz5HLNwnHu1HD70m9WTm//723pym3x02ndtmn/0mbnxGa0o2ZeWWbwzWT8zGT/4mPqymLtwmJuYmLvymH/vmB5ZGC9kF4MAF3ru1zmu1zou1mnjVn4xFjYnli0mVi5i1jiqVfyyVbmtlbXkVNUOFPlvFLNrFKjfVLjwFHuvlBgHlDsuU9ONU9ODk7/2E02Gk3gpEzcpEzpsUvjqkralkqEaUr/tUnorkngjkf7n0bXikb6xERCJETemEPckUG1gD/ooD3Ulj3jkz3TZT3WjjzOeDqBWDr3pDnglTlMADnbbTf2gjbkbzaTYDZpAjbplzTtcTTEazPXXzOeXzDscS3MPi38jizJWSrVSCrrXynzfCjVdCjZRyjTQCbFUiTlYCPLPSHVNCHwXh7iRh7GPh3PLBr9LRTRDBG/ABG2ABCxDg7BDAvUAwv9KwrEGArTBAjZAAbJAAJ7jjdaAAAAPnRSTlMACEIarGn7+/n39fTw7Ozr5+bl5OTh4NvS0cvHxsbEw8G+vLqysaufnJiVk4yDfG9dXFpMSEFBNTApJyEcFLSeMvYAAAFySURBVBjTYsAHmFmlJFmZUYTMWDivn9q5mp3FGCHGOCvp4tXHN3qakxYzwrUqbAi+9zk91W1v3goVqKglx+YJtzIyXj7Iej/D/YCgFVjQvNFr/rMPT11fp3+9W2ZXbwESs5H39D78/Iuri4urm0udXaWiNVBQ/3Sp16LzbrePrtmTdaXVztNJFyioebk8f9r+tBcpief2TZ5pXxyrDhQUSvbJsUuLv/Pk2sMLx32Lqs6IAwUB4zq5K9f+7ceUR4nxr97YFUQkiAEFVeMmlRSeffcpMzP15qWKmvZwLaCg9KElvdne/v4b1832tfcIdNwuBxRkW7j8mE91sHv/qtoOj6lHYpx5gYJGK7dG318QuCki1qnTKTk6PIgJ5HpDnsiEE35znOdN7I7Z0cUHFmMwFXBwWBbmEDA9JC60rY8fIqjc1ODoGOIcEHVwS+hcvxY1SGhqc0ctXbtt/e6woMgponqwALU10JCVEBGWUdIxwR1hAKaOh2BwM3MwAAAAAElFTkSuQmCC" alt="">
+        <a target="_blank" rel="noopener external nofollow noreferrer" href="https://beian.mps.gov.cn/#/query/webSearch?code=32059002006328">苏公网安备32059002006328号</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#stm32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text"> STM32单片机外设初始化例程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%B5%B7%E5%9B%A0"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、起因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、基本流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E6%9C%ACstm32%E7%A1%AC%E4%BB%B6%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 1、基本STM32硬件知识点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E5%BA%93%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 内核库文件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#cor_cm3h"><span class="toc-number">1.2.2.1.</span> <span class="toc-text"> cor_cm3.h</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#misch"><span class="toc-number">1.2.2.2.</span> <span class="toc-text"> misc.h</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#miscc"><span class="toc-number">1.2.2.3.</span> <span class="toc-text"> misc.c</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E5%A4%96%E8%AE%BE%E5%BA%93%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.2.3.</span> <span class="toc-text"> 处理器外设库文件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#startup_stm32f10x_hds"><span class="toc-number">1.2.3.1.</span> <span class="toc-text"> startup_stm32f10x_hd.s</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#system_stm32f10xc"><span class="toc-number">1.2.3.2.</span> <span class="toc-text"> system_stm32f10x.c</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#stm32f10xh"><span class="toc-number">1.2.3.3.</span> <span class="toc-text"> Stm32f10x.h</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#stm32f10x_xxxh"><span class="toc-number">1.2.3.4.</span> <span class="toc-text"> stm32f10x_xxx.h</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#stm32f10x_xxxc"><span class="toc-number">1.2.3.5.</span> <span class="toc-text"> stm32f10x_xxx.c</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#systeminit-%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98"><span class="toc-number">1.2.4.</span> <span class="toc-text"> SystemInit 相关问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#font-stylecolorrgb18-18-182-%E5%9F%BA%E6%9C%ACstm32%E5%A4%96%E8%AE%BE%E9%85%8D%E7%BD%AE%E6%B5%81%E7%A8%8Bfont"><span class="toc-number">1.3.</span> <span class="toc-text"> 2、基本stm32外设配置流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%E7%94%B3%E6%98%8E%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">1.3.0.1.</span> <span class="toc-text"> 第一步：申明结构体；</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E5%BC%80%E5%90%AF%E6%97%B6%E9%92%9F"><span class="toc-number">1.3.0.2.</span> <span class="toc-text"> 第二步：开启时钟；</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">1.3.0.3.</span> <span class="toc-text"> 第三步：初始化结构体；</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8B%A5%E6%9C%89%E8%AE%BE%E7%BD%AE%E4%B8%AD%E6%96%AD"><span class="toc-number">1.3.1.</span> <span class="toc-text"> *若有设置中断</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%E4%BD%BF%E8%83%BD%E5%A4%96%E8%AE%BE%E6%9F%90%E7%89%B9%E5%AE%9A%E4%B8%AD%E6%96%AD%E5%AE%9A%E6%97%B6%E5%99%A8%E4%B8%B2%E5%8F%A3adc"><span class="toc-number">1.3.1.1.</span> <span class="toc-text"> 第一步：使能外设某特定中断（定时器，串口，ADC）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E5%88%9D%E5%A7%8B%E5%8C%96-nvic"><span class="toc-number">1.3.1.2.</span> <span class="toc-text"> 第二步：初始化 NVIC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%E8%AE%BE%E7%BD%AE%E7%B3%BB%E7%BB%9F%E4%B8%AD%E6%96%AD%E4%BC%98%E5%85%88%E7%BA%A7%E5%88%86%E7%BB%84%E9%80%9A%E5%B8%B8%E5%9C%A8%E4%B8%BB%E5%87%BD%E6%95%B0%E4%B8%AD%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.1.3.</span> <span class="toc-text"> 第三步：设置系统中断优先级分组(通常在主函数中配置）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#end%E5%AE%9A%E6%97%B6%E5%99%A8%E4%B8%B2%E5%8F%A3adc%E4%BD%BF%E8%83%BD"><span class="toc-number">1.3.2.</span> <span class="toc-text"> END.定时器&#x2F;串口&#x2F;ADC使能</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%BB%93%E6%9E%84%E4%BD%93%E5%8F%98%E9%87%8F%E9%85%8D%E7%BD%AE%E5%85%B7%E4%BD%93%E5%BD%A2%E5%BC%8F"><span class="toc-number">1.4.</span> <span class="toc-text"> 3、结构体变量配置具体形式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%9D%E5%A7%8B%E5%8C%96-gpio-%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.0.1.</span> <span class="toc-text"> 初始化结构体初始化 GPIO 的常用格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%9D%E5%A7%8B%E5%8C%96-usart-%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.0.2.</span> <span class="toc-text"> 初始化结构体初始化 USART 的常用格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%9D%E5%A7%8B%E5%8C%96-nvic-%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.0.3.</span> <span class="toc-text"> 初始化结构体初始化 NVIC 的常用格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%9D%E5%A7%8B%E5%8C%96%E5%A4%96%E9%83%A8%E4%B8%AD%E6%96%AD%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.0.4.</span> <span class="toc-text"> 初始化结构体初始化外部中断的常用格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%9D%E5%A7%8B%E5%8C%96%E5%AE%9A%E6%97%B6%E5%99%A8%E4%B8%AD%E6%96%AD%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.0.5.</span> <span class="toc-text"> 初始化结构体初始化定时器中断的常用格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BE%93%E5%87%BA%E6%AF%94%E8%BE%83%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.0.6.</span> <span class="toc-text"> 初始化结构体初始化输出比较的常用格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE-adc-%E7%9A%84%E9%80%9A%E7%94%A8%E6%8E%A7%E5%88%B6%E5%AF%84%E5%AD%98%E5%99%A8-ccr-common-control-register"><span class="toc-number">1.4.0.7.</span> <span class="toc-text"> 设置 ADC 的通用控制寄存器 CCR( common control register)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%9D%E5%A7%8B%E5%8C%96adc%E7%9A%84%E5%B8%B8%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.0.8.</span> <span class="toc-text"> 初始化结构体初始化ADC的常用格式</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89-gpio%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text"> 三、GPIO配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-number">2.0.1.</span> <span class="toc-text"> 1、常用函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#font-stylecolorrgb77-77-77%E8%AE%BE%E8%AE%A1%E6%A1%86%E5%9B%BEfont"><span class="toc-number">2.0.2.</span> <span class="toc-text"> 设计框图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#font-stylecolorrgb77-77-77%E4%BE%8B%E7%A8%8B%E4%BB%A3%E7%A0%81font"><span class="toc-number">2.0.3.</span> <span class="toc-text"> 例程代码</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%B8%80font-stylecolorrgb77-77-77led%E7%81%AF%E5%88%9D%E5%A7%8B%E5%8C%96gpio%E5%8F%A3%E4%BE%8B%E7%A8%8Bfont"><span class="toc-number">2.0.3.1.</span> <span class="toc-text"> 示例一:LED灯初始化GPIO口例程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BA%8C%E6%8A%8Agpio%E9%85%8D%E7%BD%AE%E6%88%90%E8%BE%93%E5%85%A5"><span class="toc-number">2.0.3.2.</span> <span class="toc-text"> 示例二:把GPIO配置成输入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#font-stylecolorrgb51-51-51%E7%A4%BA%E4%BE%8B%E4%B8%89%E9%85%8D%E7%BD%AE%E5%A4%8D%E7%94%A8%E5%8A%9F%E8%83%BD-pa9-pa10-%E9%85%8D%E7%BD%AE%E6%88%90%E4%B8%B2%E5%8F%A31%E7%9A%84%E6%94%B6%E5%8F%91%E6%8E%A5%E5%8F%A3font"><span class="toc-number">2.0.3.3.</span> <span class="toc-text"> 示例三:配置复用功能 PA9 PA10 配置成串口1的收发接口</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B-%E5%A4%96%E9%83%A8%E4%B8%AD%E6%96%AD"><span class="toc-number">3.</span> <span class="toc-text"> 四、外部中断</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0-2"><span class="toc-number">3.0.1.</span> <span class="toc-text"> 1、常用函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E6%A1%86%E5%9B%BE"><span class="toc-number">3.0.2.</span> <span class="toc-text"> 设计框图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E7%A8%8B%E4%BB%A3%E7%A0%81"><span class="toc-number">3.0.3.</span> <span class="toc-text"> 例程代码</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="toc-number">3.0.3.1.</span> <span class="toc-text"> 完整代码</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94-%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text"> 五、定时器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0-3"><span class="toc-number">4.0.1.</span> <span class="toc-text"> 1、常用函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E6%A1%86%E5%9B%BE-2"><span class="toc-number">4.0.2.</span> <span class="toc-text"> 设计框图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E7%A8%8B%E4%BB%A3%E7%A0%81-2"><span class="toc-number">4.0.3.</span> <span class="toc-text"> 例程代码</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="冯笑一" class="lazyload">
+  <div class="sidebar-author-name">冯笑一</div>
+  <div class="sidebar-description">电子信息爱好者</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">16</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">17</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a href=mailto:qingchunhuoli@live.com itemprop="url" target="_blank" aria-label="email" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/MYxiaoyi itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://space.bilibili.com/5463002 itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="home icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives/" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="archives icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about/" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="about icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend/" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              <img src="/images/taichi.svg" alt="friend icon" style="width: 1em;">
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png"/>
+        </div>
+      </div>
+    
+    
+    
+      <meting-js
+        theme="var(--color-link)"
+        id="7378273438"
+        server="netease"
+        type="playlist"
+        auto=""
+        fixed="true"
+        autoplay="false"
+        loop="all"
+        order="list"
+        preload="auto"
+        volume="0.7"
+        mutex="true"
+        list-folded="false"
+        lrc-type="3"
+      ></meting-js>
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/quicklink@2.3.0/dist/quicklink.umd.js" integrity="sha384-aD7FsuQkS1ohgFKY41fJfeA+Wd&#x2F;QRNnrOd9Bs58K3FzKdJJv8yPnYU8Tnp5z1agS" crossorigin="anonymous"></script>
+
+  <script data-pjax>
+    window.quicklink?.listen({
+      timeout: 3000,
+      priority: true,
+      ignores: []
+    });
+  </script>
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "冯笑一",
+          title: "STM32单片机外设初始化例程",
+          url: "https://myxiaoyi.github.io/2023/01/18/STM32%E5%8D%95%E7%89%87%E6%9C%BA%E5%A4%96%E8%AE%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B/",
+          excerpt: "",
+          description: "",
+          stripContent: " STM32单片机外设初始化例程  一、起因 由于自己学习STM32单片机是零零散散的学习的，没有系统的进行学习，学习的东西非常的混乱，没有做过什么整体的框架整理，所以在此将STM32的外设的初始化进行系统的打包成一个文档，把程序的过程进行整理。  二、基本流程  1、基本STM32硬件知识点 STM32的单片机的开发程序发展的流程基本都是从寄存器阶段到标准库阶段到现在的HAL库、RTOS。所以第一步我们需要清楚单片机的整体工作流程。  通过图上可以看出，STM32单片机有一个Cortex-M3",
+          date: "Wed Jan 18 2023 00:00:00 GMT+0800",
+          updated: "Wed Jul 16 2025 17:01:59 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@11.6.0/dist/mermaid.min.js" integrity="sha384-zkWMJO4sgpPUzyuOgDx8HB&#x2F;K55glbAwajEpk1Go2NWRuPkPA&#x2F;wIhoEJTuSkmOYrV" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+<script data-pjax>
+  var loadScript = (src, integrity) => {
+    const script = document.createElement('script');
+    script.src = src;
+    if (integrity) script.integrity = integrity;
+    script.crossOrigin = 'anonymous';
+    return script;
+  };
+
+  var commentConfigKeys = ['valine', 'waline', 'twikoo', 'gitalk', 'giscus'];
+  var commentConfig = {
+    valine: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.valine-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/valine@1.5.1/dist/Valine.min.js',
+          'sha384-3ma91AExDeMAZ1rjTjaP8V2A2obQE+s5ltKRwYlwdpArz9xVbp0tF3b0VV2ACNPn'
+        );
+        script.onload = () => {
+          var GUEST_INFO = ['nick', 'mail', 'link'];
+          var guest_info = 'nick,mail,link'.split(',').filter((item) => {
+            return GUEST_INFO.indexOf(item) > -1
+          });
+          var recordIP = JSON.parse('true');
+          var highlight = JSON.parse('true');
+          var visitor = JSON.parse('false');
+          var serverURLs = undefined;
+
+          if (window.Valine) {
+            new Valine({
+              el: '.valine-comment',
+              appId: "",
+              appKey: "",
+              placeholder: "Just go go",
+              pageSize: '10',
+              avatar: 'mp',
+              lang: document.documentElement.lang || 'en',
+              recordIP: recordIP,
+              highlight: highlight,
+              visitor: visitor,
+              requiredFields: guest_info,
+              path: window.location.pathname,
+              serverURLs
+            });
+          }
+        };
+        document.head.appendChild(script);
+      }
+    },
+    waline: {
+      enable: false,
+      load: async () => {
+        const container = document.querySelector('.waline-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        let walineInit;
+        const walineCdn = 'https://npm.webcache.cn/@waline/client@2.15.8/dist/waline.mjs';
+        const walineIntegrity = 'sha384-9sbqJjrfGjbkI6/PI4nU/MvBfEmkkPC4YK9I4zBeMIf1CVCZdCMH/KinBEAZII/5';
+
+        const module = await safeImport(walineCdn, walineIntegrity);
+        walineInit = module.init;
+
+        window.walineInstance = walineInit({
+          el: '.waline-comment',
+          serverURL: 'https://6dfzn3xp.api.lncldglobal.com',
+          lang: document.documentElement.lang || 'en',
+          locale: {},
+          emoji: ["https://unpkg.com/@waline/emojis@1.2.0/weibo","https://unpkg.com/@waline/emojis@1.2.0/alus","https://unpkg.com/@waline/emojis@1.2.0/bilibili","https://unpkg.com/@waline/emojis@1.2.0/qq","https://unpkg.com/@waline/emojis@1.2.0/tieba","https://unpkg.com/@waline/emojis@1.2.0/tw-emoji"],
+          meta: ["nick","mail","link"],
+          requiredMeta: ["nick","mail"],
+          wordLimit: JSON.parse('0'),
+          comment: true,
+          pageSize: JSON.parse('10'),
+          dark: 'html[data-theme="dark"]',
+          pageview: JSON.parse('true'),
+        });
+      }
+    },
+    twikoo: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.twikoo-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/twikoo@1.6.44/dist/twikoo.all.min.js',
+          'sha384-kwWLC0HjeZZnVPqCJ1AncI8tsk+kQqF9TbAmCclcc9Z0hGkfgHRzeQZxmdmZhE0K'
+        );
+
+        script.onload = () => {
+          if (window.twikoo) {
+            twikoo.init({
+              envId: '',
+              el: '.twikoo-comment',
+              region: '',
+              lang: document.documentElement.lang || 'en',
+            });
+
+            twikoo.getCommentsCount({
+              envId: '',
+              region: '',
+              urls: [
+                '/friend/index.html'
+              ],
+              includeReply: false
+            }).then((res) => {
+              _$('.twikoo-comment-count').innerText = res[0].count;
+            }).catch((err) => {
+              console.error(err);
+            });
+          }
+        } 
+        document.head.appendChild(script);
+      }
+    },
+    gitalk: {
+      enable: false,
+      load: () => {
+        const container = document.querySelector('.gitalk-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        const script = loadScript(
+          'https://npm.webcache.cn/gitalk@1.8.0/dist/gitalk.min.js',
+          'sha384-kspnZUWBoSWwoJHa0hBCXYbHGbhvU/lcEH5O8eVbSDhbPwsiVUTp/aGX/z/5EuMA'
+        );
+
+        script.onload = () => {
+          if (false) {
+            const md5Script = loadScript(
+              'https://npm.webcache.cn/blueimp-md5@2.19.0/js/md5.min.js',
+              'sha384-JmVtRz6RWiXnA14QbIOJzPuU3MidULOpBP66deeLLyyoF4Tr/gZlbkHkL6vTthxH'
+            );
+            md5Script.onload = initGitalk;
+            document.head.appendChild(md5Script);
+          } else {
+            initGitalk();
+          }
+        }
+        document.head.appendChild(script);
+
+        function initGitalk() {
+          var gitalkId = location.pathname;
+          var gitalk = new Gitalk({
+            clientID: '',
+            clientSecret: '',
+            repo: '',
+            owner: '',
+            admin: null,
+            id: gitalkId,
+            distractionFreeMode: false,
+            language: document.documentElement.lang || 'en',
+          })
+          gitalk.render('gitalk-comment');
+        }
+      }
+    },
+    giscus: {
+      enable: true,
+      load: () => {
+        const container = document.querySelector('.giscus-comment');
+        if (!container) return;
+        container.style.display = 'block';
+
+        // 删除可能已存在的 giscus 脚本和 iframe
+        const existingScript = container.querySelector('script[src*="giscus.app/client.js"]');
+        if (existingScript) existingScript.remove();
+        const existingFrame = document.querySelector('iframe.giscus-frame');
+        if (existingFrame) existingFrame.remove();
+
+        const giscusScript = document.createElement('script');
+        const domMode = document.documentElement.getAttribute("data-theme");
+
+        const docLang = document.documentElement.lang || 'en';
+        const langBase = docLang.split('-')[0];
+        const supportedLangs = ['ar', 'be', 'bg', 'ca', 'cs', 'da', 'de', 'en', 
+        'eo', 'es', 'eu', 'fa', 'fr', 'gr', 'hbs', 'he', 'hu', 'id', 'it', 'ja', 
+        'kh', 'ko', 'nl', 'pl', 'pt', 'ro', 'ru', 'th', 'tr', 'uk', 'uz', 'vi', 'zh-CN', 'zh-HK', 'zh-TW'];
+        const giscusLang = supportedLangs.includes(docLang) ? docLang : supportedLangs.includes(langBase) ? langBase : 'en';
+
+        giscusScript.src = 'https://giscus.app/client.js';
+        giscusScript.setAttribute('data-repo', 'MYxiaoyi/MYxiaoyi.github.io');
+        giscusScript.setAttribute('data-repo-id', 'R_kgDOPMp1Fg');
+        giscusScript.setAttribute('data-category', 'Announcements'); 
+        giscusScript.setAttribute('data-category-id', 'DIC_kwDOPMp1Fs4CtAct');
+        giscusScript.setAttribute('data-mapping', '0');
+        giscusScript.setAttribute('data-strict', '0');
+        giscusScript.setAttribute('data-reactions-enabled', '1');
+        giscusScript.setAttribute('data-emit-metadata', '0');
+        giscusScript.setAttribute('data-input-position', 'bottom');
+        giscusScript.setAttribute('data-theme', domMode === 'dark' ? 'dark' : 'light');
+        giscusScript.setAttribute('data-lang', giscusLang);
+        giscusScript.setAttribute('crossorigin', 'anonymous');
+        giscusScript.async = true;
+        container.appendChild(giscusScript);
+        document.body.addEventListener('light-theme-set', () => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: 'light' } } }, 'https://giscus.app');
+        });
+        document.body.addEventListener('dark-theme-set', () => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: 'dark' } } }, 'https://giscus.app');
+        });
+      }
+    }
+  }
+  commentConfig.enable = commentConfigKeys.some(key => commentConfig[key].enable);
+
+  var defaultComment = '';
+  if (commentConfig.enable) {
+    // 1. 首先检查localStorage中是否有保存的评论类型
+    var savedCommentType = localStorage.getItem('commentType');
+    
+    // 2. 如果localStorage中有值且对应的评论系统可用，就使用它
+    if (savedCommentType) {
+      if (commentConfig[savedCommentType]?.enable) {
+        defaultComment = savedCommentType;
+      }
+    }
+    
+    // 3. 如果localStorage无效，检查配置的默认评论系统
+    if (!defaultComment) {
+      var configDefault = 'waline';
+      if (commentConfig[configDefault]?.enable) {
+        defaultComment = configDefault;
+      }
+    }
+    
+    // 4. 如果前两项都无效，按指定顺序找到第一个可用的评论系统
+    if (!defaultComment) {
+      defaultComment = commentConfigKeys.find(sys => commentConfig[sys].enable) || '';
+    }
+  }
+  function loadComments() {
+    if (!commentConfig.enable) return;
+    // 评论组件加载状态跟踪
+    const loadedComments = {
+      valine: false,
+      waline: false,
+      twikoo: false,
+      gitalk: false,
+      giscus: false
+    };
+
+    // 隐藏所有评论容器
+    const hideAllComments = () => {
+      const commentContainers = document.querySelectorAll('.comment');
+      commentContainers.forEach(container => {
+        container.style.display = 'none';
+      });
+    };
+
+    // 按需加载评论系统
+    const loadCommentSystem = (type) => {
+      if (loadedComments[type]) {
+        // 如果已加载，只需显示对应容器
+        document.querySelector(`.${type}-comment`).style.display = 'block';
+        return;
+      }
+
+      // 根据类型加载对应的脚本
+      commentConfig[type]?.load();
+      loadedComments[type] = true;
+    };
+
+    // 评论组件选择器
+    const changeActiveCommentItems = (item) => {
+      const commentItems = document.querySelectorAll('.selector-item');
+      for (let i = 0; i < commentItems.length; i++) {
+        commentItems[i].classList.remove('active');
+      }
+      item.classList.add('active');
+
+      // 获取要加载的评论系统类型
+      const commentType = item.getAttribute('data-selector');
+
+      // 隐藏所有评论系统
+      hideAllComments();
+
+      // 加载选中的评论系统
+      loadCommentSystem(commentType);
+    };
+
+    const commentInit = () => {
+      // 评论组件选择器点击事件
+      const commentItems = document.querySelectorAll('.selector-item');
+      for (let item of commentItems) {
+        item.addEventListener('click', () => {
+          // 保存选择器状态
+          const commentType = item.getAttribute('data-selector');
+          window.localStorage.setItem('commentType', commentType);
+          // 切换选中状态
+          changeActiveCommentItems(item);
+        });
+      }
+
+      // 检查是否需要加载默认评论系统
+      if (defaultComment) {
+        const defaultSelectorItem = document.querySelector(`[data-selector="${defaultComment}"]`);
+        if (!defaultSelectorItem) return;
+        defaultSelectorItem.style.display = 'block';
+        defaultSelectorItem.classList.add('active');
+        loadCommentSystem(defaultComment);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', commentInit);
+    } else {
+      commentInit();
+    }
+  };
+  loadComments();
+</script>
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.9.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+    
+<script src="https://npm.webcache.cn/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF&#x2F;RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh&#x2F;OJfpU0jr6" crossorigin="anonymous" defer data-pjax></script>
+
+    
+<script src="https://npm.webcache.cn/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous" defer onload="renderMathInElement(_$(&#39;article&#39;), {delimiters: [{left: &#39;$$&#39;, right: &#39;$$&#39;, display: true},{left: &#39;$&#39;, right: &#39;$&#39;, display: false}]});" data-pjax></script>
+
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.js" integrity="sha384-gdGYZwHnfJM54evoZhpO0s6ZF5BQiybkiyW7VXr+h5UfruuRL&#x2F;aORyw+5+HZoU6e" crossorigin="anonymous"></script>
+
+  
+
+
+
+  
+  <script>
+    var isMobile = window.matchMedia('(max-width: 959px)').matches;
+    if (isMobile) {
+      const meting = _$('meting-js');
+      if (meting) {
+        meting.setAttribute('fixed', 'true');
+        const aside = meting.parentNode;
+        if (aside?.tagName === 'ASIDE') {
+          aside.removeChild(meting);
+          document.body.appendChild(meting);
+        }
+      }
+    }
+  </script>
+  
+<script src="https://npm.webcache.cn/meting@2.0.1/dist/Meting.min.js" integrity="sha384-ASVlpKF80A22OXTK3tfEjZm1EL6uFMKIC4p8+0maanw1S&#x2F;IyB+Y4JG+ZDU7GpKE8" crossorigin="anonymous"></script>
+
+
+
+
+    
+  </body>
+  </html>
+
